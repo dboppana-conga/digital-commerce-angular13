@@ -22,7 +22,7 @@ export class RavenErrorHandler extends ErrorHandler implements ErrorHandler {
             }
         }
     }
-    override handleError(err: any): void {
+    handleError(err: any): void {
         if (this.configurationService.get('enableErrorPrinting') !== false)
             super.handleError(err);
 
