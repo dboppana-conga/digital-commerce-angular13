@@ -50,7 +50,7 @@ export class ApiService {
   }
 
   get(location: string, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('GET', url)),
@@ -99,7 +99,7 @@ export class ApiService {
   }
 
   put(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('PUT', url, payload)),
@@ -113,7 +113,7 @@ export class ApiService {
   }
 
   patch(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('PATCH', url, payload)),
@@ -127,7 +127,7 @@ export class ApiService {
   }
 
   delete(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('DELETE', url, payload)),
