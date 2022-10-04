@@ -25,7 +25,7 @@ export class AObjectService {
 
     static arrayToCsv(idArray: Array<string>): string {
         if (!idArray || idArray.length === 0)
-            return null;
+            return '';
         else {
             let result = ``;
             for (const key of idArray) {
@@ -76,7 +76,7 @@ export class AObjectService {
                 };
             });
         } else
-            return null;
+            return new Array();
     }
 
     getChildren(instance: AObject, filters?: Array<any>, depth: number = 0, deep: boolean = true): Array<Object> {
@@ -92,7 +92,7 @@ export class AObjectService {
                 }
             ));
         } else
-            return null;
+            return new Array();
     }
 
     getRestResource() {
@@ -114,13 +114,13 @@ export class AObjectService {
 
     describe(entity?: ClassType<AObject>, field?: string, picklistOnly: boolean = false, useGobalDescribe: boolean = false): Observable<any> {
         const entityClass = (entity != null) ? entity : this.type;
-        let fieldApiName, apiName;
+        let fieldApiName: any, apiName;
         fieldApiName = (apiName === undefined) ? field : apiName;
         return this.describeObject(entity)
             .pipe(
                 map(data => {
-                    const metadata = (!_.isNil(field)) ? _.find(_.get(data, 'FieldMetadata', []), (f) => _.toLower(f.FieldName) === _.toLower(_.trim(fieldApiName))) : data;
-                    const picklistValues = _.get(_.find(_.get(data, 'PicklistMetadata', []), (f) => _.toLower(f.Name) === _.toLower(_.get(metadata, 'PicklistName'))), 'PicklistEntries');
+                    const metadata = (!_.isNil(field)) ? _.find(_.get(data, 'FieldMetadata', []), (f: any) => _.toLower(f.FieldName) === _.toLower(_.trim(fieldApiName))) : data;
+                    const picklistValues = _.get(_.find(_.get(data, 'PicklistMetadata', []), (f: any) => _.toLower(f.Name) === _.toLower(_.get(metadata, 'PicklistName'))), 'PicklistEntries');
                     if (picklistOnly) {
                         return picklistValues;
                     }
@@ -142,7 +142,7 @@ export class AObjectService {
     @MemoizeAll()
     fetch(id: string): Observable<AObject> {
        const route: string = _.defaultTo(_.get(this.getInstance().getMetadata(), 'route'), this.getInstance().getApiName());
-        const subject: BehaviorSubject<AObject> = new BehaviorSubject<AObject>(null);
+        const subject: BehaviorSubject<AObject> = new BehaviorSubject<AObject>(new AObject());
 
         this.apiService.get(`/${route}/${id}`, this.type)
             .pipe(take(1))

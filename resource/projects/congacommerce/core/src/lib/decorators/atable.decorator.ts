@@ -3,13 +3,13 @@ import { AObject } from '../classes/a.model';
 
 
 export function ATable(metadata: ATableMetadata) {
-    return function (target) {
+    return function (target: any) {
         Reflect.defineMetadata('aobject', metadata, target);
     };
 }
 
-export function ATableType(objectType: new (t?) => AObject){
-    return function (target){
+export function ATableType(objectType: new (t?: any) => AObject){
+    return function (target: any){
         target.type = objectType;
     };
 }
