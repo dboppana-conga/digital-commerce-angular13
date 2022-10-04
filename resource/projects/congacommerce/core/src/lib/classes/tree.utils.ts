@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { memoizeAll } from 'lodash-decorators';
 
 export class TreeUtils {
-    static arrayToTree(data, options) {
+    static arrayToTree(data: any, options: any) {
         options = Object.assign(
             {
                 parentProperty: 'parent_id',
@@ -26,7 +26,7 @@ export class TreeUtils {
         );
     }
 
-    static createTree(array, rootNodes, customID, childrenProperty) {
+    static createTree(array: any, rootNodes: any, customID: string, childrenProperty: any) {
         const tree = [];
 
         for (const rootNode in rootNodes) {
@@ -48,10 +48,10 @@ export class TreeUtils {
         return tree;
     }
 
-    static groupByParents(array, options) {
+    static groupByParents(array: any, options: any) {
         const arrayByID = _.keyBy(array, options.customID);
 
-        return array.reduce(function (prev, item) {
+        return array.reduce(function (prev: any, item : any) {
             let parentID = _.get(item, options.parentProperty);
             if (!parentID || !arrayByID.hasOwnProperty(parentID)) {
                 parentID = options.rootID;
