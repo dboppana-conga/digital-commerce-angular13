@@ -1,19 +1,19 @@
 export class Configuration {
     production?: boolean;
-    endpoint: string;
+    endpoint: string='';
     authenticationEndpoint?: string = '';
     organizationId?: string;
-    defaultImageSrc: string;
+    defaultImageSrc: string='';
     defaultCountry?: string = 'US';
     defaultLanguage?: string = 'en-US';
     defaultCurrency?: string = 'USD';
     productIdentifier?: string = 'Id';
     proxy?: string;
     sentryDsn?: string;
-    storefrontId: string = null;
+    storefrontId: string | null = null;
     hashRouting?: boolean = false;
-    clientId: string = null;
-    authority: string = null;
+    clientId: string | null = null;
+    authority: string | null= null;
     enableTelemetry: boolean = false;
 }
 export interface Provider {
