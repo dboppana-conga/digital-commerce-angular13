@@ -146,7 +146,7 @@ export class AObjectService {
 
         this.apiService.get(`/${route}/${id}`, this.type)
             .pipe(take(1))
-            .subscribe(data => subject.next(_.first(data)));
+            .subscribe(data => subject.next(_.first(data) as AObject));
 
         return subject.pipe(filter(d => !_.isNil(d)));
     }
