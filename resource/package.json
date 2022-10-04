@@ -27,6 +27,7 @@
     "@ngx-translate/core": "^13.0.0",
     "angular2-ladda": "3.1.0",
     "bootstrap": "^4.4.1",
+    "bootstrap-material-design": "^4.1.2",
     "lodash-decorators": "^6.0.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
@@ -47,7 +48,6 @@
     "replace": "^1.1.5",
     "roboto-fontface": "^0.10.0",
     "xml-js": "^1.6.11",
-    "lodash": "^4.17.20",
     "crypto-js": "^3.1.9-1"
   },
   "devDependencies": {
@@ -55,6 +55,7 @@
     "@angular/cli": "~13.2.1",
     "@angular/compiler-cli": "~13.0.0",
     "@types/jasmine": "~3.10.0",
+    "@types/lodash": "^4.14.186",
     "@types/node": "^12.11.1",
     "jasmine-core": "~3.10.0",
     "karma": "~6.3.0",

@@ -5,8 +5,6 @@
     "paths": {
       "@congacommerce/core": [
         "dist/congacommerce/core/congacommerce-core",
-        "dist/congacommerce/core",
-        "dist/congacommerce/core/congacommerce-core",
         "dist/congacommerce/core"
       ],
       "@congacommerce/ecommerce": [
