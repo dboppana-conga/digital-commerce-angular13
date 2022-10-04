@@ -75,13 +75,13 @@ export abstract class AObjectMetadata {
             return mapValues(mapKeys(defaultMetadataStorage.getExposedMetadatas(this.constructor), 'propertyName'), 'options');
     }
 
-    getTypeMetadata(fieldName: string): TypeMetadata {
+    getTypeMetadata(fieldName: string): TypeMetadata | undefined {
         if (this.constructor)
             return defaultMetadataStorage.findTypeMetadata(this.constructor, fieldName);
         else
             return undefined;
     }
-    getExposeMetadata(fieldName: string): ExposeMetadata {
+    getExposeMetadata(fieldName: string): ExposeMetadata | undefined {
         if (this.constructor)
             return defaultMetadataStorage.findExposeMetadata(this.constructor, fieldName);
         else
@@ -94,7 +94,7 @@ export abstract class AObjectMetadata {
     }
 
     getKey(apiName: string): string {
-        return first(keys(this.getFieldMetadataFromExpose(f => get(f, 'name') === apiName)));
+        return first(keys(this.getFieldMetadataFromExpose(f => get(f, 'name') === apiName))) as string;
 
     }
 
@@ -102,11 +102,11 @@ export abstract class AObjectMetadata {
     instanceOf(fieldName: string): AObject {
         // 'PriceList.Account';
         const fieldParts = split(fieldName, '.');
-        let instance: AObject;
+        let instance: any;
         forEach(fieldParts, part => {
             let i = defaultTo(instance, this);
 
-            const metadata = i.getTypeMetadata(part);
+            const metadata = i.getTypeMetadata(part) as TypeMetadata;
             if (get(i, part) instanceof AObject)
                 instance = get(i, part);
             else if (get(metadata, 'typeFunction')) {
@@ -116,15 +116,15 @@ export abstract class AObjectMetadata {
                 if (isArray(get(i, part)))
                     instance = first(get(i, part))!;
         });
-        return defaultTo(instance, this);
+        return defaultTo(instance, this) as AObject;
     }
     @memoize()
     getApiName(field?: string) {
-        const memod = (f) => {
+        const memod = (f: any) => {
             if (!isNil(f)) {
                 const fieldParts = split(f, '.');
                 const fieldReference = fieldParts.pop();
-                let instance, fields, subField;
+                let instance: any, fields, subField;
                 let prefix = '';
                 forEach(fieldParts, part => {
                     prefix += (isNil(instance)
@@ -147,7 +147,7 @@ export abstract class AObjectMetadata {
     strip(fields?: Array<string>): AObject {
         let standardFields = ['CreatedDate', 'ModifiedDate', 'ModifiedBy', 'CreatedBy', '_metadata'];
         if (fields) standardFields = standardFields.concat(fields);
-        return omit(pickBy(this, (a, b) => identity(a, b) && !(endsWith(b, 'Id') && !isEqual(b, 'Id') && b !== 'ExternalId') && b !== 'hasErrors'), standardFields);
+        return omit(pickBy(this, (a, b) => identity(a) && !(endsWith(b, 'Id') && !isEqual(b, 'Id') && b !== 'ExternalId') && b !== 'hasErrors'), standardFields) as unknown as AObject;
     }
 
     getReferenceFields(type?: 'Child' | 'Lookup'): Array<string> {
@@ -165,8 +165,8 @@ export abstract class AObjectMetadata {
         }
     }
 
-    getReferenceType(fieldName: string): 'Lookup' | 'Child' {
-        const metadata = this.getTypeMetadata(fieldName);
+    getReferenceType(fieldName: string): 'Lookup' | 'Child' | undefined {
+        const metadata = this.getTypeMetadata(fieldName) as TypeMetadata;
 
         if (get(metadata, 'reflectedType') && new metadata.reflectedType() instanceof AObject === false && Array.isArray(metadata.reflectedType()))
             return 'Child';
@@ -245,22 +245,22 @@ export abstract class AObjectMetadata {
 export class AObject extends AObjectMetadata {
 
     @Expose({ name: 'Id' })
-    Id: string = null;
+    Id: string | null = null;
 
 
     @Expose({ name: 'CreatedDate' })
-    CreatedDate: Date = null;
+    CreatedDate: Date | null = null;
 
     @Expose({ name: 'ModifiedDate' })
-    ModifiedDate: Date = null;
+    ModifiedDate: Date | null = null;
 
 
     @Expose({ name: 'LastModifiedById' })
-    LastModifiedById: string = null;
+    LastModifiedById: string | null = null;
 
 
     @Expose({ name: 'CreatedById' })
-    CreatedById: string = null;
+    CreatedById: string  | null= null;
 
     _metadata?: any;
     validate(): void { }
