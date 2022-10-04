@@ -67,7 +67,7 @@ export class AObjectService {
         const replace = (field: string) => field.replace('__r', '__c');
         const referenceField = instance.getReferenceFieldsFromExpose('Lookup');
         if (!_.isEmpty(referenceField) && depth <= this.configurationService.get('expandDepth')) {
-            return _.map(referenceField, l => {
+            return _.map(referenceField, (l: string) => {
                 const expand = _.get(instance.getMetadata(l), 'expand') === 'deep' && deep;
                 return {
                     // field: replace(instance.getApiName(l)),
@@ -83,7 +83,7 @@ export class AObjectService {
         depth += 1;
         const referenceField = instance.getReferenceFieldsFromExpose('Child');
         if (!_.isEmpty(referenceField) && depth <= this.configurationService.get('expandDepth') && deep) {
-            return _.map(referenceField, c => (
+            return _.map(referenceField, (c: string) => (
                 {
                     //  field: instance.getApiName(c),
                     filters: _.compact(_.first(_.map(_.filter(filters, { field: c }), 'filterList'))),
@@ -141,7 +141,7 @@ export class AObjectService {
 
     @MemoizeAll()
     fetch(id: string): Observable<AObject> {
-       const route: string = _.defaultTo(_.get(this.getInstance().getMetadata(), 'route'), this.getInstance().getApiName());
+        const route: string = _.defaultTo(_.get(this.getInstance().getMetadata(), 'route'), this.getInstance().getApiName());
         const subject: BehaviorSubject<AObject> = new BehaviorSubject<AObject>(new AObject());
 
         this.apiService.get(`/${route}/${id}`, this.type)
