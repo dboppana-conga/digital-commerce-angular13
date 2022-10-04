@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, SecurityContext } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import { from, Observable, of, throwError, timer } from 'rxjs';
-import { get, startsWith, isNil, set, split, last } from 'lodash';
+import { get, startsWith, isNil, set, split, last , map as _map} from 'lodash';
 import {
   map,
   switchMap,
@@ -166,12 +166,12 @@ export class ApiService {
         )
       ),
       tap(creds => {
-        if (!isNil(get(creds, 'accessToken'))) {
+        if (creds && !isNil(get(creds, 'accessToken'))) {
           localStorage.setItem(
             PlatformConstants.ACCESS_TOKEN,
-            creds.accessToken
+            get(creds, 'accessToken')
           );
-          this.onRefresh.emit(creds.accessToken);
+          this.onRefresh.emit(get(creds, 'accessToken'));
           if (!isNil(get(creds, 'LoginURL'))) {
             const authenticationUrl = decodeURIComponent(get(creds, 'LoginURL'));
             let url = authenticationUrl.replace('#URL#', encodeURIComponent(window.location.toString()));
@@ -218,9 +218,9 @@ export class ApiService {
           };
 
           // Supporting function to convert the hex key into an ArrayBuffer object
-          const hexToArrayBuffer = hex => {
+          const hexToArrayBuffer = (hex: string) => {
             const typedArray = new Uint8Array(
-              hex.match(/[\da-f]{2}/gi).map(function (h) {
+              _map(hex.match(/[\da-f]{2}/gi), (h) => {
                 return parseInt(h, 16);
               })
             );
@@ -228,7 +228,7 @@ export class ApiService {
           };
 
           // Supporting function converts a string into an ArrayBuffer
-          const getUtf8Bytes = str =>
+          const getUtf8Bytes = (str: string) =>
             new Uint8Array(
               [...unescape(encodeURIComponent(str))].map(c => c.charCodeAt(0))
             );
@@ -274,7 +274,7 @@ export class ApiService {
     }
   }
 
-  public mapResult(result): any {
+  public mapResult(result: any): any {
     const data = get(result.body, 'Data') ? get(result.body, 'Data') : result.body;
     const count = last(split(result.headers.get('content-range'), '/'));
     if (count) set(data, 'TotalCount', count);
@@ -283,7 +283,7 @@ export class ApiService {
   }
 
   public getEndpoint(location: string): Observable<string> {
-    location = this.sanitizer.sanitize(SecurityContext.URL, location);
+    location = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
     if (!startsWith(location, '/')) location = '/' + location;
     const endpoint = `${this.configService.endpoint()}/api${location}`;
     return of(endpoint);
@@ -323,7 +323,7 @@ export const genericRetryStrategy = ({
   maxRetryAttempts = 3,
   scalingDuration = 1000,
   excludedStatusCodes = [],
-  onError = null
+  onError = of(null)
 }: {
   maxRetryAttempts?: number;
   scalingDuration?: number;
