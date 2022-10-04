@@ -204,7 +204,7 @@ export class ApiService {
     username?: string,
     password?: string
   ): Observable<string> {
-    if (isNil(username) || isNil(password)) return of(null);
+    if (isNil(username) || isNil(password)) return of('');
     else {
       return this.getAuthKey().pipe(
         switchMap(key => {
