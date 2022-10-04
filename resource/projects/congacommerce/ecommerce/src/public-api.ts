@@ -1,7 +1,5 @@
 /*
- * Public API Surface of ecommerce
+ * Public API Surface of ng-salesforce
  */
-
-export * from './lib/ecommerce.service';
-export * from './lib/ecommerce.component';
 export * from './lib/ecommerce.module';
+export * from './lib/modules/index';
