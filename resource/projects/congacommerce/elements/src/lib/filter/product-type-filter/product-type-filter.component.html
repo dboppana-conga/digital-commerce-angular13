@@ -1,0 +1,27 @@
+<div class="card mb-2" *ngIf="(isLoggedIn$ | async) === true && (storefront$ | async)?.EnableABO">
+  <div class="card-body">
+    <h5 class="card-title">{{'FILTER.PRODUCT_TYPES' | translate}}</h5>
+    <form>
+      <ul class="list-unstyled pl-2">
+        <li>
+          <div class="custom-control custom-radio">
+            <input type="radio" id="allTypes" class="custom-control-input" name="productTypes"
+              (change)="onCheckChange($event)" value="All" [(ngModel)]="value">
+            <label class="custom-control-label" for="allTypes">
+              {{'FILTER.ALL' | translate}}
+            </label>
+          </div>
+        </li>
+        <li>
+          <div class="custom-control custom-radio">
+            <input type="radio" id="assetType" class="custom-control-input" name="productTypes"
+              (change)="onCheckChange($event)" value="Assets" [(ngModel)]="value">
+            <label class="custom-control-label" for="assetType">
+              {{'FILTER.ASSETS' | translate}}
+            </label>
+          </div>
+        </li>
+      </ul>
+    </form>
+  </div>
+</div>

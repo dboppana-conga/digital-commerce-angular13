@@ -1,0 +1,34 @@
+<ng-container *ngIf="(productRecommendations$ | async)?.length > 0">
+  <div class="d-flex align-items-center my-3">
+    <span> {{'COMMON.YOU_MAY_ALSO_LIKE' | translate}}</span>
+    <div class="border-top mt-4 border-gray flex-grow-1 ml-3">&nbsp;</div>
+  </div>
+  
+  <ul class="list-unstyled">
+    <li class="media bg-light my-2 p-2" *ngFor="let product of (productRecommendations$ | async)">
+      <img class="mr-3" [src]="product.IconId | image" width="50" height="50" alt="Generic placeholder image">
+      <div class="media-body d-flex flex-wrap justify-content-between">
+        <div>
+          <h6 class="m-0">{{product?.Name}}</h6>
+          <small><strong>{{'COMMON.PRODUCT_CODE' | translate}}:</strong>&nbsp;{{product.ProductCode}}</small>
+        </div>
+        <span class="ml-auto mr-4">
+          <strong> {{'COMMON.QTY' | translate}}:</strong>&nbsp;1
+  
+          <strong class="ml-2"> {{'COMMON.PRICE' | translate}}:</strong>
+          <apt-price [record]="product"></apt-price>
+        </span>
+        <apt-add-to-cart
+          *ngIf="!product?._metadata?.inCart; else inCart"
+          [product]="product"
+          btnClass="btn-outline-primary"
+          [trigger]="false"
+          [showQuantityControls]="false"
+        ></apt-add-to-cart>
+        <ng-template #inCart>
+          <i class="fas fa-check-circle mx-5 mt-1"></i>
+        </ng-template>
+      </div>
+    </li>
+  </ul>
+</ng-container>

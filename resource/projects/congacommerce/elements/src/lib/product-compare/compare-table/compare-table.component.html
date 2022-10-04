@@ -1,0 +1,25 @@
+<table class="table" [style.min-width]="(products?.length > 5) ? '1200px' : widths[products?.length]">
+  <thead>
+    <tr>
+      <th></th>
+      <th scope="col" *ngFor="let product of products">
+        <apt-compare-product-card
+          [product]="product"
+        ></apt-compare-product-card>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let featureSet of tableData">
+      <tr>
+        <th class="featureSetCell py-2" [attr.colspan]="products?.length + 1">
+          {{featureSet?.featureSet?.Name}}
+        </th>
+      </tr>
+      <tr *ngFor="let feature of featureSet.featuresInSet">
+        <th class="bg-light">{{feature?.feature?.Name}}</th>
+        <td class="bg-white" *ngFor="let value of feature?.featureValuePerProduct">{{value}}</td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

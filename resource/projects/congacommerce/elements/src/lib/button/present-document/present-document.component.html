@@ -1,0 +1,37 @@
+<button class="btn btn-primary btn-outline-primary btn-raised" (click)="openModal()"
+    [disabled]="disablePresentAction || record.hasErrors">{{'DETAILS.PRESENT_ORDER' | translate}}</button>
+
+<ng-template #presentDocTemplate>
+    <div class="modal-header align-items-center p-0 mx-4 mt-3 border-bottom border-secondary">
+        <h6 class="modal-title pull-left font-weight-bold">
+            {{'DETAILS.PRESENT_ORDER' | translate}}
+        </h6>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form name="frmPresentDoc" (ngSubmit)="f.form.valid && presentDocument()" #f="ngForm" novalidate>
+        <div class="modal-body d-flex flex-column justify-content-center">
+            <label class="font-weight-bold">{{'DETAILS.SEND_TO' | translate}} </label>
+            <apt-output-field [record]="record" class="form-control" field="PrimaryContact.Name" layout="inline" valueOnly="true"
+                [editable]="false" [showQuickView]="false">
+            <apt-output-field [record]="record" field="PrimaryContact.Email" layout="inline" [editable]="false"
+                [showQuickView]="false"></apt-output-field>
+            </apt-output-field>
+            <label class="font-weight-bold mt-4">{{'COMMON.CC' | translate}} </label>
+
+            <div class="form-group">
+                <input type="email" [(ngModel)]="ccEmail" class="form-control" name="email" placeholder="{{'COMMON.VALID_EMAIL' | translate}}"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" #email="ngModel" [ngClass]="{ 'is-invalid': email.invalid && (email.touched || email.dirty) }" email>
+                <div *ngIf="email.invalid && (email.touched || email.dirty)" class="invalid-feedback">
+                    {{'COMMON.INVALID_EMAIL_ERROR' | translate}}
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-link text-uppercase" type="button" (click)="modalRef.hide()"> {{'COMMON.CANCEL' | translate}} </button>
+            <button class="btn btn-primary btn-raised" type="submit"
+                [disabled]="disablePresentBtn || f.form.invalid"> {{'DETAILS.PRESENT' | translate}} </button>
+        </div>
+    </form>
+</ng-template>

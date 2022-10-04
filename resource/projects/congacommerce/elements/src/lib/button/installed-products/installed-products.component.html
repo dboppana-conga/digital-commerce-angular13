@@ -1,0 +1,18 @@
+<ng-container *ngIf="(storefront$ | async)?.EnableABO">
+  <ng-container *ngIf="(isLoggedIn$ | async) === true; else guest">
+    <button class="btn btn-outline-primary" [routerLink]="['/assets']">
+      {{'BUTTON.INSTALLED_PRODUCTS' | translate}}
+    </button>
+  </ng-container>
+  <ng-template #guest>
+    <div tooltip="{{'BUTTON.LOGIN_REQUIRED_TOOLTIP' | translate}}" placement="left">
+      <button class="btn btn-link border" disabled="true">
+        {{'BUTTON.INSTALLED_PRODUCTS' | translate}}
+      </button>
+    </div>
+  </ng-template>
+</ng-container>
+
+
+
+

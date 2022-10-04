@@ -100,6 +100,99 @@
           }
         }
       }
+    },
+    "@congacommerce/core": {
+      "projectType": "library",
+      "root": "projects/congacommerce/core",
+      "sourceRoot": "projects/congacommerce/core/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/congacommerce/core/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/congacommerce/core/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/congacommerce/core/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/congacommerce/core/src/test.ts",
+            "tsConfig": "projects/congacommerce/core/tsconfig.spec.json",
+            "karmaConfig": "projects/congacommerce/core/karma.conf.js"
+          }
+        }
+      }
+    },
+    "@congacommerce/ecommerce": {
+      "projectType": "library",
+      "root": "projects/congacommerce/ecommerce",
+      "sourceRoot": "projects/congacommerce/ecommerce/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/congacommerce/ecommerce/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/congacommerce/ecommerce/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/congacommerce/ecommerce/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/congacommerce/ecommerce/src/test.ts",
+            "tsConfig": "projects/congacommerce/ecommerce/tsconfig.spec.json",
+            "karmaConfig": "projects/congacommerce/ecommerce/karma.conf.js"
+          }
+        }
+      }
+    },
+    "@congacommerce/elements": {
+      "projectType": "library",
+      "root": "projects/congacommerce/elements",
+      "sourceRoot": "projects/congacommerce/elements/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/congacommerce/elements/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/congacommerce/elements/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/congacommerce/elements/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/congacommerce/elements/src/test.ts",
+            "tsConfig": "projects/congacommerce/elements/tsconfig.spec.json",
+            "karmaConfig": "projects/congacommerce/elements/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "ecommerce"

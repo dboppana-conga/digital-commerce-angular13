@@ -1,0 +1,100 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title d-flex align-items-center m-0 text-truncate">
+            {{ "FAVORITE.FAVORITE_MODAL.ADD_FAVORITE" | translate }}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <ng-container [ngSwitch]="layout">
+        <ng-container *ngSwitchCase="'AddExistingFav'">
+            <ng-container *ngTemplateOutlet="AddExistingFav;"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'AddNewFav'">
+            <ng-container *ngTemplateOutlet="AddNewFav;"></ng-container>
+        </ng-container>
+    </ng-container>
+</div>
+
+<ng-template #AddExistingFav>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <label [class.col-form-label-sm]="small"
+                        class="font-weight-bold">{{'FAVORITE.FAVORITE_MODAL.SEARCH_OR_ADD_FAV' | translate}}</label>
+                    <ng-select class="form-control aptFavLookup p-0" [class.form-control-sm]="small" [(ngModel)]="value"
+                        [items]="lookupResults" bindLabel="Name" (search)="onLookupSearch($event)" bindValue="Id"
+                        bindLabel="Name" placeholder="{{'FAVORITE.FAVORITE_MODAL.ENTER_FAVORITE_NAME' | translate}}"
+                        [loading]="lookUpLoading"
+                        [ngClass]="{ 'is-invalid': select.invalid && (select.touched || select.dirty) }"
+                        (clear)="setFavLookupFieldData()" (focus)="setFavLookupFieldData()" #select="ngModel">
+                        <ng-template ng-option-tmp let-item="item" let-index="index" let-search="search">
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex flex-column h-100 justify-content-around">
+                                    <span [ngOptionHighlight]="search">{{item['Name']}}</span>
+                                    <i class="small" *ngIf="lookupOptions?.secondaryTextField">{{item['Name']}}</i>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template ng-footer-tmp let-search="search">
+                            <button type="button" class="btn btn-link" (click)="layout = 'AddNewFav'">
+                                <small class="d-block">
+                                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+                                    <small
+                                        [innerHTML]="'FAVORITE.FAVORITE_MODAL.ADD_NEW_FAVORITE' | translate: {search: searchTerm}"></small>
+                                </small>
+                            </button>
+                        </ng-template>
+                        <ng-template ng-loadingspinner-tmp>
+                            <apt-spinner></apt-spinner>
+                        </ng-template>
+                    </ng-select>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="form-group d-flex justify-content-end">
+            <button class="btn btn-primary btn-raised" type="button" (click)="addFavorite()" [disabled]="!value"
+                [ladda]="loading" data-style="zoom-in">{{ "COMMON.UPDATE" | translate }}</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #AddNewFav>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <apt-input-field [entity]="favorite" [field]="'Name'" [(ngModel)]="favoriteName" [label]="'Name'">
+                    </apt-input-field>
+                </div>
+                <div class="form-group">
+                    <apt-input-field [entity]="favorite" [field]="'Description'" [(ngModel)]="favorite.Description">
+                    </apt-input-field>
+                </div>
+                <div class="form-group custom-control custom-checkbox pl-3">
+                    <input type="checkbox" [checked]="fav_checked" id="favScope" class="custom-control-input"
+                        [(ngModel)]="fav_checked"
+                        (ngModelChange)="fav_checked ? favorite.Scope = 'Public': favorite.Scope = 'Private'">
+                    <label class="ml-2 custom-control-label"
+                        for="favScope">{{'FAVORITE.FAVORITE_MODAL.MAKE_PUBLICLY_VISIBILE' | translate}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="form-group d-flex justify-content-end">
+            <button *ngIf="lookupResults.length > 0" class="btn btn-link btn-raised" type="button"
+                (click)="layout = 'AddExistingFav'" data-style="zoom-in">
+                {{ 'FAVORITE.FAVORITE_MODAL.ADD_TO_EXISTING' | translate }}
+            </button>
+            <button class="btn btn-primary btn-raised" type="button" (click)="createFavorite()" [ladda]="loading"
+                data-style="zoom-in">
+                {{ 'FAVORITE.FAVORITE_MODAL.ADD_FAVORITE' | translate }}
+            </button>
+        </div>
+    </div>
+</ng-template>

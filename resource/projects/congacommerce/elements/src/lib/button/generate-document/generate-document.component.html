@@ -1,0 +1,32 @@
+<button class="btn btn-primary btn-outline-primary btn-raised" (click)="openModal()" *ngIf="type==='Order'; else generateQuote"
+  [disabled]="disableGenFormBtn || record.hasErrors">{{'DETAILS.GENERATE_ORDER' | translate}}</button>
+
+<ng-template #generateQuote>
+  <button
+    [ngClass]="record.Approval_Stage === 'Approved'  ? 'btn btn-primary btn-raised px-4 py-2' : 'btn btn-outline-primary btn-link text-primary text-primary px-4 ml-auto'"
+    (click)="openModal()" [disabled]="true">{{'DETAILS.GENERATE_QUOTE' |
+    translate}}</button> <!-- TO DO : Disabled button since functionality is not avilable at the moment -->
+</ng-template>
+
+<ng-template #docGenTemplate>
+  <div class="modal-header align-items-center p-0 mx-4 mt-3 border-bottom border-secondary">
+    <h6 class="modal-title pull-left font-weight-bold">
+      {{'DETAILS.GENERATE_ORDER' | translate}}
+    </h6>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body d-flex flex-column justify-content-center">
+    <label>{{'DETAILS.TEMPLATE' | translate}} *</label>
+    <ng-select [items]="templateList" bindLabel="name" [(ngModel)]="generateDocObj.templateId" (change)="onChange()">
+    </ng-select>
+    <label class="mt-4">{{'DETAILS.FILE_FORMAT' | translate}} *</label>
+    <ng-select [items]="formatList" [(ngModel)]="generateDocObj.format" (change)="onChange()"></ng-select>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-link text-uppercase" (click)="modalRef.hide()">{{'COMMON.CANCEL' | translate}}</button>
+    <button class="btn btn-primary btn-raised text-uppercase" type="button" (click)="generateDocument()"
+      [disabled]="disableGenModalBtn">{{'DETAILS.GENERATE' | translate}}</button>
+  </div>
+</ng-template>

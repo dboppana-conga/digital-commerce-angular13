@@ -1,0 +1,26 @@
+<ng-container *ngIf="_lineItem && _lineItem[identifier]">
+  <div class="card">
+    <div class="card-body readonly p-3">
+      <div class="card-title d-flex justify-content-between align-items-start">
+        <p class="m-0 card-title font-weight-bold text-break" tooltip="{{_product?.Name}}" container="body"
+          placement="top">{{_product?.Name | truncate:30}}</p>
+        <button type="button" class="btn btn-link p-0 close" aria-label="Close" (click)="removeCartItem()"
+          *ngIf="selected$ | async">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier], _lineItem[identifier]]"
+        [state]="_product">
+        <div class="img-container">
+          <img class="card-img-top w-auto m-auto d-flex align-self-center" [src]="_product.IconId | image"
+            [alt]="_product.Name" *ngIf="thumbnail">
+        </div>
+
+        <span class="card-text font-weight-bold d-flex flex-column justify-content-between mt-2" *ngIf="showPrice">
+          <span>{{'COMMON.NET_PRICE' | translate}}</span>
+          <apt-price [record]="_lineItem" type="net"></apt-price>
+        </span>
+      </a>
+    </div>
+  </div>
+</ng-container>

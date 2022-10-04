@@ -1,0 +1,29 @@
+.dropdown-menu > span:hover {
+  background-color: rgb(195, 230, 203);
+}
+
+.dropdown-menu {
+  min-width: 12rem;
+  max-height: 17rem;
+}
+
+button {
+  font-size: medium;
+}
+
+::-webkit-scrollbar {
+  width: 0.35rem;
+  background: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(222, 222, 222);
+  border-radius: 0.35rem;
+}
+.dropdown-menu {
+  .dropdown-item {
+    line-height: unset;
+    padding-bottom: unset;
+    min-height: unset;
+  }
+}

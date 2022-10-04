@@ -1,0 +1,44 @@
+.custom-control {
+  position: relative;
+  left: -30px;
+}
+.tableWrapper {
+  overflow-x: auto;
+}
+table {
+  font-size: 12px;
+  td {
+    padding: 2px;
+    min-width: 200px;
+  }
+}
+.buttonWrapper {
+  flex-basis: 200px;
+}
+button.dropdown-toggle::before{
+  display: none;
+}
+div.dropdown-menu{
+    top: 35px !important;
+    left: 25px !important;
+}
+div.btn-group-sm{
+  width: 150px;
+}
+
+.btn.btn-outline-secondary.dropdown-toggle.dropdown-toggle-split{
+  height: 35%;
+}
+
+.accordionHeader {
+  cursor: pointer;
+  .downArrow {
+    transition: transform .35s ease;
+  }
+
+  &.collapsed {
+    .downArrow {
+      transform: rotate(-90deg);
+    }
+  }
+}

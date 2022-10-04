@@ -1,0 +1,88 @@
+<div
+    *ngIf="view$ | async as view"
+    class="d-flex"
+    dropdown
+    #dropdown="bs-dropdown"
+    [autoClose]="false"
+    (onHidden)="handleDropdownHide(view)"
+>
+    <button class="btn text-primary btn-link dropdown-toggle btn-sm" dropdownToggle>
+        <i class="fa fa-filter"></i>
+    </button>
+
+    <div class="d-flex flex-wrap">
+        <div *ngFor="let conditionView of view?.appliedConditions" class="badge badge-info mr-2 my-1 pl-2 d-flex align-items-center">
+            {{conditionView?.label}} {{conditionView?.operator}} {{conditionView?.value}}
+            <button class="btn btn-link text-primary" (click)="deleteCriteria(conditionView, view)">
+                <i class="fas fa-minus-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <div *dropdownMenu class="dropdown-menu p-0">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">{{ 'FILTER.ADVANCED_FILTERS' | translate }}</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="shrink">#</th>
+                            <th scope="col">{{ 'COMMON.FIELD' | translate }}</th>
+                            <th scope="col">{{ 'COMMON.OPERATOR' | translate }}</th>
+                            <th scope="col">{{ 'COMMON.VALUE' | translate }}</th>
+                            <th class="shrink">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let filter of view.conditionList; let i = index;">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>
+                                <select class="form-control" [(ngModel)]="filter.val" (ngModelChange)="changeField(filter.val, filter.condition)">
+                                    <option disabled selected value="null">Select Option</option>
+                                    <option *ngFor="let field of view?.fieldList" [ngValue]="field">{{field.label}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="view?.fieldListWithOperators; else allVisible">
+                                    <select class="form-control"  [(ngModel)]="filter.condition.filterOperator" [disabled]="!filter.condition.field">
+                                        <option disabled selected value="null">Select Option</option>
+                                        <option *ngFor="let operator of view?.fieldListWithOperators[filter.condition.field]" [value]="operator">{{operator | splitPascalCase}}</option>
+                                    </select>
+                                </ng-container>
+                                <ng-template #allVisible>
+                                    <select class="form-control"  [(ngModel)]="filter.condition.filterOperator" [disabled]="!filter.condition.field">
+                                        <option disabled selected value="null">Select Option</option>
+                                        <option *ngFor="let operator of view?.operatorList" [value]="operator">{{operator | splitPascalCase}}</option>
+                                    </select>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <apt-input-field [entity]="instance" [field]="filter?.condition.field" [lookupOptions]="filter?.lookupOptions" [showLabel]="false" [(ngModel)]="filter.condition.val" (ngModelChange)="changeValue($event, filter.condition, filter.val)"  [multiple]="filter.condition.filterOperator === 'In' || filter.condition.filterOperator === 'NotIn'" *ngIf="filter?.condition.field; else blank"
+                                [fieldType]="filter.val?.type" [minVal]="filter.val?.min"></apt-input-field>
+                                <ng-template #blank>
+                                    <input type="text" disabled="disabled" class="form-control"/>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <button class="btn btn-link text-primary" type="button" (click)="removeCriteria(filter, view)"><i class="fas fa-times-circle"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-link text-primary btn-icon" type="button" (click)="addCriteria(view)">
+                    <i class="fas fa-plus-circle mr-3"></i>
+                    {{ 'FILTER.ADD_CRITERIA' | translate }}
+                </button>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                <button class="btn btn-link text-primary" (click)="dropdown.hide()">
+                    {{ 'COMMON.CANCEL' | translate }}
+                </button>
+                <button class="btn btn-primary btn-raised" (click)="handleApply($event, view)">{{ 'COMMON.APPLY' | translate }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+

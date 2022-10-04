@@ -1,0 +1,117 @@
+apt-input-field {
+  display: block;
+
+  .custom-asterisk {
+    font-size: 8px;
+  }
+
+  select {
+    text-indent: 5px;
+  }
+
+  .date-form {
+    position: relative;
+    input[bsdatepicker] {
+      padding-right: 1.6rem;
+    }
+    i {
+      position: absolute;
+      top: 25%;
+      right: 3%;
+    }
+  }
+  .ng-select.picklist {
+    .ng-select-container {
+      height: 100%;
+      min-height: 100%;
+    }
+  }
+  .ng-select.aptSingleSelectLookup {
+    font-size: inherit;
+
+    &.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .ng-select-container {
+      background-color: transparent;
+      border-radius: 0px;
+      min-height: 34px;
+      height: 34px;
+      border-width: 0px;
+
+      .ng-arrow-wrapper {
+        display: none;
+      }
+
+      apt-spinner {
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .ng-clear-wrapper {
+        width: 24px;
+        height: 24px;
+
+        &:hover .ng-clear {
+          opacity: 1;
+        }
+
+        .ng-clear {
+          width: 24px;
+          height: 24px;
+          color: transparent;
+          content: "";
+          background-image: url("data:image/svg+xml,%3Csvg fill='%23000' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24' height='24' viewBox='0 0 24 24' class='ng-scope'%3E%3Cpolygon points='20 5.611 18.389 4 12 10.389 5.611 4 4 5.611 10.389 12 4 18.389 5.611 20 12 13.611 18.389 20 20 18.389 13.611 12'%3E%3C/polygon%3E%3C/svg%3E");
+          opacity: 0.5;
+        }
+      }
+
+      &::before {
+        width: 24px;
+        height: 24px;
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg fill='%23000' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24' height='24' viewBox='0 0 24 24' class='ng-scope'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'%3E%3C/path%3E%3C/svg%3E");
+      }
+    }
+
+    &.ng-select-single .ng-select-container .ng-value-container .ng-input {
+      padding-left: 34px;
+      padding-right: 36px;
+      & > input {
+        cursor: text;
+      }
+    }
+
+    &.contacts {
+      .ng-dropdown-panel {
+        bottom: auto !important;
+      }
+    }
+
+    .ng-dropdown-panel {
+      .ng-dropdown-header {
+        font-size: 12px;
+        padding-left: 14px;
+        border: none;
+      }
+      .ng-dropdown-panel-items {
+        .ng-option {
+          min-height: 40px;
+          padding: 4px 10px 4px 14px;
+
+          .basicOption {
+            line-height: 32px;
+          }
+
+          .contactOption {
+            height: 56px;
+          }
+        }
+      }
+    }
+  }
+}

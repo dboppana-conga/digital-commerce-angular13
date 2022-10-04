@@ -1,0 +1,27 @@
+:host{
+  .badge{
+    max-height: 1.7rem;
+  }
+}
+div.dropdown-menu.show {
+    min-width: 700px;
+    z-index: 1000;
+  }
+  table {
+    thead {
+      th {
+        &.shrink {
+          width: 5%;
+        }
+        &:not(.shrink) {
+          width: 26%;
+        }
+      }
+    }
+    tbody{
+        th{
+            padding-top: .8rem;
+        }
+    }
+  }
+  

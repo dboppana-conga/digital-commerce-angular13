@@ -1,0 +1,100 @@
+<ng-container *ngIf="cartItems$ | async as cartItems">
+    <div class="dropdown">
+        <button class="btn btn-link dropdown-toggle mr-2" href="#cartMenu" data-toggle="dropdown" #btnDropdown>
+            <i class="fa fa-shopping-cart fa-lg"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right m-0 p-0" aria-labelledby="dropdownMenuButton" id="cartMenu">
+            <ng-container *ngTemplateOutlet="listItems; context: {lineItems:cartItems}"></ng-container>
+            <ng-template #listItems let-lineItems="lineItems">
+                <ul class="list-group p-0" *ngIf="lineItems?.length > 0; else empty">
+                    <ng-container *ngFor="let item of lineItems; let i = index; trackBy: trackById">
+                        <li class="media list-group-item d-flex"
+                            [ngClass]="{'last-list-item': (lineItems?.length === (i+1)), 'first-list-item': ((i === 0))}"
+                            *ngIf="item?.LineType === 'Product/Service' && item?.Product">
+                            <img class="align-self-center"
+                                [src]="sanitizer.bypassSecurityTrustUrl(item.Product?.IconId | image)"
+                                alt="Generic placeholder image">
+                            <div class="media-body ml-3">
+                                <h6 class="m-0 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="javascript:void(0)"
+                                            [routerLink]="[productLink, item.Product[identifier], item.Id]"
+                                            *ngIf="item?.Product && item?.Id; else read">
+                                            {{item.Product?.Name}}
+                                        </a>
+                                        <ng-template #read>
+                                            {{item.Product?.Name}}
+                                        </ng-template>
+                                    </div>
+                                    <button *ngIf="item?.IsPrimaryLine" class="btn btn-link p-0 m-0"
+                                        (click)="removeCartItem(item, $event)" [ladda]="item?._metadata?.deleting"
+                                        data-style="zoom-in" data-spinner-color="black">
+                                        <span class="fa fa-trash"></span>
+                                    </button>
+                                </h6>
+                                <span class="d-block small">{{item.Product?.ProductCode}}</span>
+                                <div class="d-flex align-items-center">
+                                    <apt-input-field inline="true" [(ngModel)]="item.Quantity" [entity]="entity"
+                                        field="Quantity" (change)="changeItemQuantity(item)" [small]="true"
+                                        [inline]="true" [readonly]="item?.LineStatus?.toLowerCase()==='cancelled'"
+                                        class="w-50 mt-2">
+                                    </apt-input-field>
+
+                                    <strong class="d-flex ml-auto">
+                                        <!-- Uncomment below code once cart services are integrated with pricing
+                                        <apt-price *ngIf="item?.PricingStatus !== 'Pending'; else pricemask"
+                                            [record]="item" type="baseExtended"></apt-price> -->
+                                        <apt-price [record]="item" type="listExtended"></apt-price>
+                                    </strong>
+                                </div>
+                            </div>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngTemplateOutlet="footersection; context: {lineItems: unsavedItems, isConfig: config?.isConfig, 
+                        relatedTo: config?.relatedTo, productId: config?.productId}">
+                    </ng-container>
+                </ul>
+            </ng-template>
+
+            <ng-template #footersection let-lineItems="lineItems" let-relatedTo="relatedTo" let-productId="productId">
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ 'MINI_CART.CART_TOTAL' | translate}}</span>
+                        <strong class="d-inline-flex">
+                            <!-- Uncomment below code once cart services are integrated with pricing
+                                <strong *ngIf="lineItemPriceComplete; else pricemask" class="d-inline-flex">
+                            <apt-price [record]="(cart$ | async)"></apt-price>
+                            <sup class="m-1" *ngIf="lineItemPricePending">
+                                <i class="fa fa-asterisk fa-xs" aria-hidden="true"></i>
+                            </sup> -->
+                            <apt-price [record]="(cart$ | async)" type="net"></apt-price>
+                        </strong>
+                    </div>
+                </li>
+                <li class="list-group-item bg-light d-block-flex">
+                    <button class="btn btn-primary btn-raised btn-block" (click)="navigateToCart()">
+                        {{ 'MINI_CART.VIEW_CART' | translate}}
+                    </button>
+                </li>
+            </ng-template>
+
+            <ng-template #empty>
+                <ul class="list-group p-0">
+                    <li class="list-group-item bg-light">
+                        {{ 'MINI_CART.YOUR_CART_IS_EMPTY' | translate}}
+                    </li>
+                </ul>
+            </ng-template>
+        </div>
+    </div>
+    <span class="badge badge-primary p-1" *ngIf="cartItems?.length > 0" href="#cartMenu" data-toggle="dropdown" #btnDropdown>{{cartItems?.length}}</span>
+</ng-container>
+
+<ng-template #pricemask>
+    <span>
+        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+        <sup class="m-1">
+            <i class="fa fa-asterisk fa-xs" aria-hidden="true"></i>
+        </sup>
+    </span>
+</ng-template>

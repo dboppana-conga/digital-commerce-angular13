@@ -1,0 +1,39 @@
+:host > div {
+  font-size: inherit;
+}
+
+.headerPrice {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.inputSection {
+  width: 66%;
+}
+
+.priceSection {
+  width: 36%;
+}
+
+.qtyInput {
+  height: 31px;
+}
+
+.accordionHeader {
+  cursor: pointer;
+  .downArrow {
+    position: absolute;
+    left: 6px;
+    transition: transform 0.35s ease;
+  }
+
+  &.collapsed {
+    .downArrow {
+      transform: rotate(-90deg);
+    }
+
+    .headerPrice {
+      opacity: 1;
+    }
+  }
+}

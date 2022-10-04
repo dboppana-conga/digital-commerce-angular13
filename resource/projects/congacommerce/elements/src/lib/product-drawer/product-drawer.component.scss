@@ -1,0 +1,103 @@
+.bannerWrapper {
+  position: fixed;
+  width: 100%;
+  height: 18.5rem;
+  bottom: 0px;
+  pointer-events: none;
+  transition: bottom 0.4s ease-in-out;
+  z-index: 1000;
+
+  &.hiddenBelow {
+    bottom: -18.5rem;
+  }
+
+  .batchActionWrapper {
+    overflow-y: auto;
+  }
+
+  .body {
+    position: relative;
+    pointer-events: fill;
+    height: 100%;
+    margin: 0 auto;
+    border: 1px solid #aaa;
+
+    .tab {
+      position: absolute;
+      display: flex;
+      justify-content: space-between;
+      left: -1px;
+      top: -40px;
+      height: 40px;
+      width: 120px;
+      line-height: 40px;
+      border: 1px solid #aaa;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom: none;
+      cursor: pointer;
+    }
+  }
+
+  .drawer-selection {
+    .btn {
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .btn-pill {
+      height: 1.6rem;
+      font-size: 0.65rem;
+    }
+    .btn-link {
+      height: 1.4rem;
+      margin: 2px 8px;
+    }
+    .btn-outline-primary {
+      .btn-link {
+        color: #0079cc !important;
+      }
+      &:hover {
+        .btn-link {
+          color: white !important;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .bannerWrapper {
+    .body {
+      width: 80%;
+      .tab {
+        width: 300px;
+      }
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .bannerWrapper {
+    height: 23rem;
+    &.hiddenBelow {
+      bottom: -23rem;
+    }
+  }
+
+  .carousel {
+    height: 95%;
+    overflow: hidden;
+  }
+
+  .batchActionWrapper {
+    position: absolute;
+    top: -40px;
+    left: 118px;
+    width: calc(100% - 117px);
+    height: 40px;
+    border-top: 1px solid #aaa;
+    border-right: 1px solid #aaa;
+    background-color: white;
+  }
+}

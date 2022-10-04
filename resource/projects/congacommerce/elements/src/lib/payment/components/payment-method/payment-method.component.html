@@ -1,0 +1,87 @@
+<ng-container>
+  <div *ngIf="paymentMethodList; else spinner" class="table-responsive-lg">
+    <table *ngIf="paymentMethodList.length > 0" class="table table-hover">
+      <thead>
+        <tr class="d-flex">
+          <th class="col-sm-6 lead" colspan="2">
+            <h5>{{'PAYMENT_METHOD_LABELS.Detail_Item1' | translate}}</h5>
+          </th>
+          <th class="col-sm-3 font-weight-normal">{{'PAYMENT_METHOD_LABELS.Detail_Item2' | translate}}</th>
+          <th class="col-sm-2 font-weight-normal">{{'PAYMENT_METHOD_LABELS.Detail_Item3' | translate}}</th>
+          <th class="col-sm-1">&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="d-flex" *ngFor="let paymentMethod of paymentMethodList; let i = index;">
+          <td class="col-sm-1">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="paymentmethodgroup" [value]="paymentMethod.Id"
+                [id]="paymentMethod.Id" [checked]="(paymentMethod.IsDefault) ? true:false"
+                [disabled] ="!IsDateExpired(paymentMethod.CardExpirationMonth,paymentMethod.CardExpirationYear)"
+                (change)="ondefaultMethodChange(paymentMethod)">
+              <label class="custom-control-label mr-auto" [for]="paymentMethod.Id"> <span class="text-muted fa fa-2x"
+                  [class.fa-cc-visa]="paymentMethod.CardType.toLowerCase() ==='visa'"
+                  [class.fa-cc-mastercard]="paymentMethod.CardType.toLowerCase() ==='mastercard'"
+                  [class.fa-cc-amex]="paymentMethod.CardType.toLowerCase() ==='amex'"
+                  [class.fa-cc-discover]="paymentMethod.CardType.toLowerCase() ==='discover'"
+                  [class.fa-cc-diner-club]="paymentMethod.CardType.toLowerCase() ==='diners'" 
+                  [class.fa-credit-card]="paymentMethod.CardType.toLowerCase() != 'visa'
+                                       && paymentMethod.CardType.toLowerCase()  != 'mastercard'
+                                       && paymentMethod.CardType.toLowerCase()  != 'discover'
+                                       && paymentMethod.CardType.toLowerCase()  != 'diners'">
+                </span></label>
+            </div>
+          </td>
+          <td class="col-sm-5">
+            <strong class="ml-4">{{paymentMethod.CardType}}
+            </strong>{{'PAYMENT_METHOD_LABELS.Detail_Ending' | translate}}
+            {{paymentMethod.CardNumber | creditCardExtractor}}           
+          </td>
+          <td class="col-sm-3">{{paymentMethod.PaymentMethodName}}</td>
+          <td class="col-sm-2">
+            <section *ngIf="IsDateExpired(paymentMethod.CardExpirationMonth,paymentMethod.CardExpirationYear)">
+              {{paymentMethod.CardExpirationMonth}}/{{paymentMethod.CardExpirationYear}}
+            </section>
+            <section *ngIf="!IsDateExpired(paymentMethod.CardExpirationMonth,paymentMethod.CardExpirationYear)">
+              <span
+                class="text-danger">{{paymentMethod.CardExpirationMonth}}/{{paymentMethod.CardExpirationYear}}</span>
+            </section>
+          </td>
+          <td class="col-sm-1">
+            <div class="dropdown" dropdown>
+              <a href="javascript:void(0)" class="dropdown-toggle" dropdownToggle>
+                <i class="fas fa-ellipsis-v"></i>
+              </a>
+              <ul *dropdownMenu class="dropdown-menu">
+                <li role="menuitem">
+                  <a class="dropdown-item text-danger" href="javascript:void(0)"
+                    (click)="deletePayment(paymentMethod)">{{'COMMON.DELETE' | translate}}</a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        <tr class="d-flex">
+          <td class="col-sm-6" colspan="2">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="paymentmethodgroup" id="newCard"
+                (change)="ondefaultMethodChange(null)">
+              <label class="custom-control-label mr-auto" for="newCard">{{'CART.PAYMENT.USE_NEW_METHOD' | translate}}</label>
+            </div>
+          </td>
+          <td class="col-sm-3"></td>
+          <td class="col-sm-2">
+          </td>
+          <td class="col-sm-1">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+
+<ng-template #spinner>
+  <div class="d-flex justify-content-center py-5">
+    <apt-spinner></apt-spinner>
+  </div>
+</ng-template>

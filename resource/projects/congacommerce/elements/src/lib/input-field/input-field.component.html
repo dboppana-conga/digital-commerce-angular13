@@ -1,0 +1,197 @@
+<ng-container *ngIf="view$ | async as view">
+  <div [ngSwitch]="view?.metadata?.DataType | lowercase" class="form-group align-items-center" [class.d-flex]="inline"
+    [id]="uuid + '-container'">
+    <label *ngIf="showLabel" [class.m-0]="inline" [class.mr-2]="inline"
+      [ngClass]="{'font-weight-bold': !labelClass}">{{(label) ? label : view?.metadata?.DisplayName}}</label>
+    <i *ngIf="required && asterisk" class="fa fa-asterisk text-danger font-weight-normal custom-asterisk p-1"></i>
+
+    <!-- Picklist -->
+    <div *ngSwitchCase="'picklist'">
+      <ng-select class="form-control picklist p-0" [searchable]="false" [(ngModel)]="value" [required]="required"
+        [placeholder]="placeholder" [loading]="loading" [disabled]="readonly" (ngModelChange)="onPickChange(value)"
+        #picklist="ngModel" [ngClass]="{ 'is-invalid': picklist.invalid && (picklist.touched || picklist.dirty) }"
+        [items]="options" [multiple]="multiple" bindValue="value" bindLabel="label">
+        <div class="invalid-feedback">{{errorMsg}}</div>
+      </ng-select>
+
+      <ng-template #checkboxes>
+        <div *ngFor="let option of options$ | async" class="custom-control custom-radio" [class.custom-radio-sm]="small"
+          [class.custom-control-inline]="inline">
+          <input type="radio" class="custom-control-input" [name]="uuid + '_' + view?.metadata.FieldName"
+            [value]="option.value" [id]="uuid + '_' + view?.metadata.FieldName + '_' + option.value" [(ngModel)]="value"
+            (ngModelChange)="propagateChange(value)" [disabled]="readonly || option.disabled" [required]="required">
+          <label class="custom-control-label mr-auto"
+            [for]="uuid + '_' + view?.metadata.FieldName + '_' + option.value">
+            {{option.label}}
+          </label>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Boolean -->
+    <ng-container *ngSwitchCase="'boolean'">
+      <div *ngIf="displayFieldType === 'radio'; else booleanPicklist">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" [id]="uuid + '_' + view?.metadata.FieldName + '_' + value"
+            [name]="uuid + '_' + view?.metadata.FieldName" [checked]="value" (change)="onBooleanChange(true)">
+          <label class="form-check-label" [for]="uuid + '_' + view?.metadata.FieldName + '_' + value">
+            {{'COMMON.YES' | translate}}
+          </label><br>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" [id]="uuid + '_' + view?.metadata.FieldName + '_' + !value"
+            [name]="uuid + '_' + view?.metadata.FieldName" [checked]="!value" (change)="onBooleanChange(false)">
+          <label class="form-check-label" [for]="uuid + '_' + view?.metadata.FieldName + '_' + !value">
+            {{'COMMON.NO' | translate}}
+          </label><br>
+        </div>
+      </div>
+
+      <ng-template #booleanPicklist>
+        <select type="radio" class="form-control" [class.form-control-sm]="small" *ngSwitchCase="'boolean'"
+          [(ngModel)]="value" [class.custom-control-inline]="inline" (ngModelChange)="onBooleanChange(value)"
+          [required]="required" [disabled]="readonly">
+          <option [value]="true"> {{'COMMON.YES' | translate}} </option>
+          <option [value]="false"> {{'COMMON.NO' | translate}} </option>
+        </select>
+      </ng-template>
+    </ng-container>
+
+    <!-- Multi select picklist -->
+    <ng-container *ngSwitchCase="'multipicklist'">
+      <div *ngFor="let option of view?.metadata.picklistValues" class="custom-control custom-checkbox"
+        [class.custom-checkbox-sm]="small" [class.custom-control-inline]="inline">
+        <input type="checkbox" class="custom-control-input" [checked]="value && value?.indexOf(option.value) > -1"
+          [id]="uuid + '_' + view?.metadata.FieldName + '_' + option.value" pattern="07[0-9]{9}"
+          [(ngModel)]="getsetValue(option.value).value" (ngModelChange)="onMultiChange(option.value)"
+          [disabled]="(enableValues?.length > 0 && enableValues?.indexOf(option.value) === -1) || readonly ? true : false"
+          [required]="required">
+        <label class="custom-control-label" [for]="uuid + '_' + view?.metadata.FieldName + '_' + option.value">
+          {{option.label}}
+        </label>
+      </div>
+    </ng-container>
+
+    <!-- Number -->
+    <ng-container *ngSwitchCase="'double'">
+      <input type="number" [min]="minVal" class="form-control custom" [class.form-control-sm]="small" [id]="value"
+        [(ngModel)]="value" [disabled]="readonly" (ngModelChange)="propagateChange(value)" [required]="required"
+        [placeholder]="placeholder" #num="ngModel"
+        [ngClass]="{ 'is-invalid': num.invalid && (num.touched || num.dirty) || value < minVal}" />
+      <div class="invalid-feedback">{{errorMsg | translate}}</div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'int'">
+      <input type="number" class="form-control custom" [class.form-control-sm]="small" [id]="value" [(ngModel)]="value"
+        [disabled]="readonly" step="1" (ngModelChange)="propagateChange(value)" [required]="required"
+        [placeholder]="placeholder" #num="ngModel"
+        [ngClass]="{ 'is-invalid': num.invalid && (num.touched || num.dirty) }" />
+      <div class="invalid-feedback">{{errorMsg}}</div>
+    </ng-container>
+    <!-- String -->
+    <ng-container *ngSwitchCase="'string'">
+      <ng-container *ngTemplateOutlet="stringTemplate"></ng-container>
+    </ng-container>
+
+    <!-- Long String -->
+    <ng-container *ngSwitchCase="'longstring'">
+      <ng-container *ngTemplateOutlet="stringTemplate"></ng-container>
+    </ng-container>
+
+    <ng-template #stringTemplate>
+      <input type="text" class="form-control custom" [class.form-control-sm]="small" [id]="value" [(ngModel)]="value"
+        (ngModelChange)="propagateChange(value)" [disabled]="readonly" [required]="required" [placeholder]="placeholder"
+        #txt="ngModel" [ngClass]="{ 'is-invalid': txt.invalid && (txt.touched || txt.dirty) }" />
+      <div class="invalid-feedback">{{errorMsg}}</div>
+    </ng-template>
+
+    <!-- Email -->
+    <ng-container *ngSwitchCase="'email'">
+      <input type="text" class="form-control custom" [class.form-control-sm]="small" [id]="value" [(ngModel)]="value"
+        (ngModelChange)="propagateChange(value)" [required]="required" [placeholder]="placeholder" #email="ngModel"
+        [ngClass]="{ 'is-invalid': email.invalid && (email.touched || email.dirty) }" />
+      <div class="invalid-feedback">{{errorMsg}}</div>
+    </ng-container>
+
+    <!-- Textarea -->
+    <ng-container *ngSwitchCase="'textarea'">
+      <textarea [(ngModel)]="value" class="form-control custom" [class.form-control-sm]="small"
+        (ngModelChange)="propagateChange(value)" [maxlength]="view?.metadata?.length" [rows]="rows"
+        [required]="required" [placeholder]="placeholder"></textarea>
+    </ng-container>
+
+    <!-- Date -->
+    <div class="date-form" *ngSwitchCase="'date'">
+      <input type="text" [id]="uuid" class="form-control custom" bsDatepicker [class.form-control-sm]="small"
+        [value]="value" (bsValueChange)="onDateChange($event)" [required]="required" [placeholder]="placeholder"
+        [bsConfig]="{ adaptivePosition: true }">
+      <i class="fa fa-calendar"></i>
+    </div>
+
+    <!-- Datetime -->
+    <div class="date-form" *ngSwitchCase="'datetime'">
+      <input type="text" [id]="uuid" class="form-control custom" bsDatepicker [class.form-control-sm]="small"
+        [value]="value" (bsValueChange)="onDateChange($event)" [required]="required" [placeholder]="placeholder"
+        [bsConfig]="{ adaptivePosition: true }">
+      <i class="fa fa-calendar"></i>
+    </div>
+
+    <!-- Percentage -->
+    <ng-container *ngSwitchCase="'percent'">
+      <input type="text" [id]="uuid" class="form-control custom" [class.form-control-sm]="small"
+        [ngModel]="value/100 | percent:'1.2'" (ngModelChange)="propagateChange(value)" [required]="required"
+        [placeholder]="placeholder">
+    </ng-container>
+
+    <!-- Currency -->
+    <ng-container *ngSwitchCase="'currency'">
+      <input type="number" class="form-control custom" [class.form-control-sm]="small" [id]="value" [(ngModel)]="value"
+        [disabled]="readonly" step=".01" (ngModelChange)="propagateChange(value)" [required]="required"
+        [placeholder]="placeholder" #num="ngModel"
+        [ngClass]="{ 'is-invalid': num.invalid && (num.touched || num.dirty) }" />
+      <div class="invalid-feedback">{{errorMsg}}</div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'reference'">
+      <ng-container *ngTemplateOutlet="referenceTemplate"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'lookup'">
+      <ng-container *ngTemplateOutlet="referenceTemplate"></ng-container>
+    </ng-container>
+
+    <!-- Reference template -->
+    <ng-template #referenceTemplate>
+      <ng-select class="form-control aptSingleSelectLookup p-0" [class.form-control-sm]="small"
+        [class.contacts]="lookupOptions?.secondaryTextField" [(ngModel)]="lookupId" [items]="view?.lookupResults"
+        (search)="onLookupSearch($event)" [required]="required" [bindLabel]="lookupOptions?.primaryTextField"
+        bindValue="Id" [placeholder]="placeholder" [loading]="loading"
+        (ngModelChange)="onLookupChange($event, view?.lookupResults)" #select="ngModel"
+        [ngClass]="{ 'is-invalid': select.invalid && (select.touched || select.dirty) }" [disabled]="readonly"
+        (clear)="setLookupFieldData()" (focus)="setLookupFieldData()">
+        <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+          <span *ngIf="!lookupOptions?.secondaryTextField" class="basicOption" [ngOptionHighlight]="search">
+            {{item[lookupOptions?.primaryTextField]}}
+          </span>
+          <div *ngIf="lookupOptions?.secondaryTextField" class="d-flex align-items-center contactOption">
+            <img *ngIf="lookupOptions?.thumbnailField" class="rounded-circle mr-4" width="32" height="32"
+              src="./assets/images/default.png" alt="Contact Image">
+            <div class="d-flex flex-column h-100 justify-content-around">
+              <span [ngOptionHighlight]="search">{{item[lookupOptions?.primaryTextField]}}</span>
+              <i class="small" *ngIf="lookupOptions?.secondaryTextField">{{item[lookupOptions?.secondaryTextField]}}</i>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template ng-loadingspinner-tmp>
+          <apt-spinner></apt-spinner>
+        </ng-template>
+      </ng-select>
+      <div class="invalid-feedback">{{errorMsg}}</div>
+    </ng-template>
+
+    <!-- Address -->
+    <ng-container *ngSwitchCase="'address'">
+      <apt-address [(ngModel)]="value"></apt-address>
+    </ng-container>
+  </div>
+</ng-container>

@@ -1,0 +1,17 @@
+<div class="dropdown" dropdown (onHidden)="saveSelections()" [insideClick]="true">
+    <button id="dropdownLabel" class="dropdown-toggle btn btn-icon btn-link text-primary bg-white" dropdownToggle
+        aria-controls="dropdownMenu">
+        <i class="fa fa-md fa-table mr-1"></i>
+        {{'COMMON.EDIT_LAYOUT' | translate }}
+    </button>
+    <div id="dropdownMenu" *dropdownMenu class="dropdown-menu overflow-auto" aria-labelledby="dropdownLabel">
+        <span *ngFor="let item of (menuItems$ | async)" class="dropdown-item">
+            <div class="ml-2">
+                <input class="form-check-input checkbox" type="checkbox" [checked]="item.isSelected"
+                    (change)="handleCheckbox(item)" value="item?.id" [id]="item?.id">
+                <label class="form-check-label" [class.font-weight-bold]="item.isSelected"
+                    [for]="item?.id">{{item?.label}}</label>
+            </div>
+        </span>
+    </div>
+</div>

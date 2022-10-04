@@ -1,0 +1,22 @@
+<div class="card " *ngIf="categoryList$ | async as categoryList">
+  <div class="card-body">
+    <h5 class="card-title">{{title}}</h5>
+
+    <form *ngIf="selection === 'multi'" [formGroup]="filterGroup">
+      <ul class="list-unstyled pl-2">
+        <li *ngFor="let category of categoryList" class="custom-control custom-checkbox py-1">
+          <input type="checkbox" class="custom-control-input" [id]="category.Id" [formControlName]="category.Id"
+            (change)="onCheckChange($event)" [name]="category.Id">
+          <label class="custom-control-label" [for]="category.Id">{{category.Label}}</label>
+        </li>
+      </ul>
+    </form>
+
+    <ul class="list-unstyled" *ngIf="selection === 'single'">
+      <li *ngFor="let category of categoryList" [class.active]="category.Id == categoryId">
+        <a href="javascript:void(0)" class="btn btn-link btn-sm py-1 text-left"
+          [class.disabled]="category.Id === categoryId" (click)="onChange.emit([category])">{{category.Label}}</a>
+      </li>
+    </ul>
+  </div>
+</div>

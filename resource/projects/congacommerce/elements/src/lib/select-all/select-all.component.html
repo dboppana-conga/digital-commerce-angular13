@@ -1,0 +1,6 @@
+<div class="custom-control custom-checkbox pl-5" *ngIf="items.length > 1">
+    <input type="checkbox" class="custom-control-input" [id]="'select-all-' + type"
+        [indeterminate]="SelectionState === 'indeterminate'"
+        [checked]="SelectionState === 'checked'" (click)="toggleAllItems(items)">
+    <label class="custom-control-label" [for]="'select-all-' + type">Select All</label>
+</div>

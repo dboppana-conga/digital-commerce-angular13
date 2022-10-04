@@ -1,0 +1,28 @@
+<h5 class="py-2 text-uppercase">
+    {{'DETAILS.ATTACHMENTS' | translate}}
+    <span *ngIf="fileList$ | async as fileList">({{fileList.length}})</span>
+</h5>
+<div class="row">
+    <div class="col">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">File Size</th>
+                    <th scope="col">Created Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let file of fileList$ | async">
+                    <th scope="row">{{file.index}}</th>
+                    <td><a class="text-underline" (click)="download(file)" target="_blank">{{file.title}}</a></td>
+                    <td class="text-truncate">{{file.type}}</td>
+                    <td>{{file.size}}</td>
+                    <td>{{file.created_date | date:'short'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

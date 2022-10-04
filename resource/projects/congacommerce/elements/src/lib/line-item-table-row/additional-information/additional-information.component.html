@@ -1,0 +1,42 @@
+<div class="card border-right-0 border-left-0 border-bottom-0">
+  <div class="card-header accordionHeader bg-transparent collapsed pr-0 border-bottom-0" role="button"
+    data-toggle="collapse" [attr.data-target]="'#adtlInformation_' + parent.Id">
+    <span class="downArrow">&#9660;</span>
+    <span class="ml-3">
+      {{'COMMON.ADDITIONAL_INFORMATION' | translate}}
+    </span>
+  </div>
+  <div class="collapse" [id]="'adtlInformation_' + parent.Id">
+    <div class="py-3 pl-3">
+      <div class="row">
+        <div class="col-md-4" *ngFor="let view of userView; let i=index">
+          <div *ngIf="i>= 3">
+            <!-- Render input field -->
+            <ng-container *ngIf="view?.label !== 'StartDate' && view?.label !== 'EndDate'; else date">
+              <apt-input-field *ngIf="view.isEditable; else outputField" [entity]="parent"
+                [(ngModel)]="parent[view.label]" [small]="true" [class]="view.label" [field]="view.label" [rows]="1"
+                (change)="updateValues(view,parent)" [displayFieldType]="'radio'">
+              </apt-input-field>
+            </ng-container>
+            <!-- Render output field -->
+            <ng-template #outputField>
+              <apt-output-field [record]="parent" [class]="view.label" layout="stacked" [field]="view.label"
+                [label]="view.label" [editable]="editableFields">
+              </apt-output-field>
+            </ng-template>
+            <!-- Render Start/End date -->
+            <ng-template #date>
+              <apt-date-range-input
+                [disableStartDate]="parent?.LineStatus?.toLowerCase() ==='cancelled' || parent?.LineStatus?.toLowerCase() ==='renewed'"
+                (onStartDateChange)="changeItemQuantity(parent)" (onEndDateChange)="changeItemQuantity(parent)"
+                [cartItem]="parent" small="true"
+                [readonly]="!view?.isEditable || (parent?.PriceType !== 'Recurring' && parent?.PriceType !== 'Usage')"
+                [displayDate]="view.label">
+              </apt-date-range-input>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

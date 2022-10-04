@@ -1,0 +1,115 @@
+<ng-template #appliedPromotionTemplate>
+  <div class="modal-header">
+    <h5 class="modal-title pl-3">{{'PROMOTION.APPLIED_PROMOTIONS' | translate}}</h5>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ng-container *ngIf="record$ | async as record; else loadingA">
+    <div class="modal-body small">
+      <span class="pl-3">
+        {{'PROMOTION.PROMOTION_APPLIED' | translate}} <strong [innerHTML]="record?.Product?.Name"></strong>
+      </span>
+      <ul class="list-group mt-3">
+        <li class="list-group-item dashed-border border-secondary bg-light d-flex justify-content-between"
+          *ngFor="let adjustment of record?.AdjustmentLineItems">
+          <div>
+            <div class="d-flex align-items-center">
+              <div class="font-weight-bold">{{adjustment?.Incentive?.Name}}</div>
+              <span class="badge badge-success ml-2">{{adjustment.CouponCode ? adjustment.CouponCode : adjustment.Incentive.IncentiveCode}}</span>
+            </div>
+            
+            <p [innerHTML]="adjustment?.Incentive?.Description"></p>
+
+            <small class="text-muted">
+              {{adjustment?.Incentive?.ExpirationDate | date:'mediumDate'}} <span class="mx-2">|</span> {{adjustment?.LineType}}
+            </small>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="badge badge-info p-2">{{adjustment?.IncentiveAdjustmentAmount | localCurrency | async}}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+      
+  </ng-container>
+  <ng-template #loadingA>
+    <div class="d-flex justify-content-center my-5">
+      <apt-dots></apt-dots>
+    </div>
+  </ng-template>
+</ng-template>
+
+<ng-template #promotionAppliedToTemplate>
+  <div class="modal-header">
+    <h5 class="modal-title">{{'PROMOTION.PROMOTION_APPLIEDTO' | translate}}</h5>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body small">
+    <ng-container *ngIf="record$ | async as record">
+      <p>
+        {{'PROMOTION.TITLE' | translate}} <strong>{{record?.Name}}</strong>
+        {{'PROMOTION.APPLIED_PROMOTION' | translate}}
+      </p>
+
+      <table class="table table-sm table-responsive" *ngIf="adjustmentList$ | async as adjustmentList; else loadingB">
+        <thead>
+          <tr>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]?.LineItem?.Product" field="Name" [labelOnly]="true">
+              </apt-output-field>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]?._metadata?.columns?.LineItem?.Option" field="Name" [labelOnly]="true" label="Option">
+              </apt-output-field>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]?.LineItem" field="ChargeType" [labelOnly]="true">
+              </apt-output-field>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]?.LineItem" field="Quantity" [labelOnly]="true">
+              </apt-output-field>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]?.LineItem" field="LineNumber" [labelOnly]="true">
+              </apt-output-field>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]" field="IncentiveCode" [labelOnly]="true" *ngIf="!adjustmentList[0].CouponCode"></apt-output-field>
+              <span *ngIf="adjustmentList[0].CouponCode">{{'PROMOTION.COUPON_CODE' | translate}}</span>
+            </th>
+            <th scope="col">
+              <apt-output-field [record]="adjustmentList[0]" field="IncentiveAdjustmentAmount" [labelOnly]="true">
+              </apt-output-field>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of adjustmentList">
+            <td>{{item?.LineItem?.Product?.Name}}</td>
+            <td>{{item?.LineItem?.Option?.Name}}</td>
+            <td>{{item?.LineItem?.ChargeType}}</td>
+            <td>{{item?.LineItem?.Quantity}}</td>
+            <td>{{item?.LineItem?.LineNumber}}</td>
+            <td>{{item?.CouponCode ? item?.CouponCode : item?.IncentiveCode}}</td>
+            <td>{{item?.IncentiveAdjustmentAmount | localCurrency | async}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #loadingB>
+        <div class="d-flex justify-content-center my-5">
+          <apt-dots></apt-dots>
+        </div>
+      </ng-template>
+    </ng-container>
+    <div class="modal-footer d-flex justify-content-between font-weight-bold">
+      <span>{{'PROMOTION.TOTAL_PROMOTION_AMOUNT' | translate}}</span>
+      <span>{{totalAmt$ | async | localCurrency | async}}</span>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,12 @@
+<div id="myChart" style="position: relative;">
+  <canvas #chart id="chart"></canvas>
+  <div #customTooltip id="chartjs-tooltip" [class]="customTooltipClass + ' bg-white border p-3'" style="position: absolute; opacity: 0; pointer-events: initial; min-width: 200px; transition: opacity .25s ease;" (mouseenter)="handleMouseEnter()" (mouseleave)="handleMouseLeave()">
+    <div class="carrot"></div>
+    <h5>{{tooltipTitle}}</h5>
+    <hr>
+    <div class="d-flex flex-column">
+      <span>{{'COMMON.QUANTITY' | translate}}: <strong>{{tooltipAmount}}</strong></span>
+      <span *ngIf="amountsByStatus"> {{'COMMON.AMOUNT' | translate}}: <strong>{{tooltipTotal | convertCurrency: currencyConversionCode | async}}</strong></span>
+    </div>
+  </div>
+</div>

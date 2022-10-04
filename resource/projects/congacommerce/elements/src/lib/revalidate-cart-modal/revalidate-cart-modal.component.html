@@ -1,0 +1,78 @@
+<div class="modal-header">
+  <h4 class="modal-title d-flex align-items-center m-0 text-truncate">
+      {{'REVALIDATE_CART.REVALIDATION_REQUIRED' | translate}}
+  </h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()" *ngIf="!isHardRevalidation">
+      <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="row">
+      <div class="col-sm-12" *ngIf="view$ | async as view">
+          <div class="small">{{ 'REVALIDATE_CART.REVALIDATION_REQUIRED_MSG' | translate }}</div>
+          <small class="text-danger font-weight-bold" *ngIf="hasError">{{ 'REVALIDATE_CART.REVALIDATION_ERROR' | translate }}</small>
+          <small class="text-danger font-weight-bold" *ngIf="message">{{message}}</small>
+          <div class="revalidate-block">
+              <table class="table table-sm mt-3 mb-0">
+                  <thead class="thead-light">
+                  <tr>
+                      <th scope="col" width="80" class="border-left">
+                          <div class="custom-control custom-checkbox">
+                              <input type="checkbox" 
+                                      class="custom-control-input" 
+                                      id="toggleAll"
+                                      [disabled]="isDisabled"
+                                      [indeterminate]="view?.checkStatus === 'indeterminate'"
+                                      [checked]="view?.checkStatus === 'checked'"
+                                      (click)="toggleAllRecords($event)"
+                                      >
+                              <label class="custom-control-label" for="toggleAll"></label>
+                          </div>
+                      </th>
+                      <th scope="col" class="border-start-0">{{ 'REVALIDATE_CART.PRODUCTNAME' | translate }}</th>
+                      <th scope="col" width="220" class="border-left">{{ 'COMMON.STATUS' | translate }}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td colspan="3">
+                              <div class="inner-body">
+                                  <table>
+                                      <ng-container *ngFor="let li of view.data; trackBy: trackById">
+                                          <tr [ngClass]="{'table-primary' : li.get('type') === 'hard' || li?.get('state') === 'checked'}">
+                                              <td width="80" class="border-left border-bottom border-top-0"> 
+                                                  <div class="custom-control custom-checkbox">
+                                                      <input 
+                                                          type="checkbox" 
+                                                          class="custom-control-input" 
+                                                          [id]="'check-' + li?.Id"
+                                                          [disabled]="li.get('type') === 'hard'"
+                                                          [checked]="li?.get('state') === 'checked'"
+                                                          (click)="toggleItem(li)"
+                                                          *ngIf="li?.get('state') !== 'readonly'">
+                                                      <label class="custom-control-label" [for]="'check-' + li?.Id"></label>
+                                                  </div>
+                                              </td>
+                                              <td class="border-bottom border-top-0">{{ getProductName(li) }}</td>
+                                              <td width="220" class="border border-top-0">{{ 'REVALIDATE_CART.TOBE_REVALIDATE' | translate }} ({{ li.get('type') === 'hard' ? ('REVALIDATE_CART.REQUIRED' | translate) : ('REVALIDATE_CART.OPTIONAL' | translate) }})</td>
+                                          </tr>
+                                      </ng-container>
+                                  </table>
+                              </div>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="small mt-3">
+              <span>{{'REVALIDATE_CART.WHATTODO' | translate}}</span>
+              <a href="javascript:void(0)" (click)="switchCart()" class="ml-1 mr-1">{{'REVALIDATE_CART.DEACTIVATE_CART' | translate}}</a>
+              <span>{{'REVALIDATE_CART.FORNOW' | translate}}</span>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary btn-raised" type="button" [disabled]="selectedRecords.length===0" (click)="applyRevalidation()" [ladda]="loading"
+          data-style="zoom-in">{{'REVALIDATE_CART.REVALIDATE' | translate}}</button>
+</div>  

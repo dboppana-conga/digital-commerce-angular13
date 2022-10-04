@@ -1,0 +1,1 @@
+export * from './credit-card-extractor.pipe';

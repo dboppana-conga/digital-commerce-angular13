@@ -1,0 +1,28 @@
+<ng-container *ngIf="storefront$ | async as storefront">
+    <div id="promotionCarousel" class="carousel slide " data-ride="carousel" *ngIf="storefront?.StoreBanners?.length > 0">
+        <ol class="carousel-indicators">
+            <li data-target="#promotionCarousel" [attr.data-slide-to]="i" [class.active]="i === 0" *ngFor="let banner of storefront?.StoreBanners; let i = index"></li>
+        </ol>
+        <div class="carousel-inner">
+                <div [class]="'carousel-item text-' + imagePosition" [class.active]="i === 0" [style]="heightStyle" *ngFor="let banner of storefront?.StoreBanners; let i = index">
+                <img [src]="banner?.Image | image" [style]="filterStyle">
+                <div class="carousel-caption text-right">
+                    <h1>{{banner?.Title}}</h1>
+                    <p [innerHTML]="banner?.Subtitle"></p>
+                    <p>
+                        <a class="btn btn-light btn-lg" [href]="banner?.Link"> {{ 'JUMBORTON.MORE_INFO' | translate }} </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#promotionCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only"> {{ 'JUMBORTON.PREVIOUS' | translate }} </span>
+        </a>
+        <a class="carousel-control-next" href="#promotionCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only"> {{ 'JUMBORTON.NEXT' | translate }} </span>
+        </a>
+    </div>
+</ng-container>
+

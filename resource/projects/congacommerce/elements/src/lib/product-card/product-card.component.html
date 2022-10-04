@@ -1,0 +1,124 @@
+<ng-container *ngIf="_product && _product[identifier]">
+  <div class="card" *ngIf="type == 'card'">
+    <div class="card-body">
+      <div class="custom-control custom-checkbox custom-checkbox-lg card-title">
+        <input [id]="_product.Id" type="checkbox" class="custom-control-input" (change)="handleCheckbox($event)"
+          [checked]="selected$ | async" />
+      <label class="custom-control-label d-flex justify-content-between" [for]="_product.Id"></label>
+        <div class="d-flex justify-content-between">
+          <p class="m-0 font-weight-bold d-flex text-break" tooltip="{{_product?.Name}}" container="body" placement="top">{{ _product?.Name | truncate:30 }}</p>
+          <span class="pt-1 text-muted icons d-flex">
+            <i
+              class="fa fa-shopping-bag"
+              tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}"
+              container="body"
+              [adaptivePosition]="false"
+               *ngIf="aboEnabled && _product?.AssetLineItems?.length > 0 && isLoggedIn$ | async"
+            >
+            </i>
+            <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body" [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
+          </span>
+        </div>
+      </div>
+      <!-- <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]" [state]="_product">  // Commented due to stopgap changes-->
+      <a href="javascript:void(0)" [state]="_product" (click)="showProductConfiguration()">
+        <div class="img-container">
+          <img class="card-img-top w-auto m-auto d-flex align-self-center" [src]="_product.IconId | image"
+            [alt]="_product.Name" *ngIf="thumbnail">
+        </div>
+    
+        <div class="d-flex my-1 align-items-center split-items">
+          <span class="text-muted product-code pr-1 text-truncate" *ngIf="showCode">{{_product.ProductCode}}</span>
+          <span class="text-muted product-category pl-1 pr-1 border-left text-truncate"
+            *ngIf="showCategory && _product.Categories?.length > 0">{{_product.Categories[0]?.Classification?.Name}}</span>
+        </div>
+        <span class="card-text font-weight-bold d-flex flex-column justify-content-between" *ngIf="showPrice">
+          <span class="text-truncate">{{'PRODUCT_CARD.STANDARD_PRICE' | translate}}</span>
+          <apt-price [record]="_product"></apt-price>
+        </span>
+      </a>
+    </div>
+    <div class="card-footer px-2" *ngIf="canAddToCart">
+      <apt-add-to-cart [skipRules]="skipRules" size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)"></apt-add-to-cart>
+    </div>
+  </div>
+
+  <div *ngIf="type == 'media'" class="media">
+    <div class="custom-control custom-checkbox custom-checkbox-lg">
+      <input [id]="_product.Id" type="checkbox" class="custom-control-input" (change)="handleCheckbox($event)"
+        [checked]="selected$ | async" />
+      <label class="custom-control-label mt-2 ml-2" [for]="_product.Id">&nbsp;</label>
+    </div>
+    <!-- <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]"  // Commented due to stopgap changes-->
+    <a href="javascript:void(0)"
+      class="d-flex justify-content-center w-25" [state]="_product" (click)="showProductConfiguration()">
+      <img class="mr-3" [src]="_product.IconId | image" [alt]="_product.Name">
+    </a>
+    <div class="media-body px-3">
+      <h5 class="m-0">
+        <!-- <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]" [state]="_product">  // Commented due to stopgap changes-->
+        <a href="javascript:void(0)" [state]="_product" (click)="showProductConfiguration()">
+          {{_product.Name}}
+        </a>
+        <span class="ml-auto mr-3 purchased list-purchasedbucket">
+          <i
+            *ngIf="aboEnabled && _product?.AssetLineItems?.length>0 && isLoggedIn$ | async"
+            class="fa fa-shopping-bag"
+            tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}"
+            container="body"
+            [adaptivePosition]="false"
+            aria-hidden="true"
+          ></i>
+          <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body" [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
+        </span>
+      </h5>
+      <div class="d-flex mb-3 align-items-center split-items">
+        <div class="text-muted" *ngIf="showCode">{{_product.ProductCode}}</div>
+        <div class="text-muted" *ngIf="showCategory && _product.Categories?.length > 0">
+          {{_product.Categories[0]?.Classification?.Name}}</div>
+      </div>
+      <div class="productDescription">
+        {{_product.Description}}
+      </div>
+    </div>
+    <div class="pl-4 align-self-stretch d-flex align-items-start flex-column">
+      <strong class="mb-auto align-self-end" *ngIf="showPrice">
+        <apt-price [record]="_product"></apt-price>
+      </strong>
+      <div *ngIf="canAddToCart">
+        <apt-add-to-cart [skipRules]="skipRules" size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)"></apt-add-to-cart>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="type === 'readonly'">
+    <div class="card-body readonly p-3">
+      <div class="card-title d-flex justify-content-between align-items-start">
+          <p class="m-0 card-title font-weight-bold text-break" tooltip="{{_product?.Name}}" container="body" placement="top">{{_product?.Name | truncate:30}}</p>
+          <button type="button" class="btn btn-link p-0 close" aria-label="Close" (click)="removeProduct()" *ngIf="selected$ | async">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]" [state]="_product">
+        <div class="img-container">
+          <img class="card-img-top w-auto m-auto d-flex align-self-center" [src]="_product.IconId | image"
+            [alt]="_product.Name" *ngIf="thumbnail">
+        </div>
+    
+        <div class="d-flex mt-3 align-items-center split-items" *ngIf="showCategory || showCode">
+          <span class="text-muted product-code" *ngIf="showCode">{{_product.ProductCode}}</span>
+          <span class="text-muted product-category"
+            *ngIf="showCategory && _product.Categories?.length > 0">{{_product.Categories[0].Classification.Name}}</span>&nbsp;
+        </div>
+        <span class="card-text font-weight-bold d-flex flex-column justify-content-between mt-2" *ngIf="showPrice">
+          <span>{{'PRODUCT_CARD.STANDARD_PRICE' | translate}}</span>
+          <apt-price [record]="_product"></apt-price>
+        </span>
+      </a>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Stopgap approach -->
+<apt-product-configuration-summary
+  [product]="_product" #productConfiguration></apt-product-configuration-summary>

@@ -1,0 +1,278 @@
+<ng-container *ngIf="ruleDetailGroups$ | async as ruleDetailGroups">
+  <div class="modal-header py-2 border-0">
+    <h5 class="modal-title pull-left">{{ "CONSTRAINT_SIDE_MENU.VALIDATION_MESSAGES" | translate }}</h5>
+    <button type="button" class="close pull-left" aria-label="Close">
+      <span aria-hidden="true" (click)="bsModalRef.hide()">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body p-0">
+    <!-- Errors -->
+    <div *ngIf="ruleDetailGroups.errors.length > 0" class="card border-0">
+      <div class="card-header border-bottom-0 border-top">
+        <i class="fas fa-exclamation-circle text-danger"></i> <span>
+          {{ (ruleDetailGroups.errors.length > 1 ? "CONSTRAINT_SIDE_MENU.NUM_OF_ERRORS.PLURAL" : "CONSTRAINT_SIDE_MENU.NUM_OF_ERRORS.ONE") | translate: {amount: ruleDetailGroups.errors.length} }}
+        </span>
+      </div>
+      <ng-container *ngFor="let error of ruleDetailGroups.errors; let i = index">
+        <ng-container [ngSwitch]="error.actionType">
+          <!-- Inclusions -->
+          <ng-container *ngSwitchCase="'Inclusion'">
+            <div class="card-body bg-white py-2 flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="error.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="error.messageHtml"></div>
+              </ng-container>
+              <ng-container *ngFor="let item of error.actionItems">
+                <div class="py-3">
+                  <a class="pt-2" href="javascript:void(0)"
+                    [routerLink]="['/products/', item.product.Id]">{{item.product.Name}}</a>
+                  <div class="d-flex py-2 align-items-center justify-content-between">
+                    <small class="font-weight-bold">{{item.chargeType}}</small>
+                    <small class="font-weight-bold">
+                      <apt-price [record]="item.product"></apt-price>
+                    </small>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-end">
+                    <label [for]="item.product.Name + i" class="mr-2 mb-0">{{ "COMMON.QTY" | translate }}</label>
+                    <input class="form-control mr-2 w-25" [id]="item.product.Name + i" type="number" min="1"
+                      [(ngModel)]="quantityControlValues[item.product.Name + i]" placeholder="1">
+                    <div class="input-group-append">
+                      <button *ngIf="!showProductConfig" class="btn btn-outline-primary"
+                        (click)="handleAddToCart(error, item.product, quantityControlValues[item.product.Name + i], item.product.Name + i)"
+                        [ladda]="loading[item.product.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.ADD_TO_CART" | translate }}</button>
+                      <button *ngIf="showProductConfig" class="btn btn-outline-primary"
+                        [disabled]="isItemSelected(item.product)"
+                        (click)="handleAddToConfiguration(item.product, quantityControlValues[item.product.Name + i], item.product.Name + i, error.targetBundleNumber)"
+                        [ladda]="loading[item.product.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.ADD" | translate }}</button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="card-footer bg-white border-0 py-2">
+            </div>
+          </ng-container>
+          <!-- Exclusions -->
+          <ng-container *ngSwitchCase="'Exclusion'">
+            <div class="card-body bg-white py-2 flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="error.messageHtml !== null;">
+                <span [innerHtml]="error.messageHtml"></span>
+              </ng-container>
+              <ng-container *ngFor="let item of error.actionItems">
+                <div class="py-3">
+                  <a class="pt-2" href="javascript:void(0)"
+                    [routerLink]="['/products/', item.product.Id]">{{item.product.Name}}</a>
+                  <div class="d-flex py-2 align-items-center justify-content-between">
+                    <small class="font-weight-bold">{{item.chargeType}}</small>
+                    <small class="font-weight-bold">
+                      <apt-price [record]="item.product"></apt-price>
+                    </small>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-end">
+                    <label [for]="item.product.Name + i" class="mr-2 mb-0">{{ "COMMON.QTY" | translate }}</label>
+                    <input class="form-control mr-2 w-25" [id]="item.product.Name + i" type="number" min="1"
+                      [(ngModel)]="quantityControlValues[item.product.Name + i]" placeholder="1">
+                    <div class="input-group-append">
+                      <button *ngIf="!showProductConfig" class="btn btn-outline-danger"
+                        (click)="handleDeleteFromCart(error, item.product?.Name + i)"
+                        [ladda]="loading[item.product?.Name + i]"
+                        data-style="zoom-in">{{ "CONSTRAINT_SIDE_MENU.REMOVE_FROM_CART" | translate }}</button>
+                      <button *ngIf="showProductConfig" class="btn btn-outline-danger"
+                        [disabled]="!isItemSelected(item.product, 'remove')"
+                        (click)="handleRemoveFromBundle(item.product, error.triggeringProducts[0], item.product?.Name + i)"
+                        [ladda]="loading[item.product?.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.REMOVE" | translate }}</button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <!-- <div class="card-footer bg-white border-0 py-2 d-flex justify-content-end">
+              <button *ngIf="!showProductConfig" class="btn btn-outline-danger" (click)="handleDeleteFromCart(error, error.actionItems[0].product?.Name + i)" [ladda]="loading[error.actionItems[0].product?.Name + i]" data-style="zoom-in">{{ "CONSTRAINT_SIDE_MENU.REMOVE_FROM_CART" | translate }}</button>
+              <button *ngIf="showProductConfig" class="btn btn-outline-danger" [disabled]="isItemSelected(error.actionItems[0].product)" (click)="handleRemoveFromBundle(error.actionItems[0].product, error.triggeringProducts[0], error.actionItems[0].product?.Name + i)" [ladda]="loading[error.actionItems[0].product?.Name + i]" data-style="zoom-in">{{ "COMMON.REMOVE" | translate }}</button>
+            </div> -->
+            <div class="card-footer bg-white border-0 py-2">
+            </div>
+          </ng-container>
+          <!-- Validation -->
+          <ng-container *ngSwitchCase="'Validation'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="error.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="error.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <!-- Recommendation -->
+          <ng-container *ngSwitchCase="'Recommendation'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="error.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="error.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <!-- Replacement -->
+          <ng-container *ngSwitchCase="'Replacement'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="error.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="error.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+    <!-- Warnings -->
+    <div *ngIf="ruleDetailGroups.warnings.length > 0" class="card border-0">
+      <div class="card-header border-bottom-0 border-top">
+        <i class="fas fa-exclamation-triangle text-warning"></i> <span>
+          {{ (ruleDetailGroups.warnings.length > 1 ? "CONSTRAINT_SIDE_MENU.NUM_OF_WARNINGS.PLURAL" : "CONSTRAINT_SIDE_MENU.NUM_OF_WARNINGS.ONE") | translate: {amount: ruleDetailGroups.warnings.length} }}</span>
+      </div>
+      <ng-container *ngFor="let warning of ruleDetailGroups.warnings; let i = index">
+        <ng-container [ngSwitch]="warning.actionType">
+          <!-- Inclusion -->
+          <ng-container *ngSwitchCase="'Inclusion'">
+            <div class="card-body bg-white py-2 flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="warning.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="warning.messageHtml"></div>
+              </ng-container>
+              <ng-container *ngFor="let item of warning.actionItems">
+                <div class="py-3">
+                  <a class="pt-2" href="javascript:void(0)"
+                    [routerLink]="['/products/', item.product.Id]">{{item.product.Name}}</a>
+                  <div class="d-flex py-2 align-items-center justify-content-between">
+                    <small class="font-weight-bold">{{item.chargeType}}</small>
+                    <small class="font-weight-bold">
+                      <apt-price [record]="item.product"></apt-price>
+                    </small>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-end">
+                    <label [for]="item.product.Name + i" class="mr-2 mb-0">{{ "COMMON.QTY" | translate }}</label>
+                    <input class="form-control mr-2 w-25" [id]="item.product.Name + i" type="number" min="1"
+                      [(ngModel)]="quantityControlValues[item.product.Name + i]" placeholder="1">
+                    <div class="input-group-append">
+                      <button *ngIf="!showProductConfig" class="btn btn-outline-primary"
+                        (click)="handleAddToCart(warning, item.product, quantityControlValues[item.product.Name + i], item.product.Name + i)"
+                        [ladda]="loading[item.product.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.ADD_TO_CART" | translate }}</button>
+                      <button *ngIf="showProductConfig" class="btn btn-outline-primary"
+                        [disabled]="isItemSelected(item.product)"
+                        (click)="handleAddToConfiguration(item.product, quantityControlValues[item.product.Name + i], item.product.Name + i, warning.targetBundleNumber)"
+                        [ladda]="loading[item.product.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.ADD" | translate }}</button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="card-footer bg-white border-0 py-2">
+            </div>
+          </ng-container>
+          <!-- Exclusion -->
+          <ng-container *ngSwitchCase="'Exclusion'">
+            <div class="card-body bg-white py-2 flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="warning.messageHtml !== null;">
+                <span [innerHtml]="warning.messageHtml"></span>
+              </ng-container>
+              <ng-container *ngFor="let item of warning.actionItems">
+                <div class="py-3">
+                  <a class="pt-2" href="javascript:void(0)"
+                    [routerLink]="['/products/', item.product.Id]">{{item.product.Name}}</a>
+                  <div class="d-flex py-2 align-items-center justify-content-between">
+                    <small class="font-weight-bold">{{item.chargeType}}</small>
+                    <small class="font-weight-bold">
+                      <apt-price [record]="item.product"></apt-price>
+                    </small>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-end">
+                    <label [for]="item.product.Name + i" class="mr-2 mb-0">{{ "COMMON.QTY" | translate }}</label>
+                    <input class="form-control mr-2 w-25" [id]="item.product.Name + i" type="number" min="1"
+                      [(ngModel)]="quantityControlValues[item.product.Name + i]" placeholder="1">
+                    <div class="input-group-append">
+                      <button *ngIf="!showProductConfig" class="btn btn-outline-danger"
+                        (click)="handleDeleteFromCart(warning, item.product?.Name + i)"
+                        [ladda]="loading[item.product?.Name + i]"
+                        data-style="zoom-in">{{ "CONSTRAINT_SIDE_MENU.REMOVE_FROM_CART" | translate }}</button>
+                      <button *ngIf="showProductConfig" class="btn btn-outline-danger"
+                        [disabled]="!isItemSelected(item.product, 'remove')"
+                        (click)="handleRemoveFromBundle(item.product, warning.triggeringProducts[0], item.product?.Name + i)"
+                        [ladda]="loading[item.product?.Name + i]"
+                        data-style="zoom-in">{{ "COMMON.REMOVE" | translate }}</button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="card-footer bg-white border-0 py-2">
+            </div>
+            <!-- <div class="card-footer bg-white border-0 py-2 d-flex justify-content-end">
+              <button *ngIf="!showProductConfig" class="btn btn-outline-danger"
+                (click)="handleDeleteFromCart(warning, warning.actionItems[0].product?.Name + i)"
+                [ladda]="loading[warning.actionItems[0].product?.Name + i]"
+                data-style="zoom-in">{{ "CONSTRAINT_SIDE_MENU.REMOVE_FROM_CART" | translate }}</button>
+              <button *ngIf="showProductConfig" class="btn btn-outline-danger"
+                [disabled]="isItemSelected(warning.actionItems[0].product)"
+                (click)="handleRemoveFromBundle(warning.actionItems[0].product, warning.triggeringProducts[0], warning.actionItems[0].product?.Name + i)"
+                [ladda]="loading[warning.actionItems[0].product?.Name + i]"
+                data-style="zoom-in">{{ "COMMON.REMOVE" | translate }}</button>
+            </div> -->
+          </ng-container>
+          <!-- Validation -->
+          <ng-container *ngSwitchCase="'Validation'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="warning.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="warning.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <!-- Recommendation -->
+          <ng-container *ngSwitchCase="'Recommendation'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="warning.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="warning.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <!-- Replacement -->
+          <ng-container *ngSwitchCase="'Replacement'">
+            <div class="card-body bg-white py-2 d-flex-column" [class.border-top]="i > 0">
+              <ng-container *ngIf="warning.messageHtml !== null;">
+                <div class="mb-2" [innerHtml]="warning.messageHtml"></div>
+              </ng-container>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+    <!-- Info Messages -->
+    <!-- <div *ngIf="ruleDetailGroups.info.length > 0" class="card border-0">
+      <div class="card-header border-bottom-0 border-top">
+        <i class="fas fa-info-circle"></i> <span> {{ruleDetailGroups.info.length}}</span> {{ruleDetailGroups.info.length > 1 ? 'Information Messages' : 'Information Message'}}
+      </div>
+      <ng-container *ngFor="let info of data.infoMessages; let i = index">
+        <div class="card-body bg-white py-2" [class.border-top]="i > 0">
+          <strong>{{info.includedProduct.name}}</strong> is included with product <a href="javascript:void(0)">{{info.product.name}}</a>.
+        </div>
+        <div class="card-footer bg-white border-0 py-2">
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-danger">Delete All</button>
+          </div>
+        </div>
+      </ng-container>
+    </div> -->
+    <!-- Success Messages -->
+    <div *ngIf="ruleDetailGroups.success.length > 0" class="card border-0">
+      <div class="card-header border-bottom-0 border-top">
+        <i class="fas fa-info-circle"></i> <span>
+          {{ (ruleDetailGroups.success.length > 1 ? "CONSTRAINT_SIDE_MENU.NUM_OF_INFO_MESSAGES.PLURAL" : "CONSTRAINT_SIDE_MENU.NUM_OF_INFO_MESSAGES.ONE") | translate: {amount: ruleDetailGroups.success.length} }}</span>
+      </div>
+      <ng-container *ngFor="let success of ruleDetailGroups.success; let i = index">
+        <div class="card-body bg-white py-2" [class.border-top]="i > 0">
+          <ng-container *ngIf="success.message !== null;">
+            <span [innerHtml]="success.message"></span>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

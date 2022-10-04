@@ -1,0 +1,19 @@
+.modal.show {
+  div.constraintRuleSidebar.modal-dialog {
+    right: -1px;
+  }
+}
+
+.modal {
+  div.constraintRuleSidebar.modal-dialog {
+    position: absolute;
+    transition: right 300ms;
+    margin: -1px 0px 0px 0px;
+    right: -20rem;
+    width: 20rem;
+    .modal-content{
+        height: 100vh;
+        overflow-y: auto;
+    }
+  }
+}

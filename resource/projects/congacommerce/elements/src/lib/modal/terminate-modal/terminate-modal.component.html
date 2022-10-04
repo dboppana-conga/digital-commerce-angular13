@@ -1,0 +1,104 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left"> {{'COMMON.TERMINATE_ASSETS' | translate}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body renew-detail" *ngIf="assetList?.length==1">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <apt-output-field [record]="this._assetItem" field="Product.Name" layout="inline" [editable]="false"></apt-output-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-md-6">
+        <div class="container-fluid">
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="SellingFrequency" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="StartDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="EndDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="ChargeType" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+        </div>
+      </div>
+      <div class="col col-md-6">
+        <div class="row">
+          <apt-output-field [record]="this._assetItem" field="NetUnitPrice" layout="inline" [editable]="false"></apt-output-field>
+        </div>
+        <div class="row">
+          <apt-output-field [record]="this._assetItem" field="Quantity" layout="inline" [editable]="false"></apt-output-field>
+        </div>
+        <div class="row">
+          <apt-output-field [record]="this._assetItem" field="NetPrice" layout="inline" [editable]="false"></apt-output-field>
+        </div>
+        <div class="row">
+          <apt-output-field [record]="this._assetItem" field="SellingTerm" layout="inline" [editable]="false"></apt-output-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="m-0">
+<form class="d-flex justify-content-between modal-body row" (ngSubmit)="terminate()">
+  <div class="col-6 form-group">
+    <div class="mb-2">
+      <label for="terminateModalEndDate" class="ml-3">
+        <b>{{'MODAL.TERMINATION_DATE' | translate}}</b>
+      </label>
+    </div>
+    <div class="input-group ml-3">
+      <input
+        type="text"
+        id="renewalDate"
+        name="endDate"
+        class="form-control"
+        placeholder="MM/DD/YYYY"
+        [minDate]="minimumDate"
+        [maxDate]="maximumDate"
+        [(ngModel)]="endDate"
+        bsDatepicker
+        [bsConfig]="{ showWeekNumbers: false }"
+        (bsValueChange)="handleDateChange(endDate)"
+      >
+      <div class="input-group-append">
+        <span class="input-group-text">
+          <i class="fas fa-calendar-alt"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="modal-footer">
+  <button class="btn btn-link" (click)="bsModalRef.hide()">{{'COMMON.CANCEL' | translate}}</button>
+  <ng-container>
+    <button
+      class="btn btn-primary btn-raised"
+      type="button"
+      (click)="terminate()"
+      [ladda]="loading"
+      data-style="zoom-in"
+    >{{'COMMON.TERMINATE' | translate}}</button>
+  </ng-container>
+  <ng-template #disabledButton>
+    <div
+      [tooltip]="'MODAL.INVALID_TERMINATION_DATE' | translate"
+      container="body"
+    >
+      <button
+        class="btn btn-primary btn-raised"
+        type="button"
+        (click)="terminate()"
+        [ladda]="loading"
+        data-style="zoom-in"
+        disabled="true"
+      >{{'COMMON.TERMINATE' | translate}}</button>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,37 @@
+:host {
+    font-size: small;
+}
+.configuration{
+    font-size: small;
+}
+.line-height-large{
+    line-height: 1.8rem;
+}
+.modal{
+    &.right{
+        .modal-content{
+            height: 100vh;
+        }
+        &.show{
+            .modal-dialog{
+                right: -1px;
+            }
+        }
+        .modal-dialog{
+            position: absolute;
+            transition: right 300ms;
+            margin: -1px 0 0 0;
+            right: -20rem;
+            width: 40rem;
+            max-width: 100vw;
+            .modal-content{
+                height: 100vh;
+            }
+        }
+    }
+}
+
+.width-fixed{
+    min-width: 8rem;
+    max-width: 8rem;
+}

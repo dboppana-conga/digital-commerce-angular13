@@ -1,0 +1,10 @@
+<div class="container-fluid">
+  <div class="row px-3 pb-5">
+    <div class="col d-flex justify-content-center" [style.min-width]="((products$ | async)?.length > 5) ? '1200px' : widths[(products$ | async)?.length]">
+      <apt-compare-table
+        [products]="products$ | async"
+        [style.min-width]="((products$ | async)?.length > 5) ? '1200px' : widths[(products$ | async)?.length]"
+      ></apt-compare-table>
+    </div>
+  </div>
+</div>

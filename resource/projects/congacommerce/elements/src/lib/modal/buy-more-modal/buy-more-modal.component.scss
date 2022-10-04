@@ -1,0 +1,13 @@
+apt-buy-more-modal{
+    font-size: small;
+    line-height: 1.5rem;
+    .row div[class^="col-md-"]{
+        dt{
+            width: 55%;
+        }
+        dd{
+            width: 45%;
+        }
+    }
+    
+}

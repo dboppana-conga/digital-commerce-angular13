@@ -1,0 +1,42 @@
+<button class="btn btn-link" (click)="openModal(searchModal)">
+  <i class="fa fa-search fa-lg"></i>
+</button>
+
+<ng-template #searchModal>
+  <form role="document" (ngSubmit)="doSearch()" class="search-container">
+    <div class="modal-header">
+      <h5 class="modal-title" id="searchModalLabel">{{'HEADER.PRODUCT_SERACH' | translate}}</h5>
+      <button type="button" class="close" (click)="modalRef.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <apt-spinner [large]="false" *ngIf="typeaheadLoading"></apt-spinner>
+      <input type="search" class="form-control" placeholder="{{'HEADER.ENTER_YOUR_SEARCH_TERM' | translate}}"
+        (typeaheadLoading)="typeaheadLoading = $event" (keyup)="onInputChange($event)"
+        (typeaheadOnSelect)="typeaheadOnSelect($event)" [typeaheadIsFirstItemActive]="false"
+        [typeaheadItemTemplate]="typeAheadItem" [typeahead]="typeahead$" [typeaheadOptionsLimit]="5" minlength="2"
+        typeaheadWaitMs="1000" typeaheadOptionField="Name" [(ngModel)]="searchQuery" name="searchQuery"
+        (typeaheadNoResults)="typeaheadNoResults($event)" #searchBox aptAutoFocus autocomplete="off" />
+      <div class="media w-100 py-2" *ngIf="noResult && searchQuery.length >=3 && !typeaheadLoading">{{'COMMON.NO_RESULT'
+        | translate}} {{searchQuery}}</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-link" data-dismiss="modal" (click)="modalRef.hide()">{{'COMMON.CANCEL' |
+        translate}}</button>
+      <button type="button" class="btn btn-primary btn-raised" type="submit"
+        [disabled]="searchQuery?.length < 3">{{'HEADER.SUBMIT' | translate}}</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #typeAheadItem let-model="item" let-index="index" let-last="last" let-match="match">
+  <div class="media w-100 p-2" (click)="onTemplateMatch(match)">
+    <img class="mr-3 align-self-center thumbnail" [src]="model.IconId | image: true: true: model.Id"
+      [alt]="model.IconId">
+    <div class="media-body truncate">
+      <h6 class="m-0">{{model.Name}}</h6>
+      <small class="d-block">{{model.ProductCode}}</small>
+    </div>
+  </div>
+</ng-template>

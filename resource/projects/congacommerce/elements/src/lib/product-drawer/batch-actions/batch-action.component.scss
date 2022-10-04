@@ -1,0 +1,11 @@
+button {
+  width: 100%;
+  justify-content: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+  &:focus {
+    text-decoration: none;
+  }
+}

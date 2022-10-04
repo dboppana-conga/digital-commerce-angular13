@@ -1,0 +1,43 @@
+<ng-container>
+  <form [ngClass]="inputClass">
+    <div class="align-items-center d-flex justify-content-center input-group-sm px-4" *ngIf="showQuantityControls">
+      <label [for]="'quantity' + product.Id" class="mr-3">{{'COMMON.QUANTITY' | translate}}</label>
+      <input type="number" min="1" class="form-control mb-2 w-50" [(ngModel)]="quantity" min="1" name="quantity"
+        [id]="'quantity' + product.Id" (ngModelChange)="emitQuantity($event)" /> <!-- Stopgap approach -->
+    </div>
+    <div class="d-flex" *ngIf="view$ | async as view">
+      <ng-container *ngIf="view?.actions?.length > 0; else disabled">
+        <apt-cr-popover class="d-block flex-grow-1" [product]="product" [ruleList]="productRules$ | async">
+          <button class="btn btn-block" [disabled]="view?.disabled || view.actions[0]?.enabled === false"
+            [ladda]="loading" [attr.data-style]="'zoom-in'" [ngClass]="buttonClass" (click)="view.actions[0]?.onClick()"
+            type="button">
+            {{view.actions[0]?.label | translate}}
+          </button>
+        </apt-cr-popover>
+
+        <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
+          *ngIf="(isLoggedIn$ | async) === true && view.actions.length > 1" [ngClass]="buttonClass"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <ng-container *ngFor="let action of view.actions; let idx = index">
+            <a class="dropdown-item" href="javascript:void(0)" (click)="action.onClick()"
+              *ngIf="idx > 0 && action?.enabled">{{action.label}}</a>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-template #disabled>
+        <button class="btn btn-block" [disabled]="true" [ngClass]="buttonClass" type="button">
+          {{label | translate}}
+        </button>
+      </ng-template>
+    </div>
+
+  </form>
+</ng-container>
+
+<apt-product-configuration-summary
+  *ngIf="renderConfiguration && configurationEnabled && (product?.HasOptions || product?.HasAttributes)"
+  [product]="product" [quantity]="quantity" #productConfiguration></apt-product-configuration-summary>

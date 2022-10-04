@@ -1,0 +1,18 @@
+button[aria-expanded]{
+  &:before, &:after{
+    font-weight: 400;
+    font-size: larger;
+    margin-right: 1rem;
+  }
+  padding: 0;
+}
+button[aria-expanded="false"]:before{
+      content: "\f0da";
+  }
+
+button[aria-expanded="true"]:before{
+    content: "\f0d7";
+}
+.collapse, .collapsing{
+    background-color: inherit;
+}

@@ -1,0 +1,18 @@
+<div class="d-flex date-range-container">
+  <div class="form-group pr-1" *ngIf="displayDate!=='EndDate'">
+    <apt-output-field [record]="cartItem" class="StartDate" field="StartDate" [labelOnly]="true" [labelClass]="'mb-1'">
+    </apt-output-field>
+    <input type="text" id="startDate" class="form-control" #startDateTemplate="bsDatepicker" [minDate]="startDate"
+      bsDatepicker [(ngModel)]="startDate" [bsConfig]="bsConfig" (ngModelChange)="startDateChange(startDate)"
+      [disabled]="disableStartDate || readonly" [readonly]="readonly" [class.form-control-sm]="small">
+    <i class="fa fa-calendar pl-3 mb-3"></i>
+  </div>
+  <div class="form-group pr-1" *ngIf="displayDate!=='StartDate'">
+    <apt-output-field [record]="cartItem" class="EndDate" field="EndDate" [labelOnly]="true" [labelClass]="'mb-1'">
+    </apt-output-field>
+    <input type="text" id="endDate" class="form-control" #endDateTemplate="bsDatepicker" [minDate]="startDate"
+      bsDatepicker [(ngModel)]="endDate" [bsConfig]="bsConfig" (ngModelChange)="endDateChange(endDate)"
+      [disabled]="disableEndDate || readonly" [readonly]="readonly" [class.form-control-sm]="small">
+    <i class="fa fa-calendar pl-3 mb-3"></i>
+  </div>
+</div>

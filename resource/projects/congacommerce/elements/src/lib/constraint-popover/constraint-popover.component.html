@@ -1,0 +1,136 @@
+<div class="h-100"
+  [popover]="((ruleList?.length > 0 && rulesToShow?.length > 0 ) || message?.length > 0) ? popTemplate : null"
+  [containerClass]="containerClass" [outsideClick]="outsideClick" [triggers]="triggers" [placement]="onShown()"
+  (click)="openPopover(pop)" #pop="bs-popover" [attr.data-popover]="(ruleList?.length > 0 || message)">
+  <ng-content></ng-content>
+</div>
+
+
+<ng-template #popTemplate>
+  <div class="p-2" *ngIf="!optionRules; else constraintOptionTemplate">
+    <div class="popoverHeader mb-3">
+      <h5>{{'CONSTRAINT_POPOVER.PRODUCTS_INCLUDED_EXCLUDED_HEADING' | translate}}</h5>
+    </div>
+    <div class="popoverBody">
+      <div *ngIf="message">
+        <p [innerHTML]="message"></p>
+      </div>
+
+      <div *ngIf="productInclusionRules?.length > 0">
+        <p [innerHTML]="'CONSTRAINT_POPOVER.PRODUCTS_INCLUSION' | translate: {productName: product?.Name}"></p>
+        <div class="border-top pt-3">
+          <div *ngFor="let rule of productInclusionRules" class="d-flex justify-content-between">
+            <ng-container *ngIf="rule.ProductScope === 'Product'">
+              <a [routerLink]="['/products', rule.Product[identifier]]" *ngIf="rule?.Product?.Id"
+                href="javascript:void(0)">{{rule?.Product?.Name}}</a>
+              <small>
+                <apt-price [record]="rule.Product" quantity="1"></apt-price>
+              </small>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="productExclusionRules?.length > 0">
+        <p [ngClass]="(productExclusionRules?.length > 0) ? 'border-top pt-3 mt-3' : ''"
+          [innerHTML]="'CONSTRAINT_POPOVER.PRODUCTS_EXCLUSION' | translate: {productName: product.Name}">
+        </p>
+        <div class="border-top pt-3">
+          <div *ngFor="let rule of productExclusionRules" class="d-flex justify-content-between">
+            <a [routerLink]="['/products', rule.Product[identifier]]" *ngIf="rule?.Product?.Id"
+              href="javascript:void(0)">{{rule?.Product?.Name}}</a>
+            <small>
+              <apt-price [record]="rule.Product"></apt-price>
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="otherRules?.length > 0">
+        <div *ngFor="let rule of otherRules">
+          <ng-container *ngIf="rule.ProductScope === 'Product Group'">
+            <p class="pt-3 mt-3"
+              [innerHTML]="'COMMON.PRODUCT_GROUP' | translate: {productGroupName: rule?.ProductGroup?.Name}"></p>
+          </ng-container>
+          <ng-container *ngIf="rule.ProductScope === 'Product Family'">
+            <p class="pt-3 mt-3"
+              [innerHTML]="'COMMON.PRODUCT_FAMILY' | translate: {productFamily: rule?.ProductFamily}"></p>
+          </ng-container>
+          <div class="border-top pt-3">
+            <p [innerHTML]="rule.Message"></p>
+            <strong> {{product?.Name}}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--  Product Details -->
+<ng-template #constraintOptionTemplate>
+  <div [ngSwitch]="state">
+    <div *ngSwitchCase="'LOADING'">
+      <div class="modal-body d-flex p-5 align-items-center justify-content-center">
+        <apt-spinner class="m-5"></apt-spinner>
+      </div>
+    </div>
+    <div *ngSwitchCase="'WRITE'">
+      <div class="p-2">
+        <div class="d-flex justify-content-between border-bottom mb-3">
+          <h5>
+            {{'CONSTRAINT_POPOVER.OPTIONS_HEADING' | translate}}
+          </h5>
+          <button type="button" class="close closeButton" aria-label="Close" (click)="popoverClose()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="popoverBody">
+          <div *ngIf="message">
+            <p [innerHTML]="message"></p>
+          </div>
+
+          <div>
+            <ng-container *ngFor="let msg of promptActionList.Messages">
+              <p [innerHTML]="msg"></p>
+            </ng-container>
+
+            <div class="border-top pt-3">
+              <div *ngFor="let item of promptActionList.ActionItem" class="d-flex mt-3">
+                <ng-container>
+                  <div class="d-flex justify-content-between flex-grow-1">
+                    <div class="d-flex flex-grow-1 option-details pr-5 w-75">
+                      <div>
+                        <p class="mt-0 mb-1">{{item.Product.Name}}</p>
+                      </div>
+                    </div>
+                  </div>
+                    <div class="border-left  d-flex align-items-center justify-content-end">
+                      <div class="pl-3">
+                        <label>{{'COMMON.PRICE' | translate}}</label>
+                        <apt-price [record]="item.Product" quantity="1"></apt-price>
+                      </div>
+
+                      <div class="pl-3">
+                        <label for="item.Product.Id" class="mr-2 mb-0">{{'COMMON.QTY2' | translate}}</label>
+                        <input type="number" class="form-control form-control-sm text-center w-50" id="item.Product.Id"
+                          placeholder="1" name="quantity"
+                          [(ngModel)]="getOptionValue(item.Product)._metadata.quantity" />
+                      </div>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-primary" *ngIf="item.ActionType === 'Inclusion'"
+                          [disabled]="isItemSelected(item.Product?.Id)"
+                          (click)="selectPromptAction(item.Product, true)">{{'COMMON.ADD' | translate}}</button>
+                        <button class="btn btn-outline-danger" *ngIf="item.ActionType === 'Exclusion'"
+                          [disabled]="!isItemSelected(item.Product?.Id)"
+                          (click)="selectPromptAction(item.Product, false)">{{'COMMON.REMOVE' | translate}}</button>
+                      </div>
+                    </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-template>

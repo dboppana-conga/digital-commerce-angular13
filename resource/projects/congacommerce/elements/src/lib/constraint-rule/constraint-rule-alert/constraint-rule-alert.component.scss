@@ -1,0 +1,14 @@
+apt-constraint-rule-alert {
+  alert > div.alert:first-child {
+    margin-bottom: 0px;
+    height: auto;
+    line-height: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+
+    button.close {
+      padding: 0px 16px 0px 0px;
+      line-height: 40px;
+    }
+  }
+}

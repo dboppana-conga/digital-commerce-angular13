@@ -1,0 +1,23 @@
+<div class="card" [class.border-top]="index === 0">
+  <div class="card-header accordionHeader d-flex p-3" role="button" data-toggle="collapse" [attr.data-target]="'#collapse' + index" aria-expanded="true" [attr.aria-controls]="'collapse' + index">
+    <div class="position-absolute ml-4" *ngIf="showAssetCheckBox(operation);">
+      <input [id]="group[0]?.parent?.Product.Name" type="checkbox" class="custom-control-input" [(ngModel)]="checkState" (change)="handleCheckbox($event)"/>
+      <label class="custom-control-label ml-2" [for]="group[0]?.parent?.Product.Name">&nbsp;</label>
+    </div>
+
+    <span class="downArrow ml-5">&#9660;</span>
+    <span class="assetName ml-3">
+      {{group[0]?.parent?.Product.Name}}
+    </span>
+  </div>
+  
+  <div [attr.id]="'collapse' + index" class="collapse show">
+    <apt-asset-accordion-item
+      *ngFor="let item of group;let i=index"
+      [item]="item"
+      [operation]="operation"
+      (checkChange)="handleCheckChange($event)"
+      [checkState]="checkAll"
+    ></apt-asset-accordion-item>
+  </div>
+</div>

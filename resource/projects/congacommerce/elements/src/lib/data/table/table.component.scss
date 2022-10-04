@@ -1,0 +1,74 @@
+apt-table{
+    .collapsing {
+        -webkit-transition: none;
+        transition: none;
+        display: none;
+    }
+    .table-controls{
+        >div{
+            padding: 0 .5rem 0 1rem;
+        }
+        div.d-flex{
+            align-items: center;
+        }
+        .input-group{
+            width: auto;
+            align-items: center;
+        }
+        pagination{
+            ul{
+                margin-bottom: 0;
+                li{
+                    display: flex;
+                    align-items: center;
+
+                    &.pagination-next>a:before{
+                        font-family: "Font Awesome 5 Free";
+                        font-weight: 400;
+                        content: "\f054";
+                    }
+                    &.pagination-prev>a:before{
+                        font-family: "Font Awesome 5 Free";
+                        font-weight: 400;
+                        content: "\f053";
+                    }
+                    &.page-item.active .page-link{
+                        background-color: inherit;
+                        color: inherit;
+                    }
+                    &.page-item.disabled .page-link {
+                        background: transparent;
+                    }
+                    .page-link {
+                        background: transparent;
+                        border: none;
+                        min-width: initial;
+                        padding: 0 .5rem;
+                    }
+                }
+            }
+        }
+        button.btn.btn-link{
+            padding: .25rem .5rem;
+        }
+    }
+    table.table{
+        td, th{
+            vertical-align: middle;
+            height: 39px;
+        }
+        .action{
+            width: 3rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .loading-indicator{
+            height: 10px;
+            border-radius: 5px;
+        }
+    }
+    .childPopover {
+        max-width: unset;
+    }
+}
+

@@ -1,0 +1,16 @@
+<div [hidden]="isLoading">
+<span>{{'CART.PAYMENT.PAYMENT_INPUT' | translate}}</span>
+  <form ngNoForm [action]="transactionRequestModel['IFram_Url__c']" hidden target="iframeAuthorizeNet" method="post" hidden>
+    <ng-container *ngFor="let item of transactionRequestModel | keyvalue">
+      <input type="hidden" [id]="item.key" [name]="item.key" [value]="item.value" />
+    </ng-container>
+    <button id="addPaymentMethod" type="submit" class="btn btn-success">
+      <i class="fa fa-floppy-o" aria-hidden="true"></i> Save
+    </button>
+  </form>
+  <iframe height="500" width="100%" #iframeAuthorizeNet (load)="onLoadIframe()" name="iframeAuthorizeNet"
+    id="iframeAuthorizeNet" src="" frameborder="0" scrolling="no"></iframe>
+</div>
+<div *ngIf="isLoading" class="d-flex justify-content-center py-5">
+  <apt-spinner></apt-spinner>
+</div>

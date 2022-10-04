@@ -1,0 +1,62 @@
+<div class="card " *ngIf="(storefront$ | async)?.EnablePromotions">
+  <h5 class="card-header mb-0">
+    {{ 'PROMOTION.PROMOTION_TITLE' | translate }}
+  </h5>
+  <div class="card-body">
+    <form class="input-group pb-3">
+      <input type="text" class="form-control promo-form-control" placeholder="{{'PROMOTION.PROMO_CODE' | translate}}" [(ngModel)]="promocode"
+        [ngModelOptions]="{standalone: true}">
+      <div class="ml-2">
+        <button type="submit" class="btn btn-outline-primary" (click)="applyPromotions()" [ladda]="loading" [attr.data-style]="'zoom-in'">
+          {{ 'PROMOTION.APPLY' | translate }} </button>
+      </div>
+    </form>
+    <div>
+
+      <ul class="list-group">
+        <li class="list-group-item dashed-border border-secondary" *ngFor="let incentive of promoList$ | async; trackBy: trackById">
+          <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-link text-primary p-0 btn-sm font-weight-bold" (click)="promotionModal.openIncentiveModal(incentive)">{{incentive?.Name}}</button>
+            <span class="badge badge-light p-2">{{incentive?._metadata?.total | localCurrency | async}}</span>
+          </div>
+          <apt-output-field field="IncentiveCode" labelClass="font-weight-normal text-uppercase" [editable]="false" [record]="incentive"
+            layout="inline" class="d-block my-2" *ngIf="!incentive._metadata.couponCode"></apt-output-field>
+          <span *ngIf="incentive._metadata.couponCode" class="coupon">
+            <dt>{{'PROMOTION.COUPON_CODE' | translate}}:</dt>
+            <dd>{{ incentive._metadata.couponCode }}</dd>
+          </span>
+          <p [innerHTML]="incentive?.Description"></p>
+          <button *ngIf="incentive?.AutoApply === false" class="btn btn-link p-0 btn-sm" (click)="removePromotion(incentive)" [ladda]="incentive?._metadata?.loading"
+            [attr.data-style]="'zoom-in'"> {{'PROMOTION.REMOVE' | translate}} </button>
+        </li>
+      </ul>
+
+      <!-- <ng-container *ngFor="let item of cartPromotionList">
+        <div class="list-group-item d-flex justify-content-between small p-1 promo-border promo-li-height">
+          <div class="d-flex flex-grow-1 flex-column">
+            <p class="mb-2">
+              <a href="javascript:void(0)" class="font-weight-bold small" (click)="openModalForCartPromo(item?.Incentive?.Name, item)">{{item?.Incentive?.Name}}</a>
+            </p>
+            <div class="mb-2 small">
+              <span class="font-weight-bold"> {{'PROMOTION.PROMO_CODE' | translate}}: </span>
+              <span>{{item?.IncentiveCode}}</span>
+            </div>
+            <div class="text-muted small">
+              {{item?.Incentive?.Description}}
+            </div>
+          </div>
+          <div class="d-flex align-items-end flex-column">
+            <p class="pt-1 m-0 small">
+              <a *ngIf="item?.Incentive?.AutoApply === false" href="javascript:void(0)" class="text-secondary" (click)="removePromotion(item?.IncentiveCode, item?.Incentive?.Name)"> {{'PROMOTION.REMOVE' | translate}} </a>
+            </p>
+            <div class="mt-auto">
+              <span class="badge badge-secondary small">{{totalPromotionAmt(item?.Incentive?.Name, item) | localCurrency | async}}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container> -->
+    </div>
+  </div>
+</div>
+
+<apt-pr-modal #promotionModal></apt-pr-modal>

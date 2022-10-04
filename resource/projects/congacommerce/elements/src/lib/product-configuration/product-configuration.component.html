@@ -1,0 +1,292 @@
+<div class="card">
+    <div class="card-body">
+        <ng-container *ngIf="(view$ | async) as view; else loading">
+            <ng-container *ngIf="view?.product?.OptionGroups?.length > 0 || view?.product?.HasAttributes && view?.product?.AttributeGroups?.length > 0
+                            ; else empty">
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <form class="input-group input-group-sm col-4">
+                            <input type="search" class="form-control"
+                                placeholder="{{'COMMON.SEARCH_CONFIGURATION' | translate}}" [(ngModel)]="searchText"
+                                name="searchText" (ngModelChange)="searchChange()">
+                            <div class="input-group-append">
+                                <button class="btn btn-link">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div>
+                            <button class="btn btn-link" [disabled]="accordion"
+                                (click)="accordion = true; collapseAll = false;">
+                                <i class="fa fa-angle-double-up fa-lg" title="Collapse All"></i>
+                            </button>
+                            <button class="btn btn-link" [disabled]="!accordion"
+                                (click)="accordion = false; collapseAll = true;">
+                                <i class="fa fa-angle-double-down fa-lg" title="Expand All"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="accordion" id="optionAccordion">
+                        <ng-container *ngIf="view?.product?.AttributeGroups?.length > 0">
+                            <apt-product-attribute [product]="view.product"
+                                [(productAttributeValue)]="view.product._metadata.item.AttributeValue"
+                                (productAttributeValueChange)="onAttributeChange($event, view)"
+                                container="optionAccordion" (attributeValueChange)="handleAttributeValueChange($event)"
+                                [accordion]="accordion" [collapseAll]="collapseAll">
+                            </apt-product-attribute>
+                        </ng-container>
+
+                        <ng-container *ngIf="view?.product?.HasOptions && view?.product?.OptionGroups?.length > 0">
+                            <div class="card border"
+                                *ngFor="let productOptionGroup of view?.product?.OptionGroups; let optionIndex = index; trackBy: trackById"
+                                [hidden]="productOptionGroup.get('hide')">
+                                <ng-container *ngIf="!productOptionGroup?.IsHidden">
+                                    <div [id]="'ac' + productOptionGroup.Id" class="accordion">
+                                        <div class="card-header px-2 py-1">
+                                            <h2 class="mb-0 d-flex justify-content-between align-items-center">
+                                                <button class="btn btn-link chevron" type="button"
+                                                    data-toggle="collapse"
+                                                    [attr.data-target]="'#a' + productOptionGroup.Id"
+                                                    [attr.aria-expanded]="((optionIndex + view?.product?.AttributeGroups?.length === 0 || productOptionGroup._metadata.expand) && collapseAll) || !accordion ? 'true' : 'false'">
+                                                    {{productOptionGroup?.OptionGroup?.Label}}
+                                                </button>
+                                                <apt-alert [record]="productOptionGroup"
+                                                    message="ERROR.OPTION_GROUP.ERROR" layout="inline"
+                                                    *ngIf="productOptionGroup?.ModifiableType !== 'Fixed'">
+                                                </apt-alert>
+                                            </h2>
+                                        </div>
+
+                                        <div [id]="'a' + productOptionGroup.Id" class="collapse"
+                                            [class.show]="((optionIndex + view?.product?.AttributeGroups?.length === 0 || productOptionGroup._metadata.expand) && collapseAll) || !accordion"
+                                            [attr.data-parent]="'#ac' + productOptionGroup.Id">
+                                            <div class="card-body">
+                                                <ng-template [ngTemplateOutlet]="productOptionGroupTemplate"
+                                                    [ngTemplateOutletContext]="{optionGroupList: productOptionGroup?.ChildOptionGroups, parent: productOptionGroup.Id}">
+                                                </ng-template>
+                                                <div class="pl-4">
+                                                    <ng-template [ngTemplateOutlet]="componentListTemplate"
+                                                        [ngTemplateOutletContext]="{componentList: productOptionGroup?.Options, parent: productOptionGroup.Id, group: productOptionGroup}">
+                                                    </ng-template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <ng-template #productOptionGroupTemplate let-optionGroupList="optionGroupList" let-parent="parent"
+                        let-parentProduct="parentProduct">
+                        <div class="accordion" [id]="parent">
+
+                            <div *ngFor="let subProductOptionGroup of optionGroupList; let categoryIndex = index; let l = last; let f = first; trackBy: trackById"
+                                class="mb-3">
+                                <ng-container *ngIf="!subProductOptionGroup?.IsHidden">
+                                    <h5 class="d-flex justify-content-between align-items-center border-bottom">
+                                        <button class="btn btn-link chevron" type="button" data-toggle="collapse"
+                                            [attr.data-target]="'#' + parent + '-' + subProductOptionGroup.Id"
+                                            [attr.aria-expanded]="((subProductOptionGroup._metadata.expand) && collapseAll) || !accordion ? 'true' : 'false'">
+                                            {{subProductOptionGroup?.OptionGroup?.Label}}
+                                        </button>
+                                        <apt-alert message="ERROR.OPTION_GROUP.ERROR" layout="inline"
+                                            [record]="subProductOptionGroup"
+                                            *ngIf="subProductOptionGroup?.ModifiableType !== 'Fixed'"></apt-alert>
+                                    </h5>
+
+                                    <div [id]="parent + '-' + subProductOptionGroup.Id" class="collapse pl-4"
+                                        [attr.data-parent]="'#' + parent"
+                                        [class.show]="((subProductOptionGroup._metadata.expand) && collapseAll) || !accordion">
+                                        <ng-template [ngTemplateOutlet]="componentListTemplate"
+                                            [ngTemplateOutletContext]="{componentList: subProductOptionGroup?.Options, parent: parent + '-' + subProductOptionGroup.Id, group: subProductOptionGroup}">
+                                        </ng-template>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #componentListTemplate let-componentList="componentList" let-parent="parent"
+                        let-group="group">
+                        <ng-container
+                            *ngIf="componentList?.length > 0 || group?.ChildOptionGroups?.length > 0; else cLoading">
+                            <ng-container
+                                *ngFor="let component of componentList; let f = first; let l = last; trackBy: trackById">
+                                <div class="option" *ngIf="!component.get('hidden')"
+                                    [class.border-bottom]="!l && ((component?.ComponentProduct?.HasOptions || component?.ComponentProduct?.HasAttributes))"
+                                    [hidden]="component.get('hide')">
+
+                                    <ng-template
+                                        *ngIf="component?.ComponentProduct?._metadata?.item?.AssetLineItem?.PriceType === 'One Time'"
+                                        [ngTemplateOutlet]="readOnlyComponent" [ngTemplateOutletContext]="{
+                                                                component: component,
+                                                                parent: parent,
+                                                                selected: isItemSelected(component),
+                                                                cartItem: component?.ComponentProduct?._metadata?.item,
+                                                                group: group
+                                                            }"></ng-template>
+
+                                    <ng-template
+                                        *ngIf="component?.ComponentProduct?._metadata?.item?.AssetLineItem?.PriceType !== 'One Time'"
+                                        [ngTemplateOutlet]="componentTemplate" [ngTemplateOutletContext]="{
+                                                            component: component, 
+                                                            parent: parent, 
+                                                            selected: isItemSelected(component), 
+                                                            cartItem: component?.ComponentProduct?._metadata?.item,
+                                                            group: group}">
+                                    </ng-template>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #cLoading>
+                            <div class="d-flex justify-content-center pt-5">
+                                <apt-dots></apt-dots>
+                            </div>
+                        </ng-template>
+                    </ng-template>
+
+                    <ng-template #readOnlyComponent let-component="component" let-parent="parent"
+                        let-cartItem="cartItem" let-group="group" let-selected="selected">
+                        <div class="d-flex py-2">
+                            <div class="d-flex flex-grow-1">
+                                <div class="d-flex">
+                                    <div class="mr-2">
+                                        <i class="fa fa-check-square-o fa-lg"></i>
+                                    </div>
+                                    <div class="image-container d-flex justify-content-center">
+                                        <img [src]="component?.ComponentProduct?.IconId | image" height="50">
+                                    </div>
+                                </div>
+                                <div class="mx-3">
+                                    <p class="m-0 font-weight-bold">{{component?.ComponentProduct?.Name}}</p>
+                                    <small class="d-block desc">{{component?.ComponentProduct?.Description}}</small>
+                                </div>
+                            </div>
+                            <div class="width-fixed border-left d-flex">
+                                <div class="form-group col">
+                                    <label>{{'COMMON.PRICE' | translate}}</label>
+                                    <h5 class="pt-1">
+                                        <apt-price [record]="component?.ComponentProduct" [quantity]="1"></apt-price>
+                                    </h5>
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="qty">{{'COMMON.QTY' | translate}}</label>
+                                    <input type="number" min="0" class="form-control form-control-sm text-center"
+                                        [disabled]="true" id="qty" [value]="cartItem?.Quantity" name="quantity">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pl-3" [hidden]="!selected">
+                            <ng-container *ngIf="component?.ComponentProduct?._metadata?.item?.AttributeValue">
+                                <apt-product-attribute [product]="component.ComponentProduct"
+                                    [container]="parent + '-' + component.Id" lineType="Option"
+                                    [(productAttributeValue)]="component.ComponentProduct._metadata.item.AttributeValue"
+                                    (productAttributeValueChange)="onAttributeChange($event, view)"
+                                    (attributeValueChange)="handleAttributeValueChange($event)" [accordion]="accordion"
+                                    [collapseAll]="collapseAll"></apt-product-attribute>
+                            </ng-container>
+
+
+                            <ng-template [ngTemplateOutlet]="productOptionGroupTemplate"
+                                [ngTemplateOutletContext]="{optionGroupList: component?.ComponentProduct?.OptionGroups, parent: parent + '-' + component.Id, parentProduct: component?.ComponentProduct}">
+                            </ng-template>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #componentTemplate let-component="component" let-parent="parent"
+                        let-selected="selected" let-cartItem="cartItem" let-group="group">
+                        <div class="d-flex py-2">
+                            <div class="d-flex flex-grow-1">
+                                <div class="d-flex cr-popover-container">
+                                    <apt-cr-popover [ruleList]="view?.ruleList" [triggers]="''" [outsideClick]="false"
+                                        [optionRules]="true" [product]="component?.ComponentProduct"
+                                        [parentProduct]="view?.product" [containerClass]="'CRPopover optionPopover'">
+                                        <div class="custom-control custom-checkbox" *ngIf="!component?.ComponentProduct?._metadata?.loading; else spinner">
+                                            <input type="checkbox" class="custom-control-input"
+                                            [id]="parent + '-' + component.Id" [checked]="selected" 
+                                            [disabled]="group?._metadata?.summary?.disabled || component?._metadata?.disabled || group.ModifiableType === 'Fixed'">
+                                            <label class="custom-control-label" [for]="parent + '-' + component.Id"
+                                            (click)="toggleOption(component, group, parent, view, $event)">&nbsp;</label>
+                                        </div>
+                                        <ng-template #spinner><apt-spinner class="pr-1 mr-2" [large]="false"></apt-spinner></ng-template>
+                                    </apt-cr-popover>
+
+                                    <div class="image-container d-flex justify-content-center">
+                                        <img [src]="component?.ComponentProduct?.IconId | image" height="50">
+                                    </div>
+
+                                </div>
+                                <div class="mx-3">
+                                    <p class="m-0 font-weight-bold">{{component?.ComponentProduct?.Name}}
+                                        <i *ngIf='component?.Required' class="fa fa-asterisk text-danger fa-xs"
+                                            aria-hidden="true"></i>
+                                    </p>
+                                    <small class="d-block desc">{{component?.ComponentProduct?.Description}}</small>
+                                </div>
+                            </div>
+                            <div class="width-fixed border-left d-flex">
+                                <div class="form-group col">
+                                    <label>{{'COMMON.PRICE' | translate}}</label>
+                                    <h5 class="pt-1">
+                                        <ng-container *ngIf="!component?.ComponentProduct?._metadata?.item; else itemPrice">
+                                            <apt-price [record]="component?.ComponentProduct" [quantity]="1"></apt-price>
+                                        </ng-container>
+                                        <ng-template #itemPrice>
+                                            <apt-price [record]="component?.ComponentProduct?._metadata?.item" [type]="'net'"></apt-price>
+                                        </ng-template>
+                                    </h5>
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="qty">{{'COMMON.QTY' | translate}}</label>
+                                    <input type="number" [min]="component?.Required ? 1 : 0"
+                                        class="form-control form-control-sm text-center"
+                                        *ngIf="cartItem; else disabledInput"
+                                        [disabled]="!selected || group.ModifiableType === 'Fixed'" id="qty"
+                                        placeholder="1" name="quantity" (change)="emitChange(view); changeItemQuantity(cartItem, component)"
+                                        [(ngModel)]="!selected ? 0 : cartItem.Quantity">
+                                    <ng-template #disabledInput>
+                                        <input type="number" min="0" class="form-control form-control-sm text-center"
+                                            [disabled]="true" id="qty" placeholder="0" name="quantity">
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pl-3" [hidden]="!selected">
+                            <ng-container *ngIf="component?.ComponentProduct?._metadata?.item?.AttributeValue">
+                                <apt-product-attribute [product]="component.ComponentProduct"
+                                    [container]="parent + '-' + component.Id" lineType="Option"
+                                    [(productAttributeValue)]="component.ComponentProduct._metadata.item.AttributeValue"
+                                    (productAttributeValueChange)="onAttributeChange($event, view)"
+                                    (attributeValueChange)="handleAttributeValueChange($event)" [accordion]="accordion"
+                                    [collapseAll]="collapseAll"></apt-product-attribute>
+                            </ng-container>
+
+
+                            <ng-template [ngTemplateOutlet]="productOptionGroupTemplate"
+                                [ngTemplateOutletContext]="{optionGroupList: component?.ComponentProduct?.OptionGroups, parent: parent + '-' + component.Id, parentProduct: component?.ComponentProduct}">
+                            </ng-template>
+                        </div>
+                    </ng-template>
+                </div>
+            </ng-container>
+            <ng-template #empty>
+                <div class="d-flex justify-content-center flex-column align-items-center py-5 my-5">
+                    <i class="fa fa-cog fa-5x text-primary xl text-faded"></i>
+                    <div class="mt-4">{{'CONFIGURATION.NO_CONFIGURATION' | translate}}</div>
+                </div>
+            </ng-template>
+        </ng-container>
+        <ng-template #loading>
+            <div class="d-flex justify-content-center py-5">
+                <apt-dots></apt-dots>
+            </div>
+        </ng-template>
+    </div>
+</div>

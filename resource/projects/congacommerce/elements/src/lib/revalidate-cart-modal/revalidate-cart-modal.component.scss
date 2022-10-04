@@ -1,0 +1,23 @@
+.revalidate-block {
+  .custom-control-label{
+    margin-left: 1.5rem;
+  }
+  table{
+    tbody{
+      >tr{
+        >td{
+          padding: 0;
+          .inner-body{
+            padding: 0;
+            margin: 0;
+            overflow: auto;
+            max-height: 10rem;
+            table{
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

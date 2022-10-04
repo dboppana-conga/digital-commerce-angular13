@@ -1,0 +1,23 @@
+<div class="card compareProductCard">
+  <button type="button" class="close remove-button" aria-label="Close" (click)="removeProduct()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <a href="javascript.void(0)" [routerLink]="['/products', _product[identifier]]" class="pt-3">
+    <div class="img-container">
+      <img class="card-img-top w-50 m-auto d-flex align-self-center" [src]="_product.IconId | image" [alt]="_product.Name">
+    </div>
+    <div class="card-body">
+      <h5 class="card-title mb-0">{{_product.Name}}</h5>
+      <div class="d-flex mb-3 align-items-center split-items">
+        <small class="text-muted product-code" *ngIf="showCode">{{_product.ProductCode}}</small>
+        <small class="text-muted product-category" *ngIf="showCategory && _product.Categories?.length > 0">{{_product.Categories[0]?.Classification?.Name}}</small>
+      </div>
+      <p class="card-text font-weight-bold">
+        <apt-price [record]="_product"></apt-price>
+      </p>
+    </div>
+  </a>
+  <div class="card-footer" *ngIf="canAddToCart">
+    <apt-add-to-cart [product]="_product"></apt-add-to-cart>
+  </div>
+</div>

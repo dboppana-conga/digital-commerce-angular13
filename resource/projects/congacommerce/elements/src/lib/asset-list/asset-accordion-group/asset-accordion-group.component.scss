@@ -1,0 +1,26 @@
+.accordionHeader {
+  cursor: pointer;
+  .downArrow {
+    transition: transform .35s ease;
+  }
+
+  &.collapsed {
+    .downArrow {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .assetName {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+}
+
+.custom-control-label {
+  pointer-events: none;
+  &::before,
+  &::after {
+    pointer-events: all;
+  }
+}

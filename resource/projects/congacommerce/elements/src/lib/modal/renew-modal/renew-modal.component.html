@@ -1,0 +1,92 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{'COMMON.RENEW' | translate}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body renew-detail" *ngIf="assetList?.length==1">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <apt-output-field [record]="this._assetItem" field="Product.Name" layout="inline" [editable]="false"></apt-output-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-md-6">
+        <div class="container-fluid">
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="ChargeType" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="SellingFrequency" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="StartDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+              <apt-output-field [record]="this._assetItem" field="NetPrice" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+        </div>
+      </div>
+      <div class="col col-md-6">
+        <div class="container-fluid">
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="NetUnitPrice" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="Quantity" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="EndDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row">
+            <apt-output-field [record]="this._assetItem" field="SellingTerm" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="m-0">
+<form class="d-flex justify-content-between modal-body row" (ngSubmit)="renew()">
+  <div class="col-6 form-group">
+    <div class="custom-control custom-radio mb-2 ml-3">
+      <input type="radio" class="custom-control-input" id="renewModalEndDate" name="state" value="renewal" 
+        [(ngModel)]="state">
+      <label class="custom-control-label" for="renewModalEndDate">
+        {{'MODAL.RENEWAL_END_DATE' | translate}}
+      </label>
+    </div>
+    <div class="input-group ml-3">
+      <input
+        type="text"
+        id="renewalDate"
+        name="endDate"
+        class="form-control"
+        placeholder="MM/DD/YYYY"
+        [minDate]="minimumDate"
+        [(ngModel)]="renewForm.endDate"
+        bsDatepicker
+        [bsConfig]="{ showWeekNumbers: false }"
+        [disabled]="state !== 'renewal'"
+      >
+      <div class="input-group-append">
+        <span class="input-group-text">
+          <i class="fas fa-calendar-alt"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 form-group">
+    <div class="custom-control custom-radio mb-2">
+      <input type="radio" class="custom-control-input" id="renewModalTerm" name="state" value="term" [(ngModel)]="state">
+      <label class="custom-control-label" for="renewModalTerm">
+        {{'MODAL.USE_EXISTING_TERM' | translate}}
+      </label>
+    </div>
+  </div>
+</form>
+<div class="modal-footer">
+  <button class="btn" (click)="bsModalRef.hide()">{{'COMMON.CANCEL' | translate}}</button>
+  <button class="btn btn-primary btn-raised" type="button" (click)="renew()" [ladda]="loading" data-style="zoom-in">{{'COMMON.RENEW' | translate}}</button>
+</div>

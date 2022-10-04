@@ -1,0 +1,46 @@
+:host{
+    position: relative;
+    display: block;
+    z-index: 10000;
+    img{
+        max-width: 3rem;
+    }
+    .dropdown-menu{
+        min-width: 25rem;
+    }
+    span.badge{
+        position: absolute;
+        top: 15px;
+        right: 5px;
+        cursor: pointer;
+    }
+    .dropdown-menu{
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    button.dropdown-toggle::after{
+        display: none;
+    }
+    li.last-list-item {
+        border-color: transparent;
+    }
+    li.first-list-item {
+        border-top-color: transparent;
+    }
+
+    li.seperator {
+        width: 100%; 
+        text-align: center; 
+        border-bottom: 1px solid #93A1AA; 
+        line-height: 0.1em;
+        margin: 10px 0 20px; 
+    } 
+    
+    li.seperator span { 
+        background:#ffffff; 
+        padding:0 10px; 
+        color: #323232;
+    }
+     
+}
+ 

@@ -1,0 +1,23 @@
+<!-- <div class="card p-3">
+    <label>{{ 'CART.PAYMENT.ORDER_CONFIRMATION_MESSAGE' | translate }}</label>
+    <h5 class="text-left my-3">{{ 'CART.PAYMENT.ORDER_NUMBER' | translate }} {{paymentTransaction?.OrderName}}</h5>
+    <small class="text-left">{{ 'CART.PAYMENT.ORDER_SUBTITLE' | translate }}</small>
+  </div>
+<div class="mt-4 mb-3">
+  <h5 class="mb-0 text-muted">{{'CART.PAYMENT.PAYMENT_TITLE' | translate}}</h5>
+</div> -->
+<div class="card p-3">
+  <div *ngIf="paymentTransaction.isUserLoggedIn" class="d-block my-3">
+    <apt-payment-method [paymentTransaction]="paymentTransaction" (callForNewPaymentMethod)='requestNewPaymentMethod($event)'>
+    </apt-payment-method>
+  </div>
+  <div *ngIf="paymentForOrder" class="d-block pl-3">  
+    <apt-payment-iframe class="d-block pl-3" [paymentTransaction]="paymentTransaction" [paymentType]="paymentType" (onSubmitPaymentRequest)='onSubmitPaymentRequestForOrder($event)' >
+    </apt-payment-iframe>    
+    <div *ngIf="paymentTransaction.isUserLoggedIn" class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" id="save-payment" (ngModelChange)="transactionType($event)"
+        [(ngModel)]="isSalesCardSaved" name="savePaymentCard">
+      <label class="custom-control-label" for="save-payment">{{'CART.PAYMENT.PAYMENT_INPUTSAVE' | translate}}</label>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+apt-product-card {
+    :host{
+        display: block;
+        width: 100% // Added to fix IE 11 issue
+    }
+    a{
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .card .card-body{
+        .card-title {
+            p {
+                height: 3rem;
+            }
+        }
+        img{
+            max-height: 8rem;
+            max-width: 100%;
+        }
+        .img-container{
+            height: 8rem;
+        }
+        .card-text{
+            > span{
+                font-size: x-small;
+            }
+            apt-price {
+                font-size: large;
+            }
+        } 
+        &.readonly{
+            img{
+                max-height: 6rem;
+                max-width: 75%;
+            }
+            .img-container{
+                height: 6rem;
+            }  
+        }
+    }
+    
+    
+    .split-items {
+        height: 2rem;
+        >* {
+            border-radius: 0;
+            line-height: 15px;
+        }
+    }
+    .product-code{
+        max-width: 50%;
+    }
+    .product-category{
+        max-width: 50%;
+    }
+    .purchased {
+       float: right;
+       padding-top: 6px;
+    }
+    button.btn.close{
+        margin-top: -5px;
+        line-height: 0.9;
+        font-size: 2rem;
+    }
+    .btn.btn-primary.dropdown-toggle.dropdown-toggle-split{
+        height: 31px;
+        padding-top: 3px;
+      }
+    .icons{
+        white-space: nowrap;
+        i{
+            font-size: smaller;
+            margin-left: 5px;
+        }
+    }
+     .list-purchasedbucket{  
+        font-size: 1rem;
+        font-weight: 400;
+        position: absolute;
+        padding-top: 3px;
+        
+        .fa{
+           padding-left: 5px;
+          }
+       }
+    
+    label{
+        &::before, &::after{
+            top: 0.15rem;
+        }
+    }
+    
+    .media {
+        img {
+            max-height: 8rem;
+            max-width: 100%;
+        }
+    
+        apt-add-to-cart {
+            form.d-flex {
+                div:first-child {
+                    justify-content: flex-end !important;
+                }
+                div:last-child {
+                    justify-content: flex-end;
+                    & > apt-cr-popover {
+                        flex-grow: unset !important;
+                        margin-right: 0px !important;
+                        & > div {
+                            margin-right: 0px !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .productDescription {
+        max-height: 100px;
+        overflow: auto;
+    }
+
+    
+}

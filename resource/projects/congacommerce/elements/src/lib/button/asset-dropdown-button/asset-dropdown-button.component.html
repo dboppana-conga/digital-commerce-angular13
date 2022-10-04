@@ -1,0 +1,49 @@
+<ng-container *ngIf="view$ | async as view">
+  <div
+    *ngIf="!view.isLoggedIn || setDisabled"
+    [tooltip]="setTooltipText ? setTooltipText : view.buttonTooltip"
+    container="body"
+  >
+    <button
+      *ngIf = "view.enabledActions.length > 0"
+      class="btn btn-block btn-link px-4 btn-sm"
+      [ngClass]="buttonType"
+      disabled="true"
+    >
+      {{ ('BUTTON.' + view.enabledActions[0]) | translate }}
+    </button>
+  </div>
+  <div
+    *ngIf="view.isLoggedIn && !setDisabled"
+    class="btn-group btn-block"
+  >
+    <button *ngIf="view.enabledActions.length >= 1"
+      class="btn btn-block px-4 btn-sm w-100 mainButton"
+      [ngClass]="buttonType"
+      (click)="onClick.emit(view.enabledActions[0])"
+    >
+      {{ ('BUTTON.' + view.enabledActions[0]) | translate }}
+    </button>
+    <button
+      *ngIf="view.enabledActions.length > 1"
+      class="btn btn-sm px-2 dropdown-toggle-split"
+      [ngClass]="buttonType"
+      data-toggle="dropdown"
+      data-reference="parent"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      <small class="downArrow"><i class="fa fa-caret-down"></i></small>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <button
+        *ngFor="let action of view.enabledActions | slice:1"
+        class="dropdown-item"
+        [class.text-danger]="action === 'Terminate'"
+        (click)="onClick.emit(action)"
+      >
+        {{ ('BUTTON.' + action) | translate }}
+      </button>
+    </div>
+  </div>
+</ng-container>

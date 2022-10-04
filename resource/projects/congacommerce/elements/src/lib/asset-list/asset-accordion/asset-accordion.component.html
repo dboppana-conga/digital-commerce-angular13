@@ -1,0 +1,8 @@
+<div class="accordion">
+  <apt-asset-accordion-group
+    *ngFor="let group of assetGroups; let i = index"
+    [index]="i"
+    [group]=group
+    [operation]="operation"
+  ></apt-asset-accordion-group>
+</div>

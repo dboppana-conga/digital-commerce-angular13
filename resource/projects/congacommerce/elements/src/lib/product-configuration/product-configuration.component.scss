@@ -1,0 +1,54 @@
+.accordion{
+  .cr-popover-container {
+      min-width: 10%;
+  }
+  .image-container{
+      width: 64px;
+      img{
+          max-height: 50px;
+          max-width: 64px;
+      }
+  }
+  
+  .form-group{
+      margin-bottom: 0;
+  }
+  input{
+      max-width: 70px;
+  }
+  .custom-control{
+      margin-top: -3px;
+  }
+
+  .width-fixed{
+      min-width: 20vw;
+      max-width: 20vw;
+  }
+  .desc{
+      max-height: 40px;
+      overflow-y: hidden;
+  }
+  .card {
+      overflow: visible;
+  }
+}
+.search{
+  min-width: 300px;
+}
+
+apt-cr-popover {
+  .custom-checkbox {
+      input[type=checkbox][disabled] {
+          + label {
+              pointer-events: none;
+          }
+      }
+  }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+ CSS styles go here */
+  apt-product-configuration div.accordion div.card div.option div.py-2 div.mx-3 {
+      margin-left: 3rem;
+  }
+}

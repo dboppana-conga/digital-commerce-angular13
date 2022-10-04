@@ -1,0 +1,74 @@
+<ng-container *ngIf="product$ | async as product">
+    <ng-container *ngIf="lineType === 'Product'">
+        <div class="card" *ngFor="let group of product?.AttributeGroups; let attrIndex = index; trackBy: trackById">
+
+            <div [id]="'ac' + group.AttributeGroup.Id" class="accordion">
+                <div class="card-header px-2 py-1" *ngIf="lineType === 'Product'">
+                    <h2 class="mb-0">
+                        <ng-container
+                            *ngTemplateOutlet="groupHeaderTemplate; context: {attributeGroup: group.AttributeGroup, index: attrIndex}">
+                        </ng-container>
+                    </h2>
+                </div>
+
+                <div [id]="'ac' + container + '-' + group.AttributeGroup.Id" class="collapse"
+                    [ngClass]="{'show': (attrIndex === 0 && collapseAll) || !accordion}"
+                    [attr.data-parent]="'#' + container">
+                    <div class="card-body pl-3">
+                        <ng-container
+                            *ngTemplateOutlet="groupTemplate; context: {attributeGroup: group.AttributeGroup, attributeValue: productAttributeValue, matrixView: product?.ProductAttributeMatrixViews,product: product}">
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="lineType === 'Option'">
+        <div class="mb-3" *ngFor="let group of product?.AttributeGroups; let attrIndex = index; trackBy: trackById">
+            <div [id]="'ac' + group.AttributeGroup.Id" class="accordion">
+                <h5 class="mb-0 border-bottom">
+                    <ng-container
+                        *ngTemplateOutlet="groupHeaderTemplate; context: {attributeGroup: group.AttributeGroup, index: attrIndex}">
+                    </ng-container>
+                </h5>
+                <div class="pl-4 collapse" [id]="'ac' + container + '-' + group.AttributeGroup?.Id"
+                    [ngClass]="{'show': (attrIndex === 0 && collapseAll) || !accordion}"
+                    [attr.data-parent]="'#ac' + group.AttributeGroup.Id">
+                    <ng-container
+                        *ngTemplateOutlet="groupTemplate; context: {attributeGroup: group.AttributeGroup, attributeValue: productAttributeValue, matrixView: product?.ProductAttributeMatrixViews, product: product}">
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #groupHeaderTemplate let-attributeGroup="attributeGroup" let-index="index">
+        <button class="btn btn-link chevron" type="button" data-toggle="collapse"
+            [attr.data-target]="'#' + 'ac' + container + '-' + attributeGroup?.Id"
+            [attr.aria-expanded]="(index === 0 && collapseAll) || !accordion ? 'true' : 'false'">
+            {{attributeGroup?.Name}}
+        </button>
+    </ng-template>
+
+    <ng-template #groupTemplate let-attributeGroup="attributeGroup" let-attributeValue="attributeValue"
+        let-matrixView="matrixView" let-product="product">
+        <div class="row no-gutters">
+            <ng-container *ngFor="let member of attributeGroup?.AttributeGroupMembers;let i= index; trackBy: trackById">
+                <div *ngIf="!member.Attribute?._metadata?.rules?.isHiddenAction" class="col-12 p-3"
+                    [class.col-md-4]="attributeGroup?.ThreeColumnAttributeDisplay"
+                    [class.col-md-6]="attributeGroup?.TwoColumnAttributeDisplay">
+                    <apt-input-field [entity]="attributeValue" [field]="member.Attribute.Name"
+                        [id]="'#' + attributeGroup?.Id + i" [fieldType]="member.Attribute.Type"
+                        [label]="member.Attribute.DisplayName" [lookupObjectName]="member.Attribute.LookupObjectName"
+                        [(ngModel)]="attributeValue[member.Attribute.Name]" [defaultValue]="false"
+                        [picklistValues]="member.Attribute.PickListValue"
+                        (ngModelChange)="attributeChange(attributeValue, member.Attribute.Name, product?.AttributeGroups, matrixView, member.Attribute)"
+                        (click)="attrClicked = true">
+                    </apt-input-field>
+                </div>
+            </ng-container>
+        </div>
+    </ng-template>
+
+</ng-container>

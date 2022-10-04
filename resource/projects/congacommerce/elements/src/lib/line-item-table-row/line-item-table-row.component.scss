@@ -1,0 +1,94 @@
+apt-line-item-table-row {
+  :host {
+    display: contents;
+    font-size: smaller;
+  }
+
+  .description {
+    max-height: 50px;
+    overflow-y: hidden;
+  }
+
+  .quantity {
+    width: 4rem;
+  }
+
+  u {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .subtitle>span:not(:last-child) {
+    &:after {
+      margin: 0 8px;
+      content: "|";
+    }
+  }
+
+  @media all and (-ms-high-contrast: none),
+  (-ms-high-contrast: active) {
+
+    /* IE10+ CSS styles go here */
+    p.description {
+      max-width: 400px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  tr[data-index="0"] {
+    td {
+      border-top: none;
+    }
+  }
+
+  .adjustment-container {
+    max-width: 80%;
+    column-gap: 1em;
+  }
+
+  .adjustment-type-dropdown {
+    width: 50%;
+
+    >apt-input-field {
+      >.form-group {
+        >div {
+          ng-select {
+            border: none;
+            background: none;
+          }
+        }
+      }
+    }
+  }
+
+  .adjustment-type-dropdown {
+    >apt-input-field {
+      >.form-group {
+        >div {
+          .ng-select.picklist .ng-select-container {
+            min-height: 2.1rem;
+            max-width: 12em;
+
+            >.ng-value-container {
+              padding-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .adjustment-type-dropdown {
+    >apt-input-field {
+      >.form-group {
+        >div {
+          .ng-select.picklist .ng-dropdown-panel {
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+}

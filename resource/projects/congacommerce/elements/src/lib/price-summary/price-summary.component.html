@@ -1,0 +1,179 @@
+<ng-container *ngIf="view$ | async as view">
+    <div class="card " *ngIf="record">
+        <div class="card-header">
+            <h5 class="card-title mb-0">{{'DETAILS.PRICE_SUMMARY' | translate }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <span> {{'MANAGE_CART.CART_SUMMARY.SUB_TOTAL' | translate }} </span>
+                <span class="font-weight-bold">
+                    <apt-price [record]="record" type="listExtended"></apt-price>
+                </span>
+            </div>
+
+            <!-- Promotion field for Manage Cart & Checkout pages which does require storefront.EnablePromotions check -->
+            <div *ngIf="view?.storefront?.EnablePromotions && view?.totalPromotions"
+                class="d-flex mt-2 justify-content-between">
+                <span> {{'MANAGE_CART.CART_SUMMARY.PROMOTIONS_APPLIED' | translate }} </span>
+                <span>{{view?.totalPromotions | localCurrency | async}}</span>
+            </div>
+            <ng-container *ngFor="let item of record?.SummaryGroups">
+                <div class="d-flex justify-content-between mt-1 text-muted small"
+                    *ngIf="item?.Name !== 'Grand Total' else grandTotal">
+                    <span class="text-truncate" tooltip="{{item?.Name}}"> {{item?.Name}}</span>
+                    <span>{{item?.NetPrice | localCurrency | async}}</span>
+                </div>
+
+                <ng-template #grandTotal>
+                    <hr class="mt-3 mb-2" />
+                    <div class="d-flex justify-content-between">
+                        <span> {{'MANAGE_CART.CART_SUMMARY.TOTAL_PRICE' | translate }} </span>
+                        <span class="font-weight-bold">
+                            {{item?.NetPrice | localCurrency | async}}
+                        </span>
+                    </div>
+                </ng-template>
+            </ng-container>
+
+            <!-- Show order payment status on order details page -->
+            <!-- TO DO : Remove when API supported -->
+            <!-- <hr class="mt-3 mb-2" *ngIf="page === 'orders' && showStatus" />
+            <div class="d-flex justify-content-between" *ngIf="page === 'orders' && showStatus">
+                <span>{{'PRICE_SUMMARY.PAYMENT_STATUS' | translate}}</span>
+
+                <div role="group" [ngSwitch]="view?.paymentStatus">
+                    <ng-container *ngSwitchCase="'Pending'">
+                        <i class="fas fa-circle text-warning"></i>
+                        <span> {{view?.paymentStatus}}</span>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="'Processed'">
+                        <i class="fas fa-circle text-success"></i>
+                        <span> {{view?.paymentStatus}}</span>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="'Error'">
+                        <i class="fas fa-circle text-danger"></i>
+                        <span> {{view?.paymentStatus}}</span>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        <i class="fas fa-circle text-warning"></i>
+                        <span> Pending</span>
+                    </ng-container>
+                </div>
+            </div> -->
+
+            <!-- Few pages doesn't require any action button; in that case no need to show <hr> -->
+            <hr class="mt-2 mb-3" *ngIf="page !== 'quotes' && page !== 'orders'" />
+
+            <!-- Action buttons for Manage Cart page -->
+            <div class="d-flex justify-content-end" *ngIf="page === 'carts' && !view?.quote?.Id && !view?.order">
+                <button *ngIf="view?.isLoggedIn" class="btn btn-link" [routerLink]="['/proposals/create']"
+                    [hidden]="view?.loading" data-style="zoom-in"
+                    [disabled]="!(view?.lineItemCount > 0) || view?.hasErrors === true || record?.hasErrors">
+                    {{'COMMON.REQUEST_QUOTE' | translate }}
+                </button>
+                <button class="btn btn-primary btn-raised" [routerLink]="['/checkout']" [ladda]="view?.loading"
+                    data-style="zoom-in"
+                    [disabled]="!(view?.lineItemCount > 0) || view?.hasErrors === true || record?.hasErrors">
+                    {{ 'COMMON.PLACE_ORDER' | translate }}
+                </button>
+            </div>
+            <div class="d-flex justify-content-end" *ngIf="page === 'carts' && (view?.quote?.Id || view?.order?.Id)">
+                <button class="btn btn-outline-danger mr-2" (click)="openDiscardChangeModals()" [hidden]="view?.loading"
+                    data-style="zoom-in" [disabled]="view?.hasErrors === true || record?.hasErrors">
+                    {{'MANAGE_CART.CART_SUMMARY.DISCARD_CHANGES' | translate }}
+                </button>
+                <button *ngIf="view?.quote?.Id" class="btn btn-primary btn-raised px-2" (click)="finalizeQuote()"
+                    [ladda]="view?.loading" data-style="zoom-in"
+                    [disabled]="!(view?.lineItemCount > 0) || view?.hasErrors === true || record?.hasErrors">
+                    {{'MANAGE_CART.CART_SUMMARY.FINALIZE_AND_SUBMIT' | translate }}
+                </button>
+                <button *ngIf="view?.order?.Id" class="btn btn-primary btn-raised px-2" (click)="confirmOrderChanges()"
+                    [ladda]="view?.loading" data-style="zoom-in"
+                    [disabled]="!(view?.lineItemCount > 0) || view?.hasErrors === true || record?.hasErrors">
+                    {{'COMMON.CONFIRM_CHANGES' | translate }}
+                </button>
+            </div>
+
+            <!-- Action buttons for Checkout page -->
+            <div *ngIf="page === 'checkout'">
+                <div class="d-flex" *ngIf="!view?.accountId && !view?.isLoggedIn; else showButton"
+                    tooltip="{{'CART.DEFAULT_ACC_NOT_AVAILABLE' | translate}}">
+                    <button class="btn btn-primary btn-block btn-raised" [ladda]="view?.loading" data-style="zoom-in"
+                        (click)="submitOrder()" [disabled]="true">
+                        {{ 'COMMON.PLACE_ORDER' | translate }}
+                    </button>
+                </div>
+                <ng-template #showButton>
+                    <div class="d-flex">
+                        <ng-content select=".cancel-button"></ng-content>
+                        <button class="btn btn-primary btn-block btn-raised" [ladda]="view?.loading"
+                            data-style="zoom-in" (click)="submitOrder()"
+                            [disabled]="!form.valid || !(view?.lineItemCount > 0)">
+                            <span *ngIf="paymentState != 'PAYNOW'">{{ 'COMMON.PLACE_ORDER' | translate }}</span>
+                            <span *ngIf="paymentState === 'PAYNOW'">{{ 'COMMON.PLACE_ORDER_PAY' | translate }}</span>
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+            <div *ngIf="page === 'paymentForOrder'">
+                <button class="btn btn-primary btn-block btn-raised" [ladda]="view?.loading" data-style="zoom-in"
+                    (click)="submitPayment()">
+                    {{'PAYMENT_METHOD_LABELS.MAKE_PAYMENT' | translate}}
+                </button>
+            </div>
+
+            <!-- Action buttons for Create Proposal page -->
+            <div class="d-flex justify-content-end" *ngIf="page === 'create-proposal'">
+                <button class="btn btn-link" [routerLink]="['/carts/active']" [hidden]="view?.loading">
+                    {{'COMMON.CANCEL' | translate }}
+                </button>
+                <button class="btn btn-primary btn-raised" (click)="requestQuote()" [disabled]="disableSubmit"
+                    *ngIf="!view?.quote?.Id" [ladda]="view?.loading" data-style="zoom-in">
+                    {{'COMMON.REQUEST_QUOTE' | translate }}
+                </button>
+                <button class="btn btn-primary btn-raised" (click)="requestQuote()" [disabled]="disableSubmit"
+                    *ngIf="view?.quote?.Id" [ladda]="view?.loading" data-style="zoom-in">
+                    {{'COMMON.SUBMIT' | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <ng-template #discardChangesTemplate>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left"> {{'MANAGE_CART.DISCARD_CHANGES_MODAL.DISCARD_CHANGES_TITLE' | translate}}
+            </h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="discardChangesModal.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body flex-column justify-content-center">
+            <p>{{'MANAGE_CART.DISCARD_CHANGES_MODAL.DISCARD_CHANGES_Message' | translate}}</p>
+            <p>{{'MANAGE_CART.DISCARD_CHANGES_MODAL.DISCARD_CHANGES_CONFIRMATION' | translate}}</p>
+            <div class="d-flex justify-content-end flex-wrap flex-md-nowrap">
+                <button class="btn btn-link" (click)="discardChangesModal.hide()"> {{ 'COMMON.CANCEL' | translate }}
+                </button>
+                <button class="btn btn-primary btn-raised m-2" (click)="onDiscardChanges()" [ladda]="view?.loading"
+                    data-style="zoom-in">
+                    {{ 'MANAGE_CART.DISCARD_CHANGES_MODAL.DISCARD_CHANGES' | translate }} </button>
+            </div>
+        </div>
+    </ng-template>
+</ng-container>
+
+<!--
+Not part of Nov 15 deliverable
+-->
+<!-- <div class="card mt-3" *ngIf="cart">
+<div class="card-header">
+    Request a Quote
+</div>
+<div class="card-body">
+    <small class="mb-3 d-block">
+    Request a quote for your configuration and someone will be in touch to discuss next steps.
+    </small>
+    <button class="btn btn-block btn-outline-primary" [ladda]="state.requestQuote view?.loading" data-style="zoom-in" (click)="createQuote()"
+    data-spinner-color="black" [disabled]="!record?.LineItems || view?.lineItemCount === 0">Request a Quote</button>
+</div>
+</div> -->

@@ -1,0 +1,89 @@
+<ng-container>
+  <ng-container [ngSwitch]="layout" *ngIf="errorList?.length > 0">
+    <ng-container *ngSwitchCase="'inline'">
+      <button type="button" class="btn btn-link" [popover]="popTemplate"
+        *ngIf="expand && errorList.length > 1; else mainError">
+        <small class="text-danger d-block">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          {{message | translate}}
+        </small>
+      </button>
+      <ng-template #mainError>
+        <ng-template [ngTemplateOutlet]="mainBlock" [ngTemplateOutletContext]="{error: errorList[0]}"></ng-template>
+      </ng-template>
+
+      <ng-template #popTemplate>
+        <ng-template [ngTemplateOutlet]="mainBlock" [ngTemplateOutletContext]="{error: error}"
+          *ngFor="let error of errorList"></ng-template>
+      </ng-template>
+
+      <ng-template #mainBlock let-error="error">
+        <small class="text-danger d-block">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          {{error?.message | translate:error?.parameter}}
+        </small>
+      </ng-template>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'alert'">
+      <ng-template [ngTemplateOutlet]="collapseError" [ngTemplateOutletContext]="{error: error, index: i}"
+        *ngFor="let error of errorList; let i = index; trackBy: trackByFn"></ng-template>
+      <ng-template #collapseError let-error="error" let-index="index">
+        <ng-container *ngIf="error?.children?.length > 0; else singleError">
+          <div class="alert alert-danger accordion" [id]="'alert' + index">
+            <button class="btn btn-link text-dark" type="button" data-toggle="collapse"
+              [attr.data-target]="'#collapse' + index" aria-expanded="false">
+              <i class="fa fa-exclamation-triangle mr-3" aria-hidden="true"></i>
+              {{message | translate}}
+            </button>
+
+            <div [id]="'collapse' + index" class="collapse" [attr.data-parent]="'#alert' + index">
+              <div *ngFor="let childError of error.children" class="mb-0 pl-5">
+                <i class="fa fa-exclamation-triangle pl-3 mr-3" aria-hidden="true"></i>
+                {{childError?.message | translate:childError?.parameter}}
+                <a *ngIf="childError?.reference" href="javascript:void(0)" [routerLink]="childError?.reference?.value">
+                  {{childError?.reference?.key}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #singleError>
+          <div [class]="'alert ' + alertColorMap[error?.type] + ' flex-grow-1'">
+            <i class="fa fa-exclamation-triangle mr-3" aria-hidden="true"></i>
+            {{error?.message | translate:error?.parameter}}
+          </div>
+        </ng-template>
+      </ng-template>
+
+    </ng-container>
+  </ng-container>
+
+  <alert type="danger" *ngIf="priceError$ | async">
+    <i class="fas fa-exclamation-circle text-danger mr-2"></i>
+    {{'COMMON.PRICE_ERROR' | translate}}
+    <button type="button" class="btn btn-link" (click)="createCart()" [ladda]="loading" [attr.data-style]="'zoom-in'">
+      {{ "COMMON.CLEAR_CART" | translate }}</button>
+    <button type="button" class="btn btn-link" (click)="cartReprice()" [attr.data-style]="'zoom-in'">
+      {{ "COMMON.REPRICE_CART" | translate }}</button>
+  </alert>
+
+  <!-- TODO: Add this back when we have a support for deferred pricing in RLP/Conga platform
+  <div class="alert alert-warning mb-0 pt-2 pb-2" *ngIf="deferredPrice$ | async">
+    <i class="fas fa-exclamation-triangle text-warning mr-2"></i>
+    <span>{{'COMMON.PRICE_NOT_AUTOUPDATED' | translate}}</span>
+    <button type="button" class="btn btn-link p-0 ml-1" (click)="cartReprice()" [ladda]="loading"
+      [attr.data-style]="'zoom-in'">
+      {{ "COMMON.UPDATE_PRICE" | translate }}</button>
+  </div> -->
+
+  <div class="alert alert-primary mb-0 py-1" *ngIf="revalidateLines$ | async">
+    <i class="fas fa-exclamation-circle text-primary mr-2"></i>
+    {{'REVALIDATE_CART.REVALIDATION_WARNING' | translate}}
+    <button type="button" class="btn btn-link" [ladda]="loading" [attr.data-style]="'zoom-in'"
+      (click)="openRevalidateCartModal()">
+      {{ "REVALIDATE_CART.VALIDATE_CART" | translate }}</button>
+  </div>
+
+</ng-container>

@@ -1,0 +1,12 @@
+<div class="d-flex flex-md-column align-items-center" *ngIf="actionList?.length > 0">
+    <label class="w-100 font-weight-bold">{{ 'COMMON.SELECT_ACTION' | translate }}</label>
+    <select class="form-control sm" [(ngModel)]="actionBatch">
+        <ng-container *ngFor="let action of actionList">
+            <option [ngValue]="action" *ngIf="!action.isDisabled()">{{action.getTranslationKey() | translate}}</option>
+        </ng-container>
+    </select>
+    <button class="btn btn-raised btn-primary my-md-3" (click)="handleClick()" [ladda]="loading"
+        [attr.data-style]="'zoom-in'" type="button" [disabled]="(actionList.length === 0)">
+        {{ 'COMMON.CONFIRM' | translate }}
+    </button>
+</div>

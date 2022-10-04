@@ -1,0 +1,27 @@
+<apt-asset-list-header *ngIf="showAssetHeader(operation)"
+  [operation]="operation"
+  [totalAssets]="totalAssets"
+  (onSelectedAmountClick)="handleSelectedAmountClick($event)"
+  (onFullListClick)="handleFullListClick()"
+></apt-asset-list-header>
+
+<apt-asset-accordion
+  *ngIf="(pageAssets && pageAssets?.length>0); else loading;"
+  [assets]="pageAssets"
+  [operation]="operation"
+></apt-asset-accordion>
+
+<ng-template #loading>
+  <ng-container *ngIf="!pageAssets; else noContent">
+    <div class="d-flex justify-content-center py-5">
+      <apt-spinner></apt-spinner>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #noContent>
+  <div class="d-flex justify-content-center align-items-center m-5 p-5 flex-column">
+    <i class="fa fa-database fa-5x text-primary xl text-faded"></i>
+    <div class="mt-4">No data to display</div>
+  </div>
+</ng-template>

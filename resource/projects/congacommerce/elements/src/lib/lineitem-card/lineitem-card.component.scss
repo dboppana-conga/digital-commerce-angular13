@@ -1,0 +1,89 @@
+apt-lineitem-card {
+  :host {
+    display: block;
+    width: 100%; // Added to fix IE 11 issue
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card .card-body {
+    .card-title {
+      p {
+        height: 3rem;
+      }
+    }
+    img {
+      max-height: 8rem;
+      max-width: 100%;
+    }
+    .img-container {
+      height: 8rem;
+    }
+    &.readonly {
+      img {
+        max-height: 6rem;
+        max-width: 75%;
+      }
+      .img-container {
+        height: 6rem;
+      }
+      .card-text {
+        > span {
+          font-size: 0.65rem;
+        }
+        apt-price {
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+
+  .split-items > * {
+    border-radius: 0;
+    border-right: 1px solid #000;
+    padding-right: 7px;
+    margin-right: 7px;
+    padding-bottom: 0;
+    line-height: 15px;
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  button.btn.close {
+    margin-top: -5px;
+    line-height: 0.9;
+    font-size: 2rem;
+  }
+  .btn.btn-primary.dropdown-toggle.dropdown-toggle-split {
+    height: 31px;
+    padding-top: 3px;
+  }
+
+  .list-purchasedbucket {
+    font-size: 1rem;
+    font-weight: 400;
+    position: absolute;
+    padding-top: 3px;
+
+    .fa {
+      padding-left: 5px;
+    }
+  }
+
+  label {
+    &::before,
+    &::after {
+      top: 0.15rem;
+    }
+    .icons {
+      white-space: nowrap;
+      i {
+        font-size: smaller;
+        margin-left: 5px;
+      }
+    }
+  }
+}

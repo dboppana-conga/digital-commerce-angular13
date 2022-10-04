@@ -1,0 +1,7 @@
+<ng-select
+  [multiple]="picklistType === 'multipicklist'"
+  [items]="values"
+  [(ngModel)]="modelValue"
+  [placeholder]="placeholder"
+  (change)="onChange.emit(modelValue)"
+></ng-select>

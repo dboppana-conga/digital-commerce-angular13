@@ -1,0 +1,16 @@
+<div class="input-group input-group-sm quantity-controls flex-nowrap">
+  <div class="input-group-prepend">
+    <button class="btn btn-outline-secondary btn-icon" type="button" (click)="decrease($event)" [disabled]="disabled">
+      <i class="fas fa-minus"></i>
+    </button>
+  </div>
+  <input type="number" class="form-control text-center quantity" min="1" placeholder="{{'COMMON.QUANTITY' | translate}}"
+    [(ngModel)]="quantity" name="quantity" aria-label="" aria-describedby="basic-addon1"
+    (click)="$event.stopPropagation()" [disabled]="disabled" [min]="min" [max]="max"
+    (change)="propagateChange(quantity)">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary btn-icon" type="button" (click)="increase($event)" [disabled]="disabled">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+</div>

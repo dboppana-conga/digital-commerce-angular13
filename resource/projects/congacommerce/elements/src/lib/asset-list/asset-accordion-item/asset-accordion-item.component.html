@@ -1,0 +1,145 @@
+<div class="d-flex flex-column bg-white" [class.border-bottom]="item.children.length > 0">
+  <div class="d-flex pl-5" [class.border-bottom]="item.children.length === 0">
+    <div class="pl-5 flex-grow-1 tableWrapper">
+      <div class="custom-control custom-checkbox custom-checkbox-lg">
+        <ng-container *ngIf="showAssetCheckBox(operation); else ShowOnlyChargeType">
+          <input [id]="item.parent.Id" type="checkbox" class="custom-control-input" [(ngModel)]="checkState"
+            (change)="handleCheckbox($event)" />
+          <label class="custom-control-label mt-2 ml-2 font-weight-bold"
+            [for]="item.parent.Id">{{item.parent.ChargeType}}</label>
+        </ng-container>
+        <ng-template #ShowOnlyChargeType>
+          <label class="mt-2 ml-2 font-weight-bold">{{item.parent.ChargeType}}</label>
+        </ng-template>
+        <ng-container *ngIf="(item.parent.HasAttributes || item.parent.HasOptions) && item?.parent?.BusinessLineItemId">
+          <button class="text-muted btn btn-link btn-sm p-0 ml-2" (click)="openModal(item.parent)" *ngIf="item?.parent">
+            <i class="fas fa-wrench"></i>
+          </button>
+        </ng-container>
+      </div>
+      <div class="table-responsive mt-3">
+        <ng-container *ngTemplateOutlet="attributeTable"></ng-container>
+      </div>
+    </div>
+    <div class="buttonWrapper">
+      <div
+        *ngIf="showAssetDropdownButton()"
+        class="btn-group p-3 dropleft align-self-start d-flex"
+      >
+        <apt-asset-dropdown-button
+          [buttonType]="'btn-outline-primary'"
+          [setDisabled]="buttonDisabled"
+          [setTooltipText]="buttonTooltip"
+          [priceType]="item.parent.PriceType"
+          [configurationType]="item.parent.Product.ConfigurationType"
+          [hasAttributes]="item.parent.HasAttributes"
+          [operation]="operation"
+          (onClick)="handleAssetDropdownButton($event)"
+        ></apt-asset-dropdown-button>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="item.children.length != 0"
+    class="accordion pl-5 ml-5"
+  >
+    <div
+      *ngFor="let subItem of item.children"
+      class="border-0"
+    >
+      <div class="py-3 accordionHeader border-top border-bottom-0 bg-transparent d-flex collapsed" [attr.data-target]="'#collapse' + subItem.Id" role="button" data-toggle="collapse">
+        <span class="downArrow small">&#9660;</span>
+        <span class="ml-3 font-weight-bold">{{subItem.ChargeType}}</span>
+      </div>
+      <div [attr.id]="'collapse' + subItem.Id" class="collapse px-5 table-responsive">
+        <ng-container *ngTemplateOutlet="subItemTable;context:{chargeType:subItem.ChargeType}"></ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<apt-product-configuration-summary
+        [relatedTo]="item?.parent"
+        *ngIf="item?.parent"
+        [product]="item?.parent?.ProductId"
+        #configurationSummary>
+</apt-product-configuration-summary>
+
+<ng-template #attributeTable>
+  <table class="table table-borderless">
+    <tbody>
+      <tr>
+        <td>
+          <apt-output-field [record]="item.parent" field="SellingFrequency" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+        <td>
+          <apt-output-field [record]="item.parent" field="NetUnitPrice" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+        <td>
+          <apt-output-field [record]="item.parent" field="PriceType" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <apt-output-field [record]="item.parent" field="StartDate" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+        <td>
+          <apt-output-field [record]="item.parent" field="Quantity" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+        <td>
+          <apt-output-field [record]="item.parent" field="AssetStatus" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <apt-output-field [record]="item.parent" field="EndDate" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+        <td>
+          <apt-output-field [record]="item.parent" field="NetPrice" layout="inline" [editable]="false"></apt-output-field>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #subItemTable let-chargeType="chargeType">
+  <table class="table table-borderless">
+    <ng-container *ngFor="let child of item.children">
+      <tbody *ngIf="child.ChargeType==chargeType">
+        <tr>
+          <td>
+            <apt-output-field [record]="child" field="SellingFrequency" layout="inline" [editable]="false">
+            </apt-output-field>
+          </td>
+          <td>
+            <apt-output-field [record]="child" field="NetUnitPrice" layout="inline" [editable]="false">
+            </apt-output-field>
+          </td>
+          <td>
+            <apt-output-field [record]="child" field="PriceType" layout="inline" [editable]="false"></apt-output-field>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <apt-output-field [record]="child" field="StartDate" layout="inline" [editable]="false"></apt-output-field>
+          </td>
+          <td>
+            <apt-output-field [record]="child" field="Quantity" layout="inline" [editable]="false"></apt-output-field>
+          </td>
+          <td>
+            <apt-output-field [record]="child" field="AssetStatus" layout="inline" [editable]="false">
+            </apt-output-field>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <apt-output-field [record]="child" field="EndDate" layout="inline" [editable]="false"></apt-output-field>
+          </td>
+          <td>
+            <apt-output-field [record]="child" field="NetPrice" layout="inline" [editable]="false"></apt-output-field>
+          </td>
+        </tr>
+      </tbody>
+    </ng-container>
+  </table>
+</ng-template>

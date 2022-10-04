@@ -1,0 +1,28 @@
+.superChevron {
+  .leftArm {
+    transform-origin: 50% 50%;
+    width: 14.14213562px;
+    transform: translateY(5px) rotate(225deg);
+    transition: all .4s ease-in-out;
+  }
+  
+  .rightArm {
+    transform-origin: 50% 50%;
+    width: 14.14213562px;
+    transform: translateY(5px) rotate(-45deg);
+    transition: all .4s ease-in-out;
+  }
+
+  &.up {
+    .leftArm {
+      width: 14.14213562px;
+      transform: translateY(-5px) rotate(135deg);
+    }
+
+    .rightArm {
+      width: 14.14213562px;
+      transform: translateY(-5px) rotate(45deg);
+    }
+  }
+
+}

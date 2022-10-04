@@ -1,0 +1,20 @@
+<div *ngIf="productList?.length > 0">
+    <h3 class="mt-5" [innerHTML]="title" *ngIf="title"></h3>
+    <p [innerHTML]="subtitle" *ngIf="subtitle"></p>
+    <carousel [itemsPerSlide]="slides" [interval]="0" [indicatorsByChunk]="true" [showIndicators]="false" class="d-lg-block">
+        <slide *ngFor="let product of productList; trackBy: trackById">
+            <apt-product-card [product]="product" class="d-block mr-2 ml-2" *ngIf="product?.Id" [type]="cardType" [showCategory]="showCategory" [showCode]="showCode"></apt-product-card>
+        </slide>
+    </carousel>
+</div>
+
+<div *ngIf="cartItemList?.length > 0">
+    <h3 class="mt-5" [innerHTML]="title" *ngIf="title"></h3>
+    <p [innerHTML]="subtitle" *ngIf="subtitle"></p>
+    <carousel [itemsPerSlide]="slides" [interval]="0" [indicatorsByChunk]="true" [showIndicators]="false" class="d-lg-block">
+        <slide *ngFor="let cartItem of cartItemList; trackBy: trackById" >
+            <apt-lineitem-card [lineItem]="cartItem" class="d-block mr-2 ml-2" *ngIf="cartItem?.Id"></apt-lineitem-card>
+        </slide>
+    </carousel>
+
+</div>

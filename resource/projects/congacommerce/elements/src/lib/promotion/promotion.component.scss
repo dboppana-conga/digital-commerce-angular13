@@ -1,0 +1,27 @@
+:host{
+    display: block;
+    font-size: small;
+
+    .promo-border {
+        border-style: dashed; 
+    }
+    .badge{
+        font-size: inherit;
+    }
+    p{
+        max-height: 60px;
+        overflow-y: hidden;
+    }
+
+    .coupon{
+        display: flex;
+        align-items: baseline;
+        margin-top: 5px;
+        dt {
+            text-transform: uppercase;
+        }
+        dd {
+            padding: 0 0.25rem;
+        }
+    }
+}

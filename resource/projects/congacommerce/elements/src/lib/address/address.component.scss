@@ -1,0 +1,10 @@
+.inline{
+    display: flex;
+    label{
+        white-space: nowrap;
+        &::after{
+            content: ":";
+            margin: 0 2px 0 0;
+        }
+    }
+}

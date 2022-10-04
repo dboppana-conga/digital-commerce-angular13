@@ -1,0 +1,52 @@
+<div *ngIf="record; else norecord">
+  <ng-container *ngIf="!readonly; else read">
+    <div class="mb-3">
+      <label [for]="getId('street')">{{ 'ADDRESS.ADDRESS_LINE1' | translate }}</label>
+      <input type="text" class="form-control" [id]="getId('street')" placeholder="{{ 'ADDRESS.PLACEHOLDER_FOR_ADDRESS_LINE1' | translate }}" required [(ngModel)]="record[street]"
+        name="street" #address="ngModel" [ngClass]="{ 'is-invalid': address.invalid && (address.touched || address.dirty || form.submitted) }">
+      <div class="invalid-feedback">
+        {{ 'ADDRESS.INVALID_SHIPPING' | translate }}
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <label [for]="getId('city')">{{cityLabel$ | async}}</label>
+      <input type="text" class="form-control" [id]="getId('city')" placeholder="{{ 'ADDRESS.CITY' | translate }}" required [(ngModel)]="record[city]"
+        name="city" #cityTemplate="ngModel" [ngClass]="{ 'is-invalid': cityTemplate.invalid && (cityTemplate.touched || cityTemplate.dirty || form.submitted) }">
+      <div class="invalid-feedback">
+        {{ 'ADDRESS.INVALID_CITY' | translate }}
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-9 mb-3">
+        <apt-dependent-picklist name="dependentPicklist" [entity]="entity" field="BillingStateCode" parentField="BillingCountryCode" [(ngModel)]="countryState" (ngModelChange)="countryStateChange($event)"></apt-dependent-picklist>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label [for]="getId('zip')">{{postalCodeLabel$ | async}}</label>
+        <input type="text" class="form-control" [id]="getId('zip')" required [(ngModel)]="record[postalCode]"
+          name="postal-code" #zipcode="ngModel" [ngClass]="{ 'is-invalid': zipcode.invalid && (zipcode.touched || zipcode.dirty || form.submitted) }">
+        <div class="invalid-feedback">
+            {{ 'ADDRESS.INVALID_ZIP' | translate }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #read>
+    <div [class.inline]="layout === 'inline'">
+    <label class="font-weight-bold" [class.pr-3]="layout === 'inline'" *ngIf="label"> {{label}} </label>
+    <address class="mb-0"  [class.ml-1]="layout === 'inline'" [class.ml-3]="layout === 'inline' && type ==='Billing'" [class.pl-5]="layout === 'inline'" >
+      {{record[street]}}
+      <br> {{record[city]}}, {{record[state]}} {{record[postalCode]}}
+      <br> {{record[country]}}
+    </address>
+  </div>
+  </ng-template>
+</div>
+
+
+<ng-template #norecord>
+  <div [class.inline]="layout === 'inline'">
+  <label class="font-weight-bold" [class.pr-3]="layout === 'inline'" *ngIf="label"> {{label}} </label>
+</div>
+</ng-template>

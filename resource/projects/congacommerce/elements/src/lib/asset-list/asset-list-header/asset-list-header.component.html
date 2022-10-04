@@ -1,0 +1,71 @@
+<div class="bg-white d-flex align-items-center p-3">
+  <div class="custom-control custom-checkbox custom-checkbox-lg">
+    <input id="selectAllResults" type="checkbox" class="custom-control-input"/>
+    <label class="custom-control-label ml-2" for="selectAllResults">&nbsp;</label>
+  </div>
+  <span class="border-right pr-3 mr-3">
+    {{'ASSET_LIST.SELECTED_ASSETS' | translate}}
+    <ng-container *ngIf="(selectedAssets$ | async); else noResults">
+      (
+      <a href="javascript.void(0)" (click)="handleSelectedAmountClick($event)">
+        {{ (selectedAssets$ | async)?.length }}
+      </a>
+       / 
+      <a href="javascript.void(0)" (click)="handleFullListClick($event)">
+        {{ totalAssets }}
+      </a>
+      )
+    </ng-container>
+    <ng-template #noResults>0</ng-template>
+  </span>
+  <div class="d-flex">
+    <ng-container *ngIf="operation !== null && operation !== undefined">
+      <div
+        *ngIf="assetBatchActionService.isActionDisabled(operation) && notAMassAction(operation)"
+        [tooltip]="assetBatchActionService.getTooltipForAction(operation)"
+        container="body"
+      >
+        <button
+          class="btn btn-link btn-sm"
+          [ngClass]="operation === 'Terminate' ? 'btn-danger' : 'btn-primary'"
+          disabled="true"
+        >
+          {{ ('BUTTON.' + operation) | translate }}
+        </button>
+      </div>
+      <button
+        *ngIf="!assetBatchActionService.isActionDisabled(operation) && notAMassAction(operation)"
+        class="btn btn-sm"
+        [ngClass]="operation === 'Terminate' ? 'btn-outline-danger' : 'btn-outline-primary'"
+        (click)="handleBatchButtonClick(operation)"
+      >
+        {{ ('BUTTON.' + operation) | translate }}
+      </button>
+    </ng-container>
+    <ng-container *ngIf="operation === null || operation === undefined">
+      <ng-container *ngFor="let action of enabledActions">
+        <div
+          *ngIf="assetBatchActionService.isActionDisabled(action) && notAMassAction(action)"
+          [tooltip]="assetBatchActionService.getTooltipForAction(action)"
+          container="body"
+        >
+          <button
+            class="btn btn-link mx-1 btn-sm"
+            [ngClass]="action === 'Terminate' ? 'btn-outline-danger' : 'btn-outline-primary'"
+            disabled="true"
+          >
+            {{ ('BUTTON.' + action) | translate }}
+          </button>
+        </div>
+        <button
+          *ngIf="!assetBatchActionService.isActionDisabled(action) && notAMassAction(action)"
+          class="btn mx-1 btn-sm"
+          [ngClass]="action === 'Terminate' ? 'btn-outline-danger' : 'btn-outline-primary'"
+          (click)="handleBatchButtonClick(action)"
+        >
+          {{ ('BUTTON.' + action) | translate }}
+        </button>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

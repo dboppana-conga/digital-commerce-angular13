@@ -1,0 +1,142 @@
+<span [class.align-items-baseline]="layout === 'inline'" [class.inline]="layout === 'inline'"
+  [class.d-flex]="layout === 'inline'" [class.label-only]="labelOnly" *ngIf="view$ | async as view">
+  <dt [ngClass]="labelClass" *ngIf="!valueOnly">
+    {{view?.label | translate}}
+  </dt>
+  <dd *ngIf="!labelOnly" class="m-0 py-2 position-relative" [class.px-1]="layout === 'inline'"
+    [class.py-1]="layout === 'stacked'" [class.empty]="!view.value" [ngClass]="valueClass" [ngSwitch]="true">
+    <ng-container
+      *ngSwitchCase="view.recordMetadata?.DataType.toLowerCase() === 'date' || view.recordMetadata?.DataType.toLowerCase() === 'datetime'">
+      {{view.value | date:getDateFormat(view.metadata)}}</ng-container>
+
+    <ng-container *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'currency'">{{view?.value?.Value |
+      localCurrency | async}}
+    </ng-container>
+
+    <ng-container *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'address'">
+      <apt-address [value]="view?.value" [readonly]="true"></apt-address>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'double'">
+      {{view?.value | number:'1.0-' + view.metadata.Scale}}
+    </ng-container>
+
+    <ng-container *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'boolean'">
+      <span [innerHTML]="view?.value ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate)"></span>
+    </ng-container>
+
+    <ng-container
+      *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'lookup' || view?.recordMetadata?.DataType.toLowerCase() === 'string'">
+      <ng-container *ngIf="view?.recordMetadata?.DataType.toLowerCase() === 'string' && !showQuickView;">
+        <ng-container [ngTemplateOutlet]="view?.nonTruncatedValue ? popOverTemplate : simple"
+          [ngTemplateOutletContext]="{view:view}">
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="view?.recordMetadata?.DataType.toLowerCase() === 'lookup' && !showQuickView">
+        <a href="javascript:void(0)" *ngIf="view?.referenceFieldInstance?.Id && view?.titleIsLink; else noLinkReference"
+          [routerLink]="['/' + view?.route, view?.referenceFieldInstance?.Id]" [innerHTML]="view?.value"
+          target="_blank"></a>
+      </ng-container>
+      <ng-template #noLinkReference>
+        <span [innerHTML]="view?.value"></span>
+      </ng-template>
+
+      <ng-container *ngIf="showQuickView">
+        <span [ngClass]="showQuickView ? 'btn-link popoverLink' : ''" #lookupPop="bs-popover"
+          [popover]="lookupPopTemplate" (click)="handleLookupPopClick()" triggers="" container="body"
+          containerClass="lookupPopover" [outsideClick]="true" [placement]="onShown()" [innerHTML]="view?.value"></span>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="view?.recordMetadata?.DataType.toLowerCase() === 'textarea'">
+      <ng-container [ngTemplateOutlet]="view?.nonTruncatedValue ? popOverTemplate : simple">
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchDefault>
+      <ng-container [ngTemplateOutlet]="simple">
+      </ng-container>
+    </ng-container>
+
+    <i *ngIf="editable" #pop="bs-popover" class="fa fa-pencil edit-icon ml-3" [popover]="editable ? popTemplate : null"
+      container="body" containerClass="editPopover" [outsideClick]="false" (onShown)="hidePopover()"></i>
+  </dd>
+
+  <ng-template #lookupPopTemplate>
+    <div class="popHeader p-3 mb-1" [ngClass]="expanded ? 'bg-dark text-white' : 'bg-white text-dark'">
+      <div class="titleSection pb-2 border-bottom d-flex justify-content-between align-items-baseline">
+        <ng-container>
+          <a class="h5 btn-link" href="javascript:void(0)"
+            *ngIf="view?.referenceFieldInstance?.Id && view?.titleIsLink; else noLinkPopoverTitle"
+            [routerLink]="['/' + view?.route, view?.referenceFieldInstance?.Id]" [innerHTML]="view?.value"
+            target="_blank"></a>
+        </ng-container>
+        <ng-template #noLinkPopoverTitle>
+          <h5 [innerHTML]="view?.value"></h5>
+        </ng-template>
+        <button aria-label="Close" [ngClass]="{'text-white': expanded}" class="close" type="button"
+          (click)="hidePopover()">×</button>
+      </div>
+      <div class="fieldSection container-fluid py-2">
+        <div class="row">
+          <div *ngFor="let field of view?.popoverFields | slice:0:6" class="col-6 pl-0 d-flex flex-column">
+            <ng-container
+              *ngIf="field?.field == 'ShippingAddress' || field?.field == 'BillingAddress'; else popoverFieldData">
+              <apt-address [value]="view.referenceFieldInstance"
+                [type]="field.field == 'ShippingAddress'? 'Shipping' : 'Billing'" [label]="field.label"
+                [readonly]="true"></apt-address>
+            </ng-container>
+            <ng-template #popoverFieldData>
+              <apt-output-field [record]="view?.referenceFieldInstance" [field]="field.field" [label]="field.label"
+                layout="stacked" [editable]="false" [showQuickView]="false" [displayValue]="field.field">
+              </apt-output-field>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!expanded" class="bottomBar bg-dark"></div>
+      <div *ngIf="view?.popoverFields?.length > 6"
+        class="toggleButton justify-content-center align-items-center border d-flex"
+        [ngClass]="hovering ? 'bg-primary' : 'bg-white'" (mouseover)="hovering = true" (mouseout)="hovering = false"
+        (click)="expanded = !expanded">
+        <i class="fa"
+          [ngClass]="{'fa-chevron-up': expanded, 'fa-chevron-down': !expanded, 'text-white': hovering, 'text-primary': !hovering}"
+          aria-hidden="true"></i>
+      </div>
+    </div>
+    <div *ngIf="expanded" class="expandSection p-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div *ngFor="let field of view?.popoverFields | slice:6" class="col-6 pl-0 d-flex flex-column">
+            <apt-output-field [record]="view?.referenceFieldInstance" [field]="field.field" [label]="field.label"
+              layout="stacked" [editable]="false" [showQuickView]="false"></apt-output-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #popTemplate>
+    <form class="p-3" (ngSubmit)="update(view)">
+      <apt-input-field [(ngModel)]="view.recordInstance[view.field]" [field]="view.field" [entity]="view.recordInstance"
+        [name]="view.field" [lookupOptions]="lookupOptions"></apt-input-field>
+      <div class="d-flex justify-content-end">
+        <button class="btn-link btn" (click)="handleHidePop(view)">{{'COMMON.CANCEL' | translate}}</button>
+        <button class="btn btn-primary btn-raised" type="submit" [ladda]="loading">{{'COMMON.UPDATE' |
+          translate}}</button>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #popOverTemplate>
+    <span [innerHTML]="view?.value" [popover]="view?.nonTruncatedValue" triggers="mouseenter:mouseleave"
+      container="body"></span>
+  </ng-template>
+
+  <ng-template #simple>
+    <span [innerHTML]="!!view?.value ? view?.value : ('COMMON.NO_DATA' | translate)"></span>
+  </ng-template>
+
+  <ng-content></ng-content>
+</span>

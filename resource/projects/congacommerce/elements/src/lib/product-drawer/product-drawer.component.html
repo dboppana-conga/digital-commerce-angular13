@@ -1,0 +1,44 @@
+<div class="bannerWrapper" [class.hiddenBelow]='!(drawerIsOpen$ | async)'>
+  <div class="body container-fluid bg-white"
+    *ngIf="{ products: products$ | async, cartItems: cartItems$ | async } as data">
+    <div class="tab px-3 bg-white" (click)="toggleDrawer()">
+      <span class="d-md-inline"> {{'COMMON.SELECTIONS' | translate}} </span>
+      <apt-super-chevron direction="{{!(drawerIsOpen$ | async) ? 'up' : 'down'}}"></apt-super-chevron>
+    </div>
+    <div class="drawer-selection">
+      <button class="btn btn-sm btn-pill btn-raised shadow-none m-2 p-0 pl-2"
+        *ngIf="data.products && data.products.length > 0"
+        [ngClass]="activePill==='Product' ? 'btn-primary' : 'btn-outline-primary'" (click)="setActivePill('Product')">
+        {{ 'COMMON.PRODUCTS' | translate }} ({{ data.products.length }})
+        <button class="btn btn-link text-white p-0" (click)="removeAllProducts($event)">
+          <i class="fas fa-times"></i>
+        </button>
+      </button>
+      <button class="btn btn-sm btn-pill btn-raised shadow-none m-2 p-0 pl-2"
+        *ngIf="data.cartItems && data.cartItems.length > 0"
+        [ngClass]="activePill==='CartItem' ? 'btn-primary' : 'btn-outline-primary'" (click)="setActivePill('CartItem')">
+        {{ 'COMMON.CARTITEMS' | translate }} ({{data.cartItems.length}})
+        <button class="btn btn-link text-white p-0" (click)="removeAllCartItems($event)">
+          <i class="fas fa-times"></i>
+        </button>
+      </button>
+    </div>
+    <div class="row h-100">
+      <div class="col-lg-10 col-md-9 col-12">
+        <div class="justify-content-center flex-column" *ngIf="data.products && data.products?.length > 0"
+          [ngClass]="activePill === 'Product' ? 'd-flex': 'd-none'">
+          <apt-product-carousel [productList]="data.products" [readonly]="true" [showCategory]="false"
+            [showCode]="false"></apt-product-carousel>
+        </div>
+        <div class="justify-content-center flex-column" *ngIf="data.cartItems && data.cartItems?.length > 0"
+          [ngClass]="activePill === 'CartItem' ? 'd-flex': 'd-none'">
+          <apt-product-carousel [cartItemList]="data.cartItems" [readonly]="true" [showCategory]="false"
+            [showCode]="false"></apt-product-carousel>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-3 col-12 my-md-2 pb-md-3">
+        <apt-batch-action (actionFired)="onAction($event)" [activePill]="activePill"></apt-batch-action>
+      </div>
+    </div>
+  </div>
+</div>

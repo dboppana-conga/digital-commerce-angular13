@@ -5,7 +5,17 @@
     "paths": {
       "@congacommerce/core": [
         "dist/congacommerce/core/congacommerce-core",
+        "dist/congacommerce/core",
+        "dist/congacommerce/core/congacommerce-core",
         "dist/congacommerce/core"
+      ],
+      "@congacommerce/ecommerce": [
+        "dist/congacommerce/ecommerce/congacommerce-ecommerce",
+        "dist/congacommerce/ecommerce"
+      ],
+      "@congacommerce/elements": [
+        "dist/congacommerce/elements/congacommerce-elements",
+        "dist/congacommerce/elements"
       ]
     },
     "baseUrl": "./",

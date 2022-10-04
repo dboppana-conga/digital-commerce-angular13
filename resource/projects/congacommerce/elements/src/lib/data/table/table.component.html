@@ -1,0 +1,286 @@
+<ng-container *ngTemplateOutlet="dataTable; context: {view: view$ | async}"></ng-container>
+
+<ng-template #dataTable let-view="view">
+    <div>
+        <div class="table-controls">
+            <div class="row border-bottom py-2 no-gutters align-items-center">
+                <form class="input-group input-group-sm col-4" (ngSubmit)="loadData()">
+                    <input type="text" class="form-control" [placeholder]="'TABLE.SEARCH' | translate"
+                        [(ngModel)]="searchString" name="searchString" (keyup)="loadDataDebounce($event)">
+                    <div class="input-group-append">
+                        <button class="btn btn-link">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="col-8 d-flex justify-content-end" *ngIf="view?.pageStats">
+                    <div class="border-right d-flex">
+                        <div class="px-2">
+                            {{'PRODUCT_LIST.SHOW_COUNT_OF_RECORDS_MESSAGE' | translate:view?.pageStats}}
+                        </div>
+                        <div class="px-3 d-flex">
+                            <pagination [totalItems]="view?.totalRecords" [(ngModel)]="page" [maxSize]="1"
+                                [itemsPerPage]="view.limit" pageBtnClass="btn btn-link" class="mr-2"
+                                (pageChanged)="onPageChange($event)" nextText="&nbsp;" previousText="&nbsp;">
+                            </pagination>
+                            <span>{{'TABLE.OF' | translate}} {{view?.totalPages}}</span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm px-3">
+                        <select class="custom-select custom-select-sm" id="size" [(ngModel)]="view.limit" name="limit"
+                            (change)="onLimitChange()">
+                            <option [value]="option" *ngFor="let option of view?.limitOptions">{{option}}</option>
+                        </select>
+                        <div class="input-group-append">
+                            <label class="input-group-text" for="sort">{{'TABLE.PER_PAGE' | translate}}</label>
+                        </div>
+                    </div>
+                    <div *ngIf="options?.groupBy" class="border-left d-flex align-items-center">
+                        <button class="btn btn-link" [class.disabled]="disableGrouping !== true"
+                            [disabled]="disableGrouping !== true" (click)="disableGrouping = false">
+                            <i class="fa fa-layer-group"></i>
+                        </button>
+                        <button class="btn btn-link" [class.disabled]="disableGrouping === true"
+                            [disabled]="disableGrouping === true" (click)="disableGrouping = true">
+                            <i class="fa fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex" *ngIf="options?.actions?.length">
+                <div class="border-right pr-3">
+                    {{'TABLE.SELECTED' | translate}} {{view?.label}} ({{view?.selectedItemCount}})
+                </div>
+                <div class="d-flex">
+                    <button class="btn btn-link" [ngClass]="'text-' + action?.theme"
+                        *ngFor="let action of view?.actions" [disabled]="!action.enabled"
+                        (click)="executeAction(action, selectedRecords)">
+                        <i class="fa" [ngClass]="action?.icon" [title]="action?.label"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-stretch" *ngIf="view?.data?.length > 0">
+            <div class="border-right">
+                <ng-container
+                    *ngTemplateOutlet="table; context: {view: view, columns: view?.stickyColumns, actions: options?.actions?.length > 0, stickySection: true}">
+                </ng-container>
+            </div>
+            <div class="table-responsive">
+                <ng-scrollbar [track]="'horizontal'">
+                    <ng-container
+                        *ngTemplateOutlet="table; context: {view: view, columns: view?.columns, actions: false}">
+                    </ng-container>
+                </ng-scrollbar>
+            </div>
+        </div>
+
+        <ng-container #empty *ngIf="view?.data?.length === 0">
+            <div class="d-flex justify-content-center align-items-center m-5 p-5 flex-column">
+                <i class="fa fa-database fa-5x text-primary xl text-faded"></i>
+                <div class="mt-4">{{'TABLE.NO_DATA_TO_DISPLAY' | translate}}</div>
+            </div>
+        </ng-container>
+
+        <ng-container #dataLoading *ngIf="!view?.data">
+            <div class="d-flex justify-content-center align-items-center m-5 p-5 flex-column">
+                <apt-dots></apt-dots>
+            </div>
+        </ng-container>
+
+        <ng-template #table let-actions="actions" let-view="view" let-columns="columns"
+            let-stickySection="stickySection">
+            <table class="table table-sm mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <!-- Checkbox header -->
+                        <th scope="col" class="action" *ngIf="actions">
+                            <div class="custom-control custom-checkbox pl-5">
+                                <input type="checkbox" class="custom-control-input" id="mainCheckbox"
+                                    [indeterminate]="view?.checkState === 'indeterminate'"
+                                    [checked]="view?.checkState === 'checked'" (click)="toggleAll($event)">
+                                <label class="custom-control-label" for="mainCheckbox">&nbsp;</label>
+                            </div>
+                        </th>
+
+                        <!-- Column headers -->
+                        <th class="pl-2" scope="col" *ngFor="let column of columns; let f = first"
+                            [attr.colspan]="actions ? 2 : 1">
+                            <div [class.pl-1]="actions" class="pr-4 d-flex text-truncate">
+                                <button class="btn btn-link chevron p-0" *ngIf="options?.groupBy && f && actions"
+                                    [attr.aria-expanded]="expanded" (click)="expanded = !expanded"></button>
+                                <button class="btn btn-icon p-0 text-truncate"
+                                    *ngIf="column?.sortable !== false; else nonSortableColumn"
+                                    (click)="sort(column.prop)">
+                                    <apt-output-field [record]="view?.type" [field]="column.prop" layout="inline"
+                                        [labelOnly]="true" [label]="column.label">
+                                        <i class="fa fa-chevron-down ml-2" *ngIf="column.prop === sortColumn"
+                                            [class.fa-chevron-down]="sortDirection === 'DESC'"
+                                            [class.fa-chevron-up]="sortDirection === 'ASC'"></i>
+                                    </apt-output-field>
+                                </button>
+                                <ng-template #nonSortableColumn>
+                                    <apt-output-field [record]="view?.type" [field]="column.prop" layout="inline"
+                                        [labelOnly]="true" [label]="column.label">
+                                        <i class="fa fa-chevron-down ml-2" *ngIf="column.prop === sortColumn"
+                                            [class.fa-chevron-down]="sortDirection === 'DESC'"
+                                            [class.fa-chevron-up]="sortDirection === 'ASC'"></i>
+                                    </apt-output-field>
+                                </ng-template>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="view?.groups?.length > 0 && !disableGrouping; else flat">
+                        <ng-container *ngFor="let group of view?.groups; let i = index">
+                            <tr class="table-info">
+
+                                <!-- Checkbox column -->
+                                <td class="action" *ngIf="actions">
+                                    <div class="custom-control custom-checkbox pl-5">
+                                        <input type="checkbox" class="custom-control-input" [id]="'check-'+ group.label"
+                                            [indeterminate]="group.state === 'indeterminate'"
+                                            [checked]="group.state === 'checked'" (click)="toggleGroup(group)">
+                                        <label class="custom-control-label" [for]="'check-'+ group.label">&nbsp;</label>
+                                    </div>
+                                </td>
+
+                                <!-- Data columns -->
+                                <td [attr.colspan]="actions ? columns?.length + 1 : columns?.length"
+                                    class="text-truncate pl-2">
+                                    <button class="btn btn-link btn-sm chevron" type="button" data-toggle="collapse"
+                                        [attr.data-target]="'#child-' + i" [attr.aria-expanded]="expanded"
+                                        *ngIf="options?.groupBy && stickySection">
+                                        <ng-container *ngIf="group?.label?.length > maxCharacterLength; else simple">
+                                            <span [popover]="group?.label" triggers="mouseenter:mouseleave"
+                                                container="body">
+                                                {{group?.label.substring(0, maxCharacterLength - 3) + '...'}}
+                                            </span>
+                                        </ng-container>
+                                        <ng-template #simple>
+                                            {{group?.label}}
+                                        </ng-template>
+                                    </button>
+                                </td>
+                            </tr>
+                            <ng-container
+                                *ngTemplateOutlet="rowData; context: {data: view?.groupedData[group.label], group: group, groupIndex: i, actions: actions, columns: columns, route: view?.route}">
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #flat>
+                        <ng-container
+                            *ngTemplateOutlet="rowData; context: {data: view?.data, actions: actions, columns: columns, route: view?.route}">
+                        </ng-container>
+                    </ng-template>
+
+                    <ng-template #rowData let-data="data" let-group="group" let-groupIndex="groupIndex"
+                        let-actions="actions" let-columns="columns" let-route="route">
+                        <tr *ngFor="let record of data; trackBy: trackById" class="collapse childSection"
+                            [class.show]="expanded" [id]="'child-' + groupIndex"
+                            [ngClass]="(canHighlightRow(record) | async) ? 'table-success' : ''"
+                            [class.table-primary]="record?._metadata?.state === 'indeterminate' || record?._metadata?.state === 'checked'">
+
+                            <!-- Checkbox column -->
+                            <td class="action" *ngIf="actions">
+                                <div class="custom-control custom-checkbox pl-5" *ngIf="showCheckbox(record)">
+                                    <input type="checkbox" class="custom-control-input" [id]="'check-' + record?.Id"
+                                        [checked]="record?.get('state') === 'checked'"
+                                        (click)="toggleRecord(record, group)">
+                                    <label class="custom-control-label" [for]="'check-' + record?.Id">&nbsp;</label>
+                                </div>
+                            </td>
+
+                            <!-- Action columns -->
+                            <td class="action" *ngIf="actions">
+                                <div class="btn-group m-0" *ngIf="record?.get('actions')?.length > 0" dropdown
+                                    [dropup]="true">
+                                    <button class="btn btn-link" dropdownToggle>
+                                        <div *ngIf="record?.get('state') === 'processing'">
+                                            <i class="fas fa-spinner fa-spin d-flex align-self-center"></i>
+                                        </div>
+                                        <div *ngIf="record?.get('state') !== 'processing'">
+                                            <i class="fa fa-ellipsis-v d-flex align-self-center fa-sm"></i>
+                                        </div>
+                                    </button>
+                                    <div *dropdownMenu class="dropdown-menu">
+                                        <h6 class="dropdown-header font-weight-bold">{{record?.Name}}</h6>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="javascript:void(0)" class="dropdown-item flex-nowrap"
+                                            *ngFor="let action of record?.get('actions')"
+                                            [ngClass]="'text-' + action?.theme" (click)="executeAction(action, record)">
+                                            <i class="fa mr-2" [ngClass]="action?.icon"></i>
+                                            {{action?.label}}
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                            <td *ngFor="let column of columns; let firstColumn = first" class="text-truncate pl-2">
+                                <!-- If custom values provided, render that. else show backend data. -->
+                                <div *ngIf="column.value; else renderRecord"> {{column.value(record) | async}}
+                                </div>
+                                <!-- No Custom data provided. -->
+                                <ng-template #renderRecord>
+                                    <div class="d-flex align-items-center">
+                                        <a href="javascript:void(0)" [routerLink]="[route, record?.Id]"
+                                            *ngIf="(column.prop === 'Name' && !options.disableLink); else read">
+                                            <apt-output-field [record]="record" [field]="column.prop" valueOnly="true"
+                                                [editable]="false" [maxCharacterLength]="maxCharacterLength">
+                                            </apt-output-field>
+                                        </a>
+                                        <ng-template #read>
+                                            <div>
+                                                <apt-output-field [record]="record" [field]="column.prop" [displayValue]="column.prop"
+                                                    valueOnly="true" [editable]="false" [maxCharacterLength]="column.showPopOver ? maxCharacterLength : null " [showQuickView]="column.showPopOver ? false : true">
+                                                </apt-output-field>
+                                            </div>
+                                        </ng-template>
+                                        <i *ngIf="firstColumn && stickySection && view?.childRecords[record?.Id]?.length > 0"
+                                            class="fas fa-info-circle ml-2 text-primary" [popover]="popTemplate"
+                                            containerClass="childPopover p-2" [outsideClick]="true"></i>
+                                        <button class="text-muted btn btn-link btn-sm p-0 ml-2"
+                                            (click)="openModal(record?.Product, record)"
+                                            *ngIf="firstColumn && stickySection && (record?.HasAttributes || record?.HasOptions) && record?.BusinessLineItemId">
+                                            <i class="fas fa-wrench"></i>
+                                        </button>
+                                        <ng-template #popTemplate>
+                                            <div>
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th *ngFor="let column of options?.childRecordOptions?.childRecordFields"
+                                                                scope="col">{{column}}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let childRecord of view?.childRecords[record?.Id]">
+                                                            <td
+                                                                *ngFor="let column of options?.childRecordOptions?.childRecordFields">
+                                                                <apt-output-field [record]="childRecord"
+                                                                    [field]="column" valueOnly="true"
+                                                                    [editable]="false"></apt-output-field>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </tbody>
+            </table>
+        </ng-template>
+    </div>
+    <apt-product-configuration-summary *ngIf="configProduct" #productConfigurationSummary [product]="configProduct.Id"
+        [relatedTo]="relatedTo">
+    </apt-product-configuration-summary>
+</ng-template>

@@ -1,0 +1,42 @@
+.compareProductCard {
+  max-width: 350px;
+}
+.card-title{
+  height: 52px;
+  overflow-y: hidden;
+}
+img{
+  max-height: 8rem;
+  max-width: 100%;
+}
+.img-container{
+  height: 8rem;
+}
+.remove-button {
+  position: absolute;
+  right: 7px;
+  top: 0px;
+}
+.split-items>*{
+    border-radius: 0;
+    border-right: 1px solid #000;
+    padding-right: 7px;
+    margin-right: 7px;
+    padding-bottom: 0;
+    line-height: 15px;
+    &:last-child{
+        border-right: none;
+    }
+}
+.product-code{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}
+.product-category{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}

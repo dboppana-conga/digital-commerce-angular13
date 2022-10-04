@@ -1,0 +1,82 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{'COMMON.CHANGE_CONFIGURATION' | translate}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body"  *ngIf="_assetItem">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col ml-1">
+        <apt-output-field [record]="_assetItem" field="Name" layout="inline" [editable]="false"></apt-output-field>
+      </div>
+    </div>
+    <div class=" row">
+      <div class="col col-md-7">
+        <div class="container-fluid">
+          <div class="row p-1">
+            <apt-output-field [record]="_assetItem" field="StartDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row p-1">
+            <apt-output-field [record]="_assetItem" field="EndDate" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+        </div>
+      </div>
+      <div class="col col-md-5 pl-0">
+        <div class="container-fluid">
+          <div class="row p-1">
+            <apt-output-field [record]="_assetItem" field="Quantity" layout="inline" [editable]="false"></apt-output-field>
+          </div>
+          <div class="row p-1">
+              <apt-output-field [record]="_assetItem" field="NetPrice" layout="inline" [editable]="false"></apt-output-field>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  <hr class="m-0">
+  <form class="pt-1 pb-3" (ngSubmit)="changeConfiguration()">
+    <div class="container-fluid ">
+        <div class=" row">
+      <div class="col col-md-6">
+        <div class="pr-3 mt-2" *ngIf="_assetItem?.PriceType === 'Recurring' || _assetItem?.PriceType === 'Usage'">
+          <label for="changeConfigurationStartDate" class="font-weight-bold ml-1">{{'ASSETS.CHANGECONFIGURATION_START_DATE' | translate}}
+          </label>
+          <div class="input-group ml-1">
+            <input type="text" id="changeConfigurationStartDate" name="startDate" class="form-control"
+              placeholder="MM/DD/YYYY" [minDate]="minimumStartDate" [(ngModel)]="changeConfigurationform.startDate"
+              bsDatepicker [bsConfig]="{ showWeekNumbers: false }"
+              (ngModelChange)="startDateChange(changeConfigurationform.startDate)">
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <i class="fas fa-calendar-alt"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col col-md-6">
+        <div class="pl-4 mt-2" *ngIf="_assetItem?.PriceType === 'Recurring' || _assetItem?.PriceType === 'Usage'">
+          <label for="changeConfigurationEndDate"
+            class="font-weight-bold ml-1">{{'ASSETS.CHANGECONFIGURATION_END_DATE' | translate}}</label>
+          <div class="input-group ml-1">
+            <input type="text" id="changeConfigurationEndDate" name="endDate" class="form-control"
+              placeholder="MM/DD/YYYY" [minDate]="minimumEndDate" [(ngModel)]="changeConfigurationform.endDate"
+              bsDatepicker [bsConfig]="{ showWeekNumbers: false }">
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <i class="fas fa-calendar-alt"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-link" (click)="bsModalRef.hide()">{{'COMMON.CANCEL' | translate}}</button>
+  <button class="btn btn-primary btn-raised" type="button" (click)="changeConfiguration()" [ladda]="loading"
+    data-style="zoom-in">{{'COMMON.CHANGE_CONFIGURATION' | translate}}</button>
+</div>
