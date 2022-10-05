@@ -75,17 +75,17 @@ export abstract class AObjectMetadata {
             return mapValues(mapKeys(defaultMetadataStorage.getExposedMetadatas(this.constructor), 'propertyName'), 'options');
     }
 
-    getTypeMetadata(fieldName: string): TypeMetadata | undefined {
+    getTypeMetadata(fieldName: string): TypeMetadata {
         if (this.constructor)
             return defaultMetadataStorage.findTypeMetadata(this.constructor, fieldName);
         else
-            return undefined;
+            return {} as TypeMetadata;
     }
-    getExposeMetadata(fieldName: string): ExposeMetadata | undefined {
+    getExposeMetadata(fieldName: string): ExposeMetadata {
         if (this.constructor)
             return defaultMetadataStorage.findExposeMetadata(this.constructor, fieldName);
         else
-            return undefined;
+        return {} as ExposeMetadata;
     }
 
 
