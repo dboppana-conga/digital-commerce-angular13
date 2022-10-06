@@ -6,302 +6,302 @@ import { AObject, ATable } from '@congacommerce/core';
 export class ApprovalRequest extends AObject {
 
     @Expose({ name: 'Action_Approve_Id' })
-    Action_Approve_Id: string = null;
+    Action_Approve_Id: string | null = null;
 
     @Expose({ name: 'Action_Reassign_Id' })
-    Action_Reassign_Id: string = null;
+    Action_Reassign_Id: string | null = null;
 
     @Expose({ name: 'Active' })
-    Active: boolean = null;
+    Active: boolean = false;
 
     @Expose({ name: 'Actual_Approver' })
-    Actual_Approver: string = null;
+    Actual_Approver: string | null = null;
 
     @Expose({ name: 'ActualApproverName' })
-    ActualApproverName: string = null;
+    ActualApproverName: string | null = null;
 
     @Expose({ name: 'Action' })
-    Action: string = null;
+    Action: string | null = null;
 
     @Expose({ name: 'Action_Prefix' })
-    Action_Prefix: string = null;
+    Action_Prefix: string | null = null;
 
     @Expose({ name: 'ApprovalCount' })
-    ApprovalCount: number = null;
+    ApprovalCount: number | null = null;
 
     @Expose({ name: 'Request_Comments' })
-    Request_Comments: string = null;
+    Request_Comments: string | null = null;
 
     @Expose({ name: 'ApprovalFromEmail' })
-    ApprovalFromEmail: boolean = null;
+    ApprovalFromEmail: boolean = false;
 
     @Expose({ name: 'ApprovalPercent' })
-    ApprovalPercent: number = null;
+    ApprovalPercent: number | null = null;
 
     @Expose({ name: 'ApprovalPolicy' })
-    ApprovalPolicy: string = null;
+    ApprovalPolicy: string | null = null;
 
     @Expose({ name: 'Approval_Process' })
-    Approval_Process: string = null;
+    Approval_Process: string | null = null;
 
     @Expose({ name: 'ProcessInstanceId' })
-    ProcessInstanceId: string = null;
+    ProcessInstanceId: string | null = null;
 
     @Expose({ name: 'Approval_Status' })
-    Approval_Status: string = null;
+    Approval_Status: string | null = null;
 
     @Expose({ name: 'Approver_Comments' })
-    Approver_Comments: string = null;
+    Approver_Comments: string | null = null;
 
     @Expose({ name: 'Assigned_To_Link' })
-    Assigned_To_Link: string = null;
+    Assigned_To_Link: string | null = null;
 
     @Expose({ name: 'Assigned_To_Name' })
-    Assigned_To_Name: string = null;
+    Assigned_To_Name: string | null = null;
 
     @Expose({ name: 'Assigned_To_Id' })
-    Assigned_To_Id: string = null;
+    Assigned_To_Id: string | null = null;
 
     @Expose({ name: 'Assigned_To_Type' })
-    Assigned_To_Type: string = null;
+    Assigned_To_Type: string | null = null;
 
     @Expose({ name: 'Auto_Complete' })
-    Auto_Complete: boolean = null;
+    Auto_Complete: boolean = false;
 
     @Expose({ name: 'AutoEscalate' })
-    AutoEscalate: boolean = null;
+    AutoEscalate: boolean = false;
 
     @Expose({ name: 'AutoReapprove' })
-    AutoReapprove: boolean = null;
+    AutoReapprove: boolean = false;
 
     @Expose({ name: 'Backup_From_User' })
-    Backup_From_User: string = null;
+    Backup_From_User: string | null = null;
 
     @Expose({ name: 'CanEscalate' })
-    CanEscalate: boolean = null;
+    CanEscalate: boolean = false;
 
     @Expose({ name: 'ChildObjectId' })
-    ChildObjectId: string = null;
+    ChildObjectId: string | null = null;
 
     @Expose({ name: 'ChildObjectLink' })
-    ChildObjectLink: string = null;
+    ChildObjectLink: string | null = null;
 
     @Expose({ name: 'ChildObjectName' })
-    ChildObjectName: string = null;
+    ChildObjectName: string | null = null;
 
     @Expose({ name: 'ChildObjectType' })
-    ChildObjectType: string = null;
+    ChildObjectType: string | null = null;
 
     @Expose({ name: 'ContinuePolicyApprovalOnAReject', })
-    ContinuePolicyApprovalOnAReject: boolean = null;
+    ContinuePolicyApprovalOnAReject: boolean =false;
 
     @Expose({ name: 'CriteriaFieldNames', })
-    CriteriaFieldNames: string = null;
+    CriteriaFieldNames: string | null = null;
 
     @Expose({ name: 'Date', })
-    Date: Date = null;
+    Date: Date | null = null;
 
     @Expose({ name: 'DateApproved', })
-    DateApproved: Date = null;
+    DateApproved: Date | null = null;
 
     @Expose({ name: 'DateAssigned' })
-    DateAssigned: Date = null;
+    DateAssigned: Date | null = null;
 
     @Expose({ name: 'DateCancelled' })
-    DateCancelled: Date = null;
+    DateCancelled: Date | null = null;
 
     @Expose({ name: 'DateEscalated' })
-    DateEscalated: Date = null;
+    DateEscalated: Date | null = null;
 
     @Expose({ name: 'DateReassigned' })
-    DateReassigned: Date = null;
+    DateReassigned: Date | null = null;
 
     @Expose({ name: 'DateRejected' })
-    DateRejected: Date = null;
+    DateRejected: Date | null = null;
 
     @Expose({ name: 'DelegateApprover' })
-    DelegateApprover: string = null;
+    DelegateApprover: string | null = null;
 
     @Expose({ name: 'DelegateApproverIds' })
-    DelegateApproverIds: string = null;
+    DelegateApproverIds: string | null = null;
 
     @Expose({ name: 'DependsOn' })
-    DependsOn: string = null;
+    DependsOn: string | null = null;
 
     @Expose({ name: 'EscalatedToHighestLevel' })
-    EscalatedToHighestLevel: boolean = null;
+    EscalatedToHighestLevel: boolean = false;
 
     @Expose({ name: 'EscalateToChain' })
-    EscalateToChain: string = null;
+    EscalateToChain: string | null = null;
 
     @Expose({ name: 'EscalateToId' })
-    EscalateToId: string = null;
+    EscalateToId: string | null = null;
 
     @Expose({ name: 'EscalateToName' })
-    EscalateToName: string = null;
+    EscalateToName: string | null = null;
 
     @Expose({ name: 'EscalateToType' })
-    EscalateToType: string = null;
+    EscalateToType: string | null = null;
 
     @Expose({ name: 'ExpectedCompletionDate' })
-    ExpectedCompletionDate: Date = null;
+    ExpectedCompletionDate: Date | null = null;
 
     @Expose({ name: 'ExpectedDaysToComplete' })
-    ExpectedDaysToComplete: number = null;
+    ExpectedDaysToComplete: number | null = null;
 
     @Expose({ name: 'ExpectedHoursToComplete' })
-    ExpectedHoursToComplete: number = null;
+    ExpectedHoursToComplete: number | null = null;
 
     @Expose({ name: 'ExpectedMinutesToComplete' })
-    ExpectedMinutesToComplete: number = null;
+    ExpectedMinutesToComplete: number | null = null;
 
     @Expose({ name: 'Group' })
-    Group: string = null;
+    Group: string | null = null;
 
     @Expose({ name: 'Group_Unique_Id' })
-    Group_Unique_Id: string = null;
+    Group_Unique_Id: string | null = null;
 
     @Expose({ name: 'HasAttachments' })
-    HasAttachments: boolean = null;
+    HasAttachments: boolean = false;
 
     @Expose({ name: 'HasDelegateApprover' })
-    HasDelegateApprover: boolean = null;
+    HasDelegateApprover: boolean = false;
 
     @Expose({ name: 'InEscalation' })
-    InEscalation: boolean = null;
+    InEscalation: boolean = false;
 
     @Expose({ name: 'Initial_Submitter' })
-    Initial_Submitter: string = null;
+    Initial_Submitter: string | null = null;
 
     @Expose({ name: 'Internal_Comments' })
-    Internal_Comments: string = null;
+    Internal_Comments: string | null = null;
 
     @Expose({ name: 'IsAdhoc' })
-    IsAdhoc: boolean = null;
+    IsAdhoc: boolean = false;
 
     @Expose({ name: 'IsAutoReapprovalEnabled' })
-    IsAutoReapprovalEnabled: boolean = null;
+    IsAutoReapprovalEnabled: boolean = false;
 
     @Expose({ name: 'IsSubprocess' })
-    IsSubprocess: boolean = null;
+    IsSubprocess: boolean = false;
 
     @Expose({ name: 'Notify_Only' })
-    Notify_Only: boolean = null;
+    Notify_Only: boolean = false;
 
     @Expose({ name: 'Object_Id' })
-    Object_Id: string = null;
+    Object_Id: string | null = null;
 
     @Expose({ name: 'Object_Id_Link' })
-    Object_Id_Link: string = null;
+    Object_Id_Link: string | null = null;
 
     @Expose({ name: 'Object_Name' })
-    Object_Name: string = null;
+    Object_Name: string | null = null;
 
     @Expose({ name: 'Object_Type' })
-    Object_Type: string = null;
+    Object_Type: string | null = null;
 
     @Expose({ name: 'Parent_Agreement' })
-    Parent_Agreement: string = null;
+    Parent_Agreement: string | null = null;
 
     @Expose({ name: 'ParentRequestId' })
-    ParentRequestId: string = null;
+    ParentRequestId: string | null = null;
 
     @Expose({ name: 'PrevAssignedToName' })
-    PrevAssignedToName: string = null;
+    PrevAssignedToName: string | null = null;
 
     @Expose({ name: 'PrevAssignedToId' })
-    PrevAssignedToId: string = null;
+    PrevAssignedToId: string | null = null;
 
     @Expose({ name: 'PrevAssignedToType' })
-    PrevAssignedToType: string = null;
+    PrevAssignedToType: string | null = null;
 
     @Expose({ name: 'Assigned_To' })
-    Assigned_To: string = null;
+    Assigned_To: string | null = null;
 
     @Expose({ name: 'Rejection_Action' })
-    Rejection_Action: string = null;
+    Rejection_Action: string | null = null;
 
     @Expose({ name: 'Related_Agreement' })
-    Related_Agreement: string = null;
+    Related_Agreement: string | null = null;
 
     @Expose({ name: 'AgreementLineItemId' })
-    AgreementLineItemId: string = null;
+    AgreementLineItemId: string | null = null;
 
     @Expose({ name: 'Related_Agreement_Owner' })
-    Related_Agreement_Owner: string = null;
+    Related_Agreement_Owner: string | null = null;
 
     @Expose({ name: 'Related_Agreement_Requestor' })
-    Related_Agreement_Requestor: string = null;
+    Related_Agreement_Requestor: string | null = null;
 
     @Expose({ name: 'Related_Agreement_Term_Exception' })
-    Related_Agreement_Term_Exception: string = null;
+    Related_Agreement_Term_Exception: string | null = null;
 
     @Expose({ name: 'Related_Opportunity' })
-    Related_Opportunity: string = null;
+    Related_Opportunity: string | null = null;
 
     @Expose({ name: 'Related_Opportunity_Owner' })
-    Related_Opportunity_Owner: string = null;
+    Related_Opportunity_Owner: string | null = null;
 
     @Expose({ name: 'RequestType' })
-    RequestType: string = null;
+    RequestType: string | null = null;
 
     @Expose({ name: 'Send_Email' })
-    Send_Email: boolean = null;
+    Send_Email: boolean = false;
 
     @Expose({ name: 'StepSequenceString' })
-    StepSequenceString: string = null;
+    StepSequenceString: string | null = null;
 
     @Expose({ name: 'StepSequence' })
-    StepSequence: number = null;
+    StepSequence: number | null = null;
 
     @Expose({ name: 'Status_Link' })
-    Status_Link: string = null;
+    Status_Link: string | null = null;
 
     @Expose({ name: 'StepNameLink' })
-    StepNameLink: string = null;
+    StepNameLink: string | null = null;
 
     @Expose({ name: 'Step' })
-    Step: string = null;
+    Step: string | null = null;
 
     @Expose({ name: 'Step_Group_Seq_Number' })
-    Step_Group_Seq_Number: number = null;
+    Step_Group_Seq_Number: number | null = null;
 
     @Expose({ name: 'StepLabel' })
-    StepLabel: string = null;
+    StepLabel: string | null = null;
 
     @Expose({ name: 'Step_Name' })
-    Step_Name: string = null;
+    Step_Name: string | null = null;
 
     @Expose({ name: 'SubmissionComment1' })
-    SubmissionComment1: string = null;
+    SubmissionComment1: string | null = null;
 
     @Expose({ name: 'SubmissionComment2' })
-    SubmissionComment2: string = null;
+    SubmissionComment2: string | null = null;
 
     @Expose({ name: 'SubmissionComment3' })
-    SubmissionComment3: string = null;
+    SubmissionComment3: string | null = null;
 
     @Expose({ name: 'SubprocessDependsOn' })
-    SubprocessDependsOn: string = null;
+    SubprocessDependsOn: string | null = null;
 
     @Expose({ name: 'SubprocessName' })
-    SubprocessName: string = null;
+    SubprocessName: string | null = null;
 
     @Expose({ name: 'SubprocessSequence' })
-    SubprocessSequence: number = null;
+    SubprocessSequence: number | null = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: string = null;
+    Sequence: string | null = null;
 
     @Expose({ name: 'SubstepDependsOn' })
-    SubstepDependsOn: string = null;
+    SubstepDependsOn: string | null = null;
 
     @Expose({ name: 'SubstepName' })
-    SubstepName: string = null;
+    SubstepName: string | null = null;
 
     @Expose({ name: 'SubstepSequence' })
-    SubstepSequence: number = null;
+    SubstepSequence: number | null = null;
 
     @Expose({ name: 'Workflow_Trigger_Added_Comments' })
-    Workflow_Trigger_Added_Comments: boolean = null;
+    Workflow_Trigger_Added_Comments: boolean = false;
 }

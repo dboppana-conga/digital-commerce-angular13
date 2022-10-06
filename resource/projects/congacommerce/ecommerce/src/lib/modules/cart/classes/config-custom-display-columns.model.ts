@@ -6,32 +6,32 @@ import { AObject, ATable } from '@congacommerce/core';
 export class ConfigCustomDisplayColumns extends AObject {
 
     @Expose({ name: 'DisplayType' })
-    DisplayType: string = null;
+    DisplayType: string | null = null;
 
     @Expose({ name: 'FieldName' })
-    FieldName: string = null;
+    FieldName: string | null = null;
 
     @Expose({ name: 'Flow' })
-    Flow: string = null;
+    Flow: string | null = null;
 
     @Expose({ name: 'HeaderStyle' })
-    HeaderStyle: string = null;
+    HeaderStyle: string | null = null;
 
     @Expose({ name: 'IsEditable' })
-    IsEditable: boolean = null;
+    IsEditable: boolean | null = null;
 
     @Expose({ name: 'IsPricePoint' })
-    IsPricePoint: boolean = null;
+    IsPricePoint: boolean | null = null;
 
     @Expose({ name: 'IsSortable' })
-    IsSortable: boolean;
+    IsSortable: boolean = false;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number = null;
+    Sequence: number | null = null;
 
     @Expose({ name: 'Style' })
-    Style: string = null;
+    Style: string | null = null;
 
     @Expose({ name: 'StyleClass' })
-    StyleClass: string = null;
+    StyleClass: string | null = null;
 }
