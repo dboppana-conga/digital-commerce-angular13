@@ -17,285 +17,285 @@ const _moment = moment;
 export class AssetLineItem extends AObject {
 
     @Expose({ name: 'AdjustedPrice' })
-    AdjustedPrice: number = null;
+    AdjustedPrice: number | null = null;
 
     @Expose({ name: 'AllowedActions' })
-    AllowedActions: string = null;
+    AllowedActions: string | null = null;
 
     @Expose({ name: 'AssetARR' })
-    AssetARR: number = null;
+    AssetARR: number | null = null;
 
     @Expose({ name: 'AssetCode' })
-    AssetCode: string = null;
+    AssetCode: string | null = null;
 
     @Expose({ name: 'AssetMRR' })
-    AssetMRR: number = null;
+    AssetMRR: number | null = null;
 
     @Expose({ name: 'AssetNumber' })
-    AssetNumber: string = null;
+    AssetNumber: string | null = null;
 
     @Expose({ name: 'AssetStatus' })
-    AssetStatus: string = null;
+    AssetStatus: string | null = null;
 
     @Expose({ name: 'AutoRenew' })
-    AutoRenew: boolean = null;
+    AutoRenew: boolean = false;
 
     @Expose({ name: 'AutoRenewalType' })
-    AutoRenewalType: string = null;
+    AutoRenewalType: string | null = null;
 
     @Expose({ name: 'AvailableBalance' })
-    AvailableBalance: number = null;
+    AvailableBalance: number | null = null;
 
     @Expose({ name: 'BaseCost' })
-    BaseCost: number = null;
+    BaseCost: number | null = null;
 
     @Expose({ name: 'BaseExtendedCost' })
-    BaseExtendedCost: number = null;
+    BaseExtendedCost: number | null = null;
 
     @Expose({ name: 'BaseExtendedPrice' })
-    BaseExtendedPrice: number = null;
+    BaseExtendedPrice: number | null = null;
 
     @Expose({ name: 'BasePrice' })
-    BasePrice: number = null;
+    BasePrice: number | null = null;
 
     @Expose({ name: 'BasePriceMethod' })
-    BasePriceMethod: string = null;
+    BasePriceMethod: string | null = null;
 
     @Expose({ name: 'BillingEndDate' })
-    BillingEndDate: Date = null;
+    BillingEndDate: Date | null = null;
 
     @Expose({ name: 'BillingFrequency' })
-    BillingFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' = null;
+    BillingFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' | null = null;
 
     @Expose({ name: 'BillingStartDate' })
-    BillingStartDate: Date = null;
+    BillingStartDate: Date | null = null;
 
     @Expose({ name: 'BillThroughDate' })
-    BillThroughDate: Date = null;
+    BillThroughDate: Date | null = null;
 
     @Expose({ name: 'BillToAccountId' })
-    BillToAccountId: string = null;
+    BillToAccountId: string | null = null;
 
     @Expose({ name: 'BundleAssetId' })
-    BundleAssetId: string = null;
+    BundleAssetId: string | null = null;
 
     @Expose({ name: 'BusinessLineItemId' })
-    BusinessLineItemId: string = null;
+    BusinessLineItemId: string | null = null;
 
     @Expose({ name: 'BusinessObjectId' })
-    BusinessObjectId: string = null;
+    BusinessObjectId: string | null = null;
 
     @Expose({ name: 'BusinessObjectType' })
-    BusinessObjectType: 'Order' | 'Proposal' | 'Agreement' = null;
+    BusinessObjectType: 'Order' | 'Proposal' | 'Agreement' | null = null;
 
     @Expose({ name: 'CancelledDate' })
-    CancelledDate: Date = null;
+    CancelledDate: Date | null = null;
 
     @Expose({ name: 'ChargeType' })
-    ChargeType: string = null;
+    ChargeType: string | null = null;
 
     @Expose({ name: 'Comments' })
-    Comments: string = null;
+    Comments: string | null = null;
 
     @Expose({ name: 'DeltaPrice' })
-    DeltaPrice: number = null;
+    DeltaPrice: number | null = null;
 
     @Expose({ name: 'DeltaQuantity' })
-    DeltaQuantity: number = null;
+    DeltaQuantity: number | null = null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null = null;
 
     @Expose({ name: 'EndDate' })
-    EndDate: Date = null;
+    EndDate: Date | null = null;
 
     @Expose({ name: 'ExtendedCost' })
-    ExtendedCost: number = null;
+    ExtendedCost: number | null = null;
 
     @Expose({ name: 'ExtendedDescription' })
-    ExtendedDescription: string = null;
+    ExtendedDescription: string | null = null;
 
     @Expose({ name: 'ExtendedPrice' })
-    ExtendedPrice: number = null;
+    ExtendedPrice: number | null = null;
 
     @Expose({ name: 'HasAttributes' })
-    HasAttributes: boolean = null;
+    HasAttributes: boolean = false;
 
     @Expose({ name: 'HasOptions' })
-    HasOptions: boolean = null;
+    HasOptions: boolean = false;
 
     @Expose({ name: 'HideInvoiceDisplay' })
-    HideInvoiceDisplay: boolean = null;
+    HideInvoiceDisplay: boolean = false;
 
     @Expose({ name: 'IsInactive' })
-    IsInactive: boolean = null;
+    IsInactive: boolean = false;
 
     @Expose({ name: 'InitialActivationDate' })
-    InitialActivationDate: Date = null;
+    InitialActivationDate: Date | null = null;
 
     @Expose({ name: 'IsOptionRollupLine' })
-    IsOptionRollupLine: boolean = null;
+    IsOptionRollupLine: boolean = false;
 
     @Expose({ name: 'IsPrimaryLine' })
-    IsPrimaryLine: boolean = null;
+    IsPrimaryLine: boolean = false;
 
     @Expose({ name: 'IsPrimaryRampLine' })
-    IsPrimaryRampLine: boolean = null;
+    IsPrimaryRampLine: boolean = false;
 
     @Expose({ name: 'IsPrimaryService' })
-    IsPrimaryService: boolean = null;
+    IsPrimaryService: boolean = false;
 
     @Expose({ name: 'IsReadOnly' })
-    IsReadOnly: boolean = null;
+    IsReadOnly: boolean = false;
 
     @Expose({ name: 'IsRenewalPending' })
-    IsRenewalPending: boolean = null;
+    IsRenewalPending: boolean = false;
 
     @Expose({ name: 'IsRenewed' })
-    IsRenewed: boolean = null;
+    IsRenewed: boolean = false;
 
     @Expose({ name: 'IsUsageTierModifiable' })
-    IsUsageTierModifiable: boolean = null;
+    IsUsageTierModifiable: boolean = false;
 
     @Expose({ name: 'ItemSequence' })
-    ItemSequence: number = null;
+    ItemSequence: number | null= null;
 
     @Expose({ name: 'LastRenewEndDate' })
-    LastRenewEndDate: Date = null;
+    LastRenewEndDate: Date | null= null;
 
     @Expose({ name: 'LineNumber' })
-    LineNumber: number = null;
+    LineNumber: number | null= null;
 
     @Expose({ name: 'LineType' })
-    LineType: string = null;
+    LineType: string | null= null;
 
     @Expose({ name: 'ListPrice' })
-    ListPrice: number = null;
+    ListPrice: number | null = null;
 
     @Expose({ name: 'MaxUsageQuantity' })
-    MaxUsageQuantity: number = null;
+    MaxUsageQuantity: number | null = null;
 
     @Expose({ name: 'MinUsageQuantity' })
-    MinUsageQuantity: number = null;
+    MinUsageQuantity: number | null = null;
 
     @Expose({ name: 'MustUpgrade' })
-    MustUpgrade: boolean = null;
+    MustUpgrade: boolean = false;
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null = null;
 
     @AField({
         soql: 'NetPrice',
         aggregate: ['SUM']
     })
     @Expose({ name: 'NetPrice' })
-    NetPrice: number = null;
+    NetPrice: number | null = null;
 
     @Expose({ name: 'NetUnitPrice' })
-    NetUnitPrice: number = null;
+    NetUnitPrice: number | null = null;
 
     @Expose({ name: 'NextRenewEndDate' })
-    NextRenewEndDate: Date = null;
+    NextRenewEndDate: Date | null = null;
 
     @Expose({ name: 'OptionId' })
-    OptionId: string = null;
+    OptionId: string | null = null;
 
     @Expose({ name: 'OptionCost' })
-    OptionCost: number = null;
+    OptionCost: number | null = null;
 
     @Expose({ name: 'OptionPrice' })
-    OptionPrice: number = null;
+    OptionPrice: number | null = null;
 
     @Expose({ name: 'OriginalStartDate' })
-    OriginalStartDate: Date = null;
+    OriginalStartDate: Date | null = null;
 
     @Expose({ name: 'ParentAssetId' })
-    ParentAssetId: string = null;
+    ParentAssetId: string | null = null;
 
     @Expose({ name: 'ParentBundleNumber' })
-    ParentBundleNumber: number = null;
+    ParentBundleNumber: number | null = null;
 
     @Expose({ name: 'PriceGroup' })
-    PriceGroup: string = null;
+    PriceGroup: string | null = null;
 
     @Expose({ name: 'PriceIncludedInBundle' })
-    PriceIncludedInBundle: boolean = null;
+    PriceIncludedInBundle: boolean = false;
 
     @Expose({ name: 'PriceListId' })
-    PriceListId: string = null;
+    PriceListId: string | null = null;
 
     @Expose({ name: 'PriceListItemId' })
-    PriceListItemId: string = null;
+    PriceListItemId: string | null = null;
 
     @Expose({ name: 'PriceMethod' })
-    PriceMethod: string = null;
+    PriceMethod: string | null = null;
 
     @Expose({ name: 'PriceType' })
-    PriceType: string = null;
+    PriceType: string | null = null;
 
     @Expose({ name: 'PricingDate' })
-    PricingDate: Date = null;
+    PricingDate: Date | null = null;
 
     @Expose({ name: 'Frequency' })
-    Frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' = null;
+    Frequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly'| null = null;
 
     @Expose({ name: 'Term' })
-    Term: number = null;
+    Term: number | null = null;
 
     @Expose({ name: 'PriceUom' })
-    PriceUom: string = null;
+    PriceUom: string | null = null;
 
     @Expose({ name: 'PrimaryLineNumber' })
-    PrimaryLineNumber: number = null;
+    PrimaryLineNumber: number | null = null;
 
     @Expose({ name: 'ProductId' })
-    ProductId: string = null;
+    ProductId: string | null = null;
 
     @Expose({ name: 'ProductType' })
-    ProductType: string = null;
+    ProductType: string | null = null;
 
     @Expose({ name: 'PurchaseDate' })
-    PurchaseDate: Date = null;
+    PurchaseDate: Date | null = null;
 
     @Expose({ name: 'Quantity' })
-    Quantity: number = null;
+    Quantity: number | null = null;
 
     @Expose({ name: 'RenewalAdjustmentAmount' })
-    RenewalAdjustmentAmount: number = null;
+    RenewalAdjustmentAmount: number | null = null;
 
     @Expose({ name: 'RenewalAdjustmentType' })
-    RenewalAdjustmentType: string = null;
+    RenewalAdjustmentType: string | null = null;
 
     @Expose({ name: 'RenewalDate' })
-    RenewalDate: Date = null;
+    RenewalDate: Date | null = null;
 
     @Expose({ name: 'RenewalFrequency' })
-    RenewalFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' = null;
+    RenewalFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' | null = null;
 
     @Expose({ name: 'RenewalTerm' })
-    RenewalTerm: number = null;
+    RenewalTerm: number | null = null;
 
     @Expose({ name: 'SellingFrequency' })
-    SellingFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' | 'One Time' = null;
+    SellingFrequency: 'Hourly' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Half Yearly' | 'Yearly' | 'One Time' | null = null;
 
     @Expose({ name: 'SellingTerm' })
-    SellingTerm: number = null;
+    SellingTerm: number | null = null;
 
     @Expose({ name: 'SellingUom' })
-    SellingUom: string = null;
+    SellingUom: string | null = null;
 
     @Expose({ name: 'ShipToAccountId' })
-    ShipToAccountId: string = null;
+    ShipToAccountId: string | null = null;
 
     @Expose({ name: 'AccountId' })
-    AccountId: string = null;
+    AccountId: string | null = null;
 
     @Expose({ name: 'StartDate' })
-    StartDate: Date = null;
+    StartDate: Date | null = null;
 
     get DaysToRenew() {
         if (this.PriceType && this.PriceType === 'Recurring') {
-            let endDate = _moment(this.EndDate);
+            let endDate = _moment(this.EndDate as Date);
             // need to consider end date too so using + 1 to calculate the value
             return endDate.diff(_moment(), 'days') + 1;
         } else {
@@ -313,15 +313,15 @@ export class AssetLineItem extends AObject {
 export class AssetLineItemExtended extends AssetLineItem {
 
     @Expose({ name: 'AttributeValueId' })
-    AttributeValueId: string = null;
+    AttributeValueId: string | null = null;
 
     @Expose({ name: 'AttributeValue' })
     @Type(() => AssetAttributeValue)
-    AttributeValue: AssetAttributeValue = null;
+    AttributeValue: AssetAttributeValue | null = null;
 
     @Expose({ name: 'PriceListItem' })
     @Type(() => PriceListItem)
-    PriceListItem: PriceListItem = null;
+    PriceListItem: PriceListItem | null = null;
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
@@ -333,7 +333,7 @@ export class AssetLineItemExtended extends AssetLineItem {
      */
     onlyHasOneTimePriceType(childRecords: Array<AssetLineItemExtended>): boolean {
         let mainAsset = this;
-        let childRecordAssetArray = get(childRecords, mainAsset.Id);
+        let childRecordAssetArray = get(childRecords, mainAsset.Id as string);
         let selectedAsset = filter(childRecordAssetArray, (asset) => asset.BundleAssetId === mainAsset.Id && asset.LineType !== 'Option' && (asset.PriceType === 'Recurring' || asset.PriceType === 'Usage'))
         return this.PriceType === 'One Time'
             && selectedAsset.length === 0;

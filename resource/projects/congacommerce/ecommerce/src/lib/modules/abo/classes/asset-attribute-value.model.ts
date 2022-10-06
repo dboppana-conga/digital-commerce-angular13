@@ -6,5 +6,5 @@ import { AObject, ATable } from '@congacommerce/core';
 export class AssetAttributeValue extends AObject {
 
     @Expose({ name: 'AssetLineItemId' })
-    LineItemId: string = null;
+    LineItemId: string | null = null;
 }

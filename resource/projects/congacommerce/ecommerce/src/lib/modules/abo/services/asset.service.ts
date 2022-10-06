@@ -431,6 +431,6 @@ export class MyComponent implements OnInit{
         //       }
         //     ],
         //   }, this.type, null, false);          
-        return null;
-        }
+        return of([]);
+    }
 }
