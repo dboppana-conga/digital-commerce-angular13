@@ -229,8 +229,8 @@ export abstract class AObjectMetadata {
 
     set hasErrors(e: boolean) { }
 
-    setError(key: string, param?: object, type: 'error' | 'warning' | 'info' = 'error', children?: Array<AObjectError>, reference?: KeyValue<string, string>): void {
-        this.set(`error['${key}']`, new AObjectError(key, param, type, children, reference));
+    setError(key: string, param?: object | null, type: 'error' | 'warning' | 'info' = 'error', children?: Array<AObjectError> | null, reference?: KeyValue<string, string>): void {
+        this.set(`error['${key}']`, new AObjectError(key, param, type, children as Array<AObjectError>, reference));
     }
     clearError(key?: string): void {
         if (!isNil(key))
@@ -280,7 +280,7 @@ export enum FilterOperator {
 }
 
 export class AObjectError extends Error {
-    constructor(m: string, public parameter?: Object, public type: 'error' | 'warning' | 'info' = 'error', public children?: Array<AObjectError>, public reference?: KeyValue<string, string>) {
+    constructor(m: string, public parameter?: Object | null, public type: 'error' | 'warning' | 'info' = 'error', public children?: Array<AObjectError>, public reference?: KeyValue<string, string>) {
         super(m);
         this.children = compact(this.children);
         if (!isNil(parameter) && !isPlainObject(parameter)) {

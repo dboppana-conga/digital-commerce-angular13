@@ -9,9 +9,9 @@ export class PriceListCategory extends AObject {
 
     @Expose({ name: 'PriceList' })
     @Type(() => PriceList)
-    PriceList: PriceList = null;
+    PriceList: PriceList  | null = null;
 
     @Expose({ name: 'Hierarchy' })
     @Type(() => Category)
-    Hierarchy: Category = null;
+    Hierarchy: Category  | null = null;
 }

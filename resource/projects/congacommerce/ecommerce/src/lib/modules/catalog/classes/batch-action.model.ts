@@ -50,15 +50,15 @@ export class BatchAction {
 
   public getTranslationKey(): string {
     if (this.displayLabel === 'Compare')
-      return 'COMMON.COMPARE';
+      return 'COMMON.COMPARE' as string;
     else if (this.displayLabel === 'Renew')
-      return 'COMMON.RENEW';
+      return 'COMMON.RENEW' as string;
     else if (this.displayLabel === 'Terminate')
-      return 'COMMON.TERMINATE';
+      return 'COMMON.TERMINATE' as string;
     else if (this.displayLabel === 'Save Favorite')
-      return 'COMMON.SAVE_FAVORITE';
+      return 'COMMON.SAVE_FAVORITE' as string;
     else if (this.displayLabel === 'Clone')
-      return 'COMMON.CLONE';
+      return 'COMMON.CLONE' as string;
   }
 
   /**

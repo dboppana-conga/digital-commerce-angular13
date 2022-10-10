@@ -7,18 +7,18 @@ import { ProductAttributeMatrixView } from '../../constraint-rules/classes/attri
 export class AttributeGroup extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string| null = null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null = null;
 
     @Expose({ name: 'TwoColumnAttributeDisplay' })
-    TwoColumnAttributeDisplay: boolean = null;
+    TwoColumnAttributeDisplay: boolean = false;
 
     @Expose({ name: 'ThreeColumnAttributeDisplay' })
-    ThreeColumnAttributeDisplay: boolean = null;
+    ThreeColumnAttributeDisplay: boolean = false;
 
     @Expose({ name: 'AttributeMatrix' })
     @Type(() => ProductAttributeMatrixView)
-    ProductAttributeMatrixes: Array<ProductAttributeMatrixView> = null;
+    ProductAttributeMatrixes: Array<ProductAttributeMatrixView> | null = null;
 }

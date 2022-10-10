@@ -9,36 +9,36 @@ import { CategoryTranslation } from '../../translation/classes/category-translat
 export class Category extends AObject {
 
     @Expose({ name: 'AncestorId' })
-    AncestorId: string = null;
+    AncestorId: string | null = null;
 
     @Expose({ name: 'PrimordialId' })
-    PrimordialId: string = null;
+    PrimordialId: string  | null = null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string  | null = null;
 
     @Expose({ name: 'HierarchyId' })
-    HierarchyId: string = null;
+    HierarchyId: string | null  = null;
 
     @Expose({ name: 'IsLeaf' })
-    IsLeaf: 'Yes' | 'No' = null;
+    IsLeaf: 'Yes' | 'No' = 'No';
 
     @Expose({ name: 'Label' })
-    Label: string = null;
+    Label: string | null= null;
 
     @Expose({ name: 'ProductCount' })
-    ProductCount: number = null;
+    ProductCount: number | null= null;
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null= null;
 
     @Expose({ name: 'Translation' })
     @Type(() => CategoryTranslation)
-    Translation: Array<CategoryTranslation> = null;
+    Translation: Array<CategoryTranslation> | null= null;
 
     @Expose({ name: 'IsHidden' })
-    IsHidden: boolean = null;
+    IsHidden: boolean = false;
 
     @Expose({ name: 'IncludeInTotalsView' })
-    IncludeInTotalsView: boolean = null;
+    IncludeInTotalsView: boolean = false;
 }

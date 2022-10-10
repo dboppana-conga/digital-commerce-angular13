@@ -7,15 +7,15 @@ import { Category } from './category.model';
 export class Classification extends AObject {
 
     @Expose({ name: 'HierarchyLabel' })
-    HierarchyLabel: string = null;
+    HierarchyLabel: string | null= null;
 
     @Expose({ name: 'Type' })
-    Type: string = null;
+    Type: string | null= null;
 
     @Type(() => Category)
     @Expose({ name: 'CategoryHierarchies' })
     CategoryHierarchies: Array<Category> = [new Category()];
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null= null;
 }

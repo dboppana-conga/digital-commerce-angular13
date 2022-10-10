@@ -6,20 +6,20 @@ import { AObject, ATable } from '@congacommerce/core';
 export class QuoteAttachment extends AObject {
 
     @Expose({ name: 'Body' })
-    Body: string = null;
+    Body: string | null = null;
 
     @Expose({ name: 'BodyLength' })
-    BodyLength: number = null;
+    BodyLength: number | null = null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null = null;
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null = null;
 
     @Expose({ name: 'ParentId' })
-    ParentId: string = null;
+    ParentId: string | null = null;
 
     @Expose({ name: 'ContentType' })
-    ContentType: string = null;
+    ContentType: string | null = null;
 }

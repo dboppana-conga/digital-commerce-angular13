@@ -6,13 +6,13 @@ import { AObject, ATable } from '@congacommerce/core';
 export class FeatureSet extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null= null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null= null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number = null;
+    Sequence: number | null= null;
 }
 
 @ATable({
@@ -21,20 +21,20 @@ export class FeatureSet extends AObject {
 export class Feature extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string | null= null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null= null;
 
     @Type(() => FeatureSet)
     @Expose({ name: 'FeatureSet' })
     FeatureSet: FeatureSet = new FeatureSet();
 
     @Expose({ name: 'Sequence' })
-    Sequence: number = null;
+    Sequence: number | null= null;
 
     @Expose({ name: 'FeatureSetId' })
-    FeatureSetId: string = null;
+    FeatureSetId: string | null= null;
 }
 @ATable({
     sobjectName: 'ProductFeatureValue'
@@ -42,13 +42,13 @@ export class Feature extends AObject {
 export class ProductFeatureValue extends AObject {
 
     @Expose({ name: 'Value' })
-    Value: string = null;
+    Value: string | null= null;
 
     @Expose({ name: 'ProductId' })
-    ProductId: string = null;
+    ProductId: string | null= null;
 
     @Expose({ name: 'IsIncluded' })
-    IsIncluded: boolean = null;
+    IsIncluded: boolean = false;
 
     @Type(() => Feature)
     @Expose({ name: 'Feature' })

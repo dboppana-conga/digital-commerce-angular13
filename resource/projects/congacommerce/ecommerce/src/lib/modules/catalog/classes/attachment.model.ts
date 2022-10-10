@@ -7,19 +7,19 @@ import { UserBase } from '../../crm/classes';
 export class Attachment extends AObject {
 
     @Expose({ name: 'BodyLength' })
-    BodyLength: number = null;
+    BodyLength: number | null = null;
 
     @Expose({ name: 'Description' })
-    Description: string = null;
+    Description: string | null = null;
 
     @Expose({ name: 'Name' })
-    Name: string = null;
+    Name: string  | null = null;
 
     @Expose({ name: 'ParentId' })
-    ParentId: string = null;
+    ParentId: string | null = null;
 
     @Expose({ name: 'ContentType' })
-    ContentType: string = null;
+    ContentType: string | null = null;
 
     @Expose({ name: 'CreatedById' })
     @Type(() => UserBase)
