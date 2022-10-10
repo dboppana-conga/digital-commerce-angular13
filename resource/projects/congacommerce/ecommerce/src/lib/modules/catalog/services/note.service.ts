@@ -52,6 +52,6 @@ export class MyComponent implements OnInit{
    *
     */
   getNotes(parentId: string): Observable<Array<Note>> {
-    return of(null); // this.apiService.get(`/note?condition[0]=ParentId,Equal,${parentId}&lookups=CreatedById&sort[field]=CreatedDate&sort[direction]=DESC`, this.type);
+    return of(null) as unknown as Observable<Array<Note>>; // this.apiService.get(`/note?condition[0]=ParentId,Equal,${parentId}&lookups=CreatedById&sort[field]=CreatedDate&sort[direction]=DESC`, this.type);
   }
 }

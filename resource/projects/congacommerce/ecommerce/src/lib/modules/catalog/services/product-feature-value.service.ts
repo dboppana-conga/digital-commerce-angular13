@@ -53,15 +53,16 @@ export class MyComponent implements OnInit{
    */
   @memoize()
   getProductFeatureValues(productList: Array<Product> | Array<string>): Observable<Array<ProductFeatureValue>> {
-    if (get(productList, 'length') > 0) {
-      let productIds = null;
-      if (every(productList, item => typeof (item) === 'string')) {
-        productIds = _map(productList, p => p).join(',');
-      }
-      else {
-        productIds = _map(productList, p => p.Id).join(',');
-      }
       // To Do:
+    // if (get(productList, 'length') > 0) {
+    //   let productIds = null;
+    //   if (every(productList, item => typeof (item) === 'string')) {
+    //     productIds = _map(productList, p => p).join(',');
+    //   }
+    //   else {
+    //     productIds = _map(productList, p => p.Id).join(',');
+    //   }
+    
       // return this.query({
       //   conditions: [new ACondition(this.type, 'ProductId', 'In', productIds)],
       //   lookups: [
@@ -71,9 +72,9 @@ export class MyComponent implements OnInit{
       //     }
       //   ]
       // })
-      return null;
-    }
-    else
-      return of(null);
+      // return null;
+    // }
+    // else
+      return of(null) as unknown as Observable<Array<ProductFeatureValue>> ;
   }
 }

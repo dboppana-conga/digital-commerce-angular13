@@ -71,11 +71,11 @@ export class MyComponent implements OnInit{
 /* An interface for the attachments associated with order/quote */
 export class File extends AObject{
     /* Size of attachment */
-    ContentSize: number;
+    ContentSize: number= 0;
     /* Title of attachment */
-    Title: string;
+    Title: string ='';
     /* Type of attachment */
-    FileType: string;
+    FileType: string ='';
     /* Attachment extension e.g. jpeg,pdf etc */
-    FileExtension: string;
+    FileExtension: string ='';
 }

@@ -3,7 +3,7 @@ import {throwError as observableThrowError,  Observable, Subscriber } from 'rxjs
 import { Attachment } from '../classes/attachment.model';
 import { AObjectService } from '@congacommerce/core';
 import { Injectable } from '@angular/core';
-import { Quote } from '../../order/classes';
+import { get } from 'lodash'
 
 /**
  * The attachment represents a file that can be associated with an order, quote, etc as an attachment.
@@ -50,8 +50,8 @@ export class AttachmentService extends AObjectService {
 
         return Observable.create((observer: Subscriber<any[]>): void => {
             reader.onload = () => {
-                let base64data = reader.result.toString().split(',')[1];
                 //TO DO:
+                //let base64data = reader.result.toString().split(',')[1];
                 // this.apiService.getConnection().sobject('Attachment').create({
                 //     ParentId: parentId,
                 //     Name: file.name,

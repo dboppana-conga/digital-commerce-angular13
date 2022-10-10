@@ -47,6 +47,7 @@ import { LineItemService } from '../../../services/line-item.service';
 import { LineStatus } from '../../cart/enums';
 import { TurboApiService } from '../../../services/turbo-api.service';
 import { plainToClass } from 'class-transformer';
+import { AttributeGroup } from '../classes/attribute-group.model';
 
 /** @ignore */
 const _moment = moment;
@@ -155,7 +156,7 @@ export class ProductOptionService extends ProductService {
                             })
                         );
                     } else
-                        return of(null);
+                        return of(null) as unknown as observable<Product>;
                 })
             );
     }
@@ -184,7 +185,7 @@ export class ProductOptionService extends ProductService {
      */
     @MemoizeAll()
     getProductOptions(product: Product): Array<ProductOptionComponent> {
-        const items = [];
+        const items: Array<ProductOptionComponent> = [];
 
         const handleComponent = (c: ProductOptionComponent) => {
             items.push(c);
@@ -223,7 +224,7 @@ export class ProductOptionService extends ProductService {
     * @returns an array of ProductoptionComponent.
     */
     getProductOptionsForGroup(product: Product, group: ProductOptionGroup): Array<ProductOptionComponent> {
-        const items = [];
+        const items : Array<ProductOptionComponent>= [];
 
         const handleComponent = (c: ProductOptionComponent) => {
             if (group.Id === get(c, 'ProductOptionGroup.Id')) {
@@ -282,14 +283,16 @@ export class ProductOptionService extends ProductService {
         parentItem = defaultTo(parentItem, find(relatedItems, i => get(i, 'LineType') === 'Product/Service' && i.IsPrimaryLine === true));
         // sort the list of ProductAttributes with in attribute groups.
         forEach(attributeGroups, group => {
-            set(group.AttributeGroup, 'AttributeGroupMembers', sortBy(get(group.AttributeGroup, 'AttributeGroupMembers'), 'Sequence'));
+            let attributeGroup: Array<AttributeGroup> = group.AttributeGroup as Array<AttributeGroup>;
+            set(attributeGroup, 'AttributeGroupMembers', sortBy(get(group.AttributeGroup, 'AttributeGroupMembers'), 'Sequence'));
         });
 
         const assetAttributeValue = get(parentItem, 'Asset.AttributeValue', get(parentItem, 'AttributeValue'));
 
       if (!isEmpty(attributeGroups) && applyFilter === 'items' || applyFilter === 'changes') {
         forEach(attributeGroups, group => {
-            set(group.AttributeGroup, 'AttributeGroupMembers',
+            let attributeGroup: Array<AttributeGroup> = group.AttributeGroup as Array<AttributeGroup>;
+            set(attributeGroup, 'AttributeGroupMembers',
                 filter(get(group.AttributeGroup, 'AttributeGroupMembers'), (member) => {
                     const attribute = member.Attribute;
 
@@ -414,17 +417,17 @@ export class ProductOptionService extends ProductService {
      */
     getRequiredUncheckedOptions(allOptions: Array<ProductOptionComponent>): Array<ProductOptionComponent> {
         // IsHidden option groups will not be considered
-        let uncheckedRequiredOptions = filter(allOptions, (o) => o.Required && !o.ComponentProduct.get('item') && !get(o, 'ProductOptionGroup.IsHidden'));
-        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) => a.ProductOptionGroup.OptionGroupId);
-        let reqUnCheckedOpts = filter(allOptions,
+        let uncheckedRequiredOptions = filter(allOptions, (o) => o.IsRequired && o.ComponentProduct && !o.ComponentProduct.get('item') && !get(o, 'ProductOptionGroup.IsHidden'));
+        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) =>  a.ProductOptionGroup && a.ProductOptionGroup.OptionGroup && a.ProductOptionGroup.OptionGroup.Id);
+        let reqUnCheckedOpts :Array<ProductOptionComponent> = filter(allOptions,
             (ao) => get(ao.ComponentProduct, 'OptionGroups.length') > 0
-                && filter(ao.ComponentProduct.OptionGroups, (og) => includes(requiredOptionGroups, og.OptionGroupId)));
+                && filter(ao.ComponentProduct && ao.ComponentProduct.OptionGroups, (og) => og.OptionGroup && includes(requiredOptionGroups, og.OptionGroup.Id))) as Array<ProductOptionComponent>;
         if (reqUnCheckedOpts.length > 0) {
-            let uncheckOptions = flatten(_map(reqUnCheckedOpts, (re) => flatten(re.ComponentProduct.get('item') && _map(re.ComponentProduct.OptionGroups, (op) => filter(op.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
-            uncheckOptions = concat(filter(allOptions, (ao) => ao.Required && ao.ParentProductId === first(reqUnCheckedOpts).ParentProductId && !get(ao, 'ProductOptionGroup.IsHidden')), uncheckOptions);
-            return uncheckOptions;
+            let uncheckOptions = flatten(_map(reqUnCheckedOpts, (re) => flatten(re.ComponentProduct && re.ComponentProduct.get('item') && _map(re.ComponentProduct.OptionGroups, (op) => filter(op.Options, (opts) => opts.IsRequired && !get(opts, 'ProductOptionGroup.IsHidden'))))));
+            uncheckOptions = concat(filter(allOptions, (ao) => ao.IsRequired && ao.ParentProduct && ao.ParentProduct.Id === first(reqUnCheckedOpts).ParentProduct.Id && !get(ao, 'ProductOptionGroup.IsHidden')), uncheckOptions);
+            return uncheckOptions as Array<ProductOptionComponent>;
         }
-        return uncheckedRequiredOptions;
+        return uncheckedRequiredOptions as Array<ProductOptionComponent>;
     }
 
     /**

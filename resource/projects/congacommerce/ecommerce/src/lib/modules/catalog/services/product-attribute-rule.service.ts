@@ -1,7 +1,7 @@
 import { AObjectService } from '@congacommerce/core';
 import { Injectable } from '@angular/core';
 import { ProductAttributeRule, ProductAttributeRuleView } from '../classes/product-attribute-rule.model';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 /**
  * <strong>This service is a work in progress.</strong>
  *  
@@ -65,7 +65,7 @@ export class MyComponent implements OnInit{
         //         ]
         //     )
         // ]);
-        return null;
+        return of(null) as unknown as  Observable<Array<ProductAttributeRule>>;
     }
 }
  /**

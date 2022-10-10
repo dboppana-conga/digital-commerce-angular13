@@ -70,10 +70,10 @@ export class MyComponent implements OnInit{
             //         new ACondition(this.productAttributeGrpMemberService.type, 'ProductId', 'In', productList)
             //     ])
             // ]);
-            return null;
+            return of(null) as unknown as Observable<Array<ProductAttributeGroup>>;
         } else {
            // obsv$ = this.get(uniq(flatten(productList.map((p: Product) => get(p, 'AttributeGroups', []).map(g => g.AttributeGroup.Id)))));
-            return null;
+            return of(null) as unknown as Observable<Array<ProductAttributeGroup>>;
         }
         return obsv$.pipe(
             switchMap(productAttributeGroupList => this.translatorService.translateData(productAttributeGroupList)),

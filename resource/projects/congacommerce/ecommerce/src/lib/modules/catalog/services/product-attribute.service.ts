@@ -69,7 +69,7 @@ export class MyComponent implements OnInit{
         //         conditions.push(new ACondition(this.productAttributeGrpMemberService.type, 'AttributeGroup.Name', 'Equal', attributeGroupName));
         //     return this.where(null, 'AND', null, [new ASort(this.type, 'Sequence', 'ASC')], null, [new AJoin(this.productAttributeGrpMemberService.type, 'AttributeGroupId', 'AttributeGroupId', conditions)]);
         // }
-        return null;
+        return of(null) as unknown as  Observable<Array<ProductAttribute>>;
     }
 
     /**
@@ -102,7 +102,7 @@ export class MyComponent implements OnInit{
     //     const attributeValue = new ProductAttributeValue();
     //     productAttributeList.forEach(attribute => attributeValue[attribute.Field] = SalesforceUtils.getDefaultValue(get(attribute, '_describe')));
     //     return attributeValue;
-        return null;
+        return of(null) as unknown as  ProductAttributeValue;
      }
 
     /**
@@ -130,7 +130,7 @@ export class MyComponent implements OnInit{
     * @returns An array of product attributes with metadata information for each attribute.
     */
     setDescribeInformationOnProductAttributes(attributes: Array<ProductAttribute>): Observable<Array<ProductAttribute>> {
-        return of(null);
+        return of(null) as unknown as  Observable<Array<ProductAttribute>>;
     }
 
     /**
@@ -163,7 +163,7 @@ export class MyComponent implements OnInit{
         // const filterList: Array<AFilter> = [];
         // filterList.push(new AFilter(this.type, [new ACondition(this.type, 'Field', 'In', fields)]));
         // return this.where(null, 'AND', filterList);
-        return null;
+        return of(null) as unknown as  Observable<Array<ProductAttribute>>;
     }
 }
 
@@ -178,7 +178,7 @@ export class ProductAttributeValueService extends AObjectService {
 
     type = ProductAttributeValue;
    
-    getInstanceWithDefaults(product: Product, objectMetadata): ProductAttributeValue {
+    getInstanceWithDefaults(product: Product, objectMetadata: any): ProductAttributeValue {
       const instance: ProductAttributeValue = this.getInstance() as ProductAttributeValue;
         const attributeMemberList = flatten(map(get(product, 'AttributeGroups', []), group => get(group.AttributeGroup, 'AttributeGroupMembers')));
         if (!isNil(objectMetadata)) {

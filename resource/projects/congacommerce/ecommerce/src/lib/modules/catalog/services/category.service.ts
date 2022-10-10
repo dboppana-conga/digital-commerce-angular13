@@ -38,7 +38,7 @@ export class CategoryService extends AObjectService {
     protected translatorService = this.injector.get(TranslatorLoaderService, 'translatorService');
     protected productCategoryService = this.injector.get(ProductCategoryService, 'productCategoryService');
 
-    private state: BehaviorSubject<Array<Category>> = new BehaviorSubject<Array<Category>>(null);
+    private state: BehaviorSubject<Array<Category>> = new BehaviorSubject<Array<Category>>([]);
 
     /**
     * @ignore
@@ -59,7 +59,7 @@ export class CategoryService extends AObjectService {
                     const categoryList = plainToClass(this.type, data, { excludeExtraneousValues: true }) as unknown as Array<Category>;
                     return of(categoryList);
                 }), take(1)
-            ).subscribe((categories) => this.state.next(categories));
+            ).subscribe((categories: Array<Category>) => this.state.next(categories));
     }
 
     /**
@@ -115,7 +115,9 @@ export class CategoryService extends AObjectService {
     */
 
     getCategoryByName(categoryName: string): Observable<Category> {
-        return this.getCategories().pipe(filter(r => !isNil(r)),map(categoryList => find(categoryList, (c) => c.Name === categoryName)));
+        return this.getCategories()
+                    .pipe(filter(r => !isNil(r)),
+                            map(categoryList => find(categoryList, (c) => c.Name === categoryName) as Category));
     }
 
     /**
@@ -156,7 +158,7 @@ export class CategoryService extends AObjectService {
         // ]);
 
         // return obsv$.pipe(mergeMap(categories => this.translatorService.translateData(categories) as Observable<Array<Category>>));
-        return null;
+        return of(null) as unknown as Observable<Array<Category>> ;
     }
 
     /**
@@ -172,7 +174,7 @@ export class CategoryService extends AObjectService {
     getCategoryBranchSync(categoryId: string, categoryList: Array<Category>): Array<Category> {
         let categoryArray = new Array<Category>();
         let list = categoryList;
-        let recursive = (_categoryId) => {
+        let recursive = (_categoryId: string) => {
             for (let category of list) {
                 if (category.Id === _categoryId) {
                     categoryArray.unshift(category);
@@ -209,7 +211,7 @@ export class CategoryService extends AObjectService {
     * @returns an  observable containing the array of categories
     */
     getCategoryBranchChildren(categoryIdList: Array<string>): Observable<Array<Category>> {
-        const isIdList = [];// To Do: categoryIdList.every(SalesforceUtils.isValid);
+        const isIdList : Array<string>= [];// To Do: categoryIdList.every(SalesforceUtils.isValid);
 
         return this.getCategories().pipe(filter(r => !isNil(r)),
             map(data => {
@@ -219,7 +221,7 @@ export class CategoryService extends AObjectService {
                     categoryArray = categoryArray.concat(children);
                     const nonLeafs = children.filter(child => child.IsLeaf !== 'Yes');
                     if (get(nonLeafs, 'length', 0) > 0)
-                        nonLeafs.forEach(child => recursive(child.Id));
+                        nonLeafs.forEach(child => recursive(child.Id as string));
                 };
                 categoryIdList.forEach(c => recursive(c));
                 return categoryArray;
@@ -232,32 +234,33 @@ export class CategoryService extends AObjectService {
      */
     getCategoryBranchForProduct(product: Product): Observable<Array<Category>> {
         if (get(product, 'Categories.length', 0) > 0) {
-            const validCategories = product.Categories.filter(r => r.Classification.PrimordialId != null || r.Classification.AncestorId != null);
+            const validCategories = product.Categories && product.Categories.filter(r => r.Classification && (r.Classification.PrimordialId != null || r.Classification.AncestorId != null));
             if (validCategories && validCategories.length > 0) {
                 let category: ProductCategory = validCategories[0];
-                return this.getCategoryBranch(category.Classification.Id);
+                const classification = category.Classification as Category;
+                return this.getCategoryBranch(classification.Id as string);
             } else
-                return of(null);
+                return of(null) as unknown as Observable<Array<Category>> ;
 
         } else
-            return of(null);
+            return of(null) as unknown as Observable<Array<Category>> ;
     }
 
     /**
      * @ignore
      */
     @Delay(1)
-    getCategoryBranchForProductSync(product): Array<Category> {
+    getCategoryBranchForProductSync(product: Product): Array<Category> {
         if (get(product, 'Categories.length', 0) > 0) {
-            const validCategories = product.Categories.filter(r => r.Classification.PrimordialId != null || r.Classification.AncestorId != null);
+            const validCategories = product.Categories && product.Categories.filter(r => r.Classification && (r.Classification.PrimordialId != null || r.Classification.AncestorId != null));
             if (validCategories && validCategories.length > 0) {
                 let category: ProductCategory = validCategories[0];
                 return this.getCategoryBranchSync(get(category, 'Classification.Id'), this.state.value);
             } else
-                return null;
+                return null as unknown as Array<Category>;
 
         } else
-            return null;
+            return null as unknown as Array<Category>;
     }
 
     /**
@@ -270,7 +273,7 @@ export class CategoryService extends AObjectService {
                 //To Do: data.filter((d) => SalesforceUtils.isEqual(d.AncestorId, categoryId)).slice(0, limit)
             ));
         } else
-            return of(null);
+            return of(null) as unknown as Observable<Array<Category>> ;
     }
 
 
@@ -280,7 +283,7 @@ export class CategoryService extends AObjectService {
     getRelatedCategories(categoryId: string, limit: number = 1000): Observable<Array<Category>> {
         return this.getCategories().pipe(filter(r => !isNil(r)),map(data => {
             const category = find(data, (d) => d.Id === categoryId);
-            return data.filter(d => d.Id === categoryId || d.AncestorId === category.AncestorId).slice(0, limit);
+            return data.filter(d => d.Id === categoryId || (category && d.AncestorId === category.AncestorId)).slice(0, limit);
         }));
     }
     /**

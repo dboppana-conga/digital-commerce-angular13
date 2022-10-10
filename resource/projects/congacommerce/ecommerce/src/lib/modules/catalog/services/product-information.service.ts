@@ -91,7 +91,7 @@ export class MyComponent implements OnInit{
         return endpoint + attachmentId;
     }
 
-    private base64ToArrayBuffer(base64) {
+    private base64ToArrayBuffer(base64: string) {
         let binaryString = window.atob(base64);
         let binaryLen = binaryString.length;
         let bytes = new Uint8Array(binaryLen);
@@ -126,7 +126,7 @@ export class MyComponent implements OnInit{
         let blob = new Blob([bytes], { type: `${get(attachment, 'Type')}` });
         let link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = get(attachment, 'Name');
+        link.download = get(attachment, 'Name') as string;
         link.click();
         link.remove();
     }
