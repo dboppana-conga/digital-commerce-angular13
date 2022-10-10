@@ -148,7 +148,7 @@ export class ProductOptionComponent extends AObject {
 
     @Expose({ name: 'ComponentProduct' })
     @Type(() => Product)
-    ComponentProduct: Product;
+    ComponentProduct: Product | null = null;
 
     @Expose({ name: 'ProductOptionGroup' })
     @Type(() => ProductOptionGroup)
