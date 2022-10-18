@@ -48,6 +48,7 @@ import { LineStatus } from '../../cart/enums';
 import { TurboApiService } from '../../../services/turbo-api.service';
 import { plainToClass } from 'class-transformer';
 import { AttributeGroup } from '../classes/attribute-group.model';
+import { ProductAttributeMatrixView } from '../../constraint-rules';
 
 /** @ignore */
 const _moment = moment;
@@ -116,7 +117,7 @@ export class ProductOptionService extends ProductService {
                     if (product) {
                         const cartState = cart;
                         set(product, 'ProductAttributeMatrixViews', filter(get(product, 'ProductAttributeMatrixViews'), r => r.Active));
-                        remove(get(product, 'ProductAttributeMatrixViews'), r => {
+                        remove(get(product, 'ProductAttributeMatrixViews'),(r :ProductAttributeMatrixView) => {
                             const expiredate = _moment(r.AttributeValueMatrix.ExpirationDate).format('YYYY-MM-DD');
                             return _moment(expiredate).isBefore(_moment(new Date()).format('YYYY-MM-DD'));
                         });
@@ -156,7 +157,7 @@ export class ProductOptionService extends ProductService {
                             })
                         );
                     } else
-                        return of(null) as unknown as observable<Product>;
+                        return of(null);
                 })
             );
     }
@@ -326,16 +327,17 @@ export class ProductOptionService extends ProductService {
                         && get(i, 'ParentBundleNumber') === get(parentItem, 'PrimaryLineNumber')
                         && every(flatten(_map(optionGroups, g => get(g, 'Options'))), (o) => get(o, 'ComponentProduct._metadata.item.PrimaryLineNumber') !== get(i, 'PrimaryLineNumber'))
                     );
-
-                    option.ComponentProduct.set('item', cloneDeep(item));
+                    
+                    const componentProduct = option.ComponentProduct as Product;
+                    componentProduct.set('item', cloneDeep(item));
                     set(option, 'ComponentProduct.ProductAttributeMatrixViews', filter(get(option, 'ComponentProduct.ProductAttributeMatrixViews'), r => r.Active));
-                    remove(get(option, 'ProductAttributeMatrixViews'), r => {
+                    remove(get(option, 'ProductAttributeMatrixViews'), (r: ProductAttributeMatrixView) => {
                         const expiredate = _moment(r.AttributeValueMatrix.ExpirationDate).format('YYYY-MM-DD');
                         return _moment(expiredate).isBefore(_moment(new Date()).format('YYYY-MM-DD'));
                     });
                     set(option, 'ComponentProduct.ProductOptionGroup.IsHidden', group.IsHidden);
                     set(option, 'ComponentProduct', this.groupOptionGroups(
-                        get(option, 'ComponentProduct')
+                        get(option, 'ComponentProduct') as Product
                         , get(item, 'AttributeValue')
                         , relatedItems
                         , applyFilter
@@ -343,7 +345,7 @@ export class ProductOptionService extends ProductService {
                         , item
                     ));
                     // Filter Product Option Components with invalid effective/expiration dates.
-                    set(option, 'ComponentProduct', first(this.productService.filterInvalidProducts([option.ComponentProduct])));
+                    set(option, 'ComponentProduct', first(this.productService.filterInvalidProducts([option.ComponentProduct as Product])));
                 });
                 if (applyFilter === 'changes')
                     set(group, 'Options',
@@ -365,16 +367,21 @@ export class ProductOptionService extends ProductService {
                 // Set the option group metadata
                 set(group, '_metadata.summary', {
                     changes: sumBy(get(group, 'Options')
-                        , (o) => Number(includes(changedStatus, get(o, 'ComponentProduct').get('item.LineStatus')))),
+                        , (o: ProductOptionComponent) => {
+                            const p = o.ComponentProduct as Product;
+                            return Number(includes(changedStatus, p.get('item.LineStatus')))
+                        }),
                     disabled: false
                 });
 
                 // Setting expand/collapse flag based on item selection.
-                group.set('expand', (filter(get(group, 'Options'), (option) => get(option, 'ComponentProduct').get('item')).length > 0) || (filter(optionGroups, (g) => get(g, 'ParentOptionGroupId') === get(group, 'OptionGroup.Id')).length > 0) ? true : false);
+                group.set('expand', (filter(get(group, 'Options'), (option) => {
+                        const op = get(option, 'ComponentProduct') as Product;
+                        return op.get('item')}).length > 0) || (filter(optionGroups, (g) => get(g, 'ParentOptionGroupId') === get(group, 'OptionGroup.Id')).length > 0) ? true : false);
             });
 
             // check all Option groups & Attribute groups are opened
-            p.set('expandAll', (optionGroups.length === filter(optionGroups, (og) => og.get('expand')).length) && attributeGroups.length <= 1)
+            p.set('expandAll', (optionGroups && optionGroups.length === filter(optionGroups, (og) => og.get('expand')).length) && attributeGroups && attributeGroups.length <= 1)
 
             // Filter out any groups that don't have options and aren't a parent
             set(p, 'OptionGroups',
@@ -418,7 +425,7 @@ export class ProductOptionService extends ProductService {
     getRequiredUncheckedOptions(allOptions: Array<ProductOptionComponent>): Array<ProductOptionComponent> {
         // IsHidden option groups will not be considered
         let uncheckedRequiredOptions = filter(allOptions, (o) => o.IsRequired && o.ComponentProduct && !o.ComponentProduct.get('item') && !get(o, 'ProductOptionGroup.IsHidden'));
-        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) =>  a.ProductOptionGroup && a.ProductOptionGroup.OptionGroup && a.ProductOptionGroup.OptionGroup.Id);
+        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) =>  a.ProductOptionGroup.OptionGroup.Id);
         let reqUnCheckedOpts :Array<ProductOptionComponent> = filter(allOptions,
             (ao) => get(ao.ComponentProduct, 'OptionGroups.length') > 0
                 && filter(ao.ComponentProduct && ao.ComponentProduct.OptionGroups, (og) => og.OptionGroup && includes(requiredOptionGroups, og.OptionGroup.Id))) as Array<ProductOptionComponent>;
@@ -469,11 +476,11 @@ export class ProductOptionService extends ProductService {
 
         if (reqdOptionsNeeded.length > 0) {
             // Get all required suboptions for the bundle options.
-            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent, cartItems) && _map(optionComponent.ComponentProduct.OptionGroups, (optionGrp) => filter(optionGrp.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
-            reqdOptions = concat(filter(productOptionComponents, (optionComponent) => !get(optionComponent, 'ProductOptionGroup.IsHidden') && optionComponent.ComponentProduct.IsActive && optionComponent.Required && optionComponent.ParentProductId === first(reqdOptionsNeeded).ParentProductId), reqdOptions);
+            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent as ProductOptionComponent, cartItems) && _map(optionComponent.ComponentProduct.OptionGroups, (optionGrp) => filter(optionGrp.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
+            reqdOptions = concat(filter(productOptionComponents, (optionComponent) => !get(optionComponent, 'ProductOptionGroup.IsHidden') && optionComponent.ComponentProduct.IsActive && optionComponent.Required && optionComponent.ParentProduct.Id === first(reqdOptionsNeeded).ParentProduct.Id), reqdOptions);
             return reqdOptions;
         }
-        return requiredUncheckedOptions;
+        return requiredUncheckedOptions as Array<ProductOptionComponent>;
     }
     /**@ignore */
     isProductOptionSelected(productOptionComponent: ProductOptionComponent, cartItems: Array<CartItem>) {

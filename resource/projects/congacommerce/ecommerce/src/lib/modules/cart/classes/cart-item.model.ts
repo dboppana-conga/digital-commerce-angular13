@@ -16,28 +16,28 @@ import { Account } from '../../crm/classes/account.model';
 export class CartItem extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string | null = null;
+    Name: string = null;
 
     @Expose({ name: 'AssetLineItem' })
     @Type(() => AssetLineItemExtended)
-    AssetLineItem: AssetLineItemExtended | null = null;
+    AssetLineItem: AssetLineItemExtended = null;
 
     @Expose({ name: 'LineNumber' })
-    LineNumber: number | null = null;
+    LineNumber: number = null;
 
     @Expose({ name: 'PrimaryLineNumber' })
-    PrimaryLineNumber: number | null = null;
+    PrimaryLineNumber: number = null;
 
     @Expose({ name: 'IncentiveCode' })
-    IncentiveCode: string | null = null;
+    IncentiveCode: string = null;
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
-    Product: Product | null = null;
+    Product: Product = null;
 
     @Expose({ name: 'Option' })
     @Type(() => Product)
-    Option: Product | null = null;
+    Option: Product = null;
 
     @Expose({ name: 'Quantity' })
     get Quantity(): number {
@@ -48,53 +48,53 @@ export class CartItem extends AObject {
     }
 
     @Expose({ name: 'TotalQuantity' })
-    TotalQuantity: number | null = null;
+    TotalQuantity: number = null;
 
     @Expose({ name: 'ItemSequence' })
-    ItemSequence: number | null = null;
+    ItemSequence: number = null;
 
     @Expose({ name: 'StartDate' })
-    StartDate: string | null = null;
+    StartDate: string = null;
 
     @Expose({ name: 'EndDate' })
-    EndDate: string | null = null;
+    EndDate: string = null;
 
     @Expose({ name: 'Frequency' })
-    Frequency: string | null = null;
+    Frequency: string = null;
 
     @Expose({ name: 'Configuration' })
     @Type(() => Cart)
-    Configuration: Cart | null = null;
+    Configuration: Cart = null;
 
     @Expose({ name: 'ListPrice' })
-    ListPrice: number | null = null;
+    ListPrice: number = null;
 
     @Expose({ name: 'BasePrice' })
-    BasePrice: number | null = null;
+    BasePrice: number = null;
 
     @Expose({ name: 'ExtendedPrice' })
-    ExtendedPrice: number | null = null;
+    ExtendedPrice: number = null;
 
     @Expose({ name: 'BaseExtendedPrice' })
-    BaseExtendedPrice: number | null = null;
+    BaseExtendedPrice: number = null;
 
     @Expose({ name: 'NetPrice' })
-    NetPrice: number | null = null;
+    NetPrice: number = null;
 
     @Expose({ name: 'NetUnitPrice' })
-    NetUnitPrice: number | null = null;
+    NetUnitPrice: number = null;
 
     @Expose({ name: 'HasOptions' })
-    HasOptions: boolean  = false;
+    HasOptions: boolean = null;
 
     @Expose({ name: 'HasAttributes' })
-    HasAttributes: boolean  = false;
+    HasAttributes: boolean = null;
 
     @Expose({ name: 'LineType' })
-    LineType: 'Product/Service' | 'Option' | 'Misc' | null = null;
+    LineType: 'Product/Service' | 'Option' | 'Misc' = null;
 
     @Expose({ name: 'IsPrimaryLine' })
-    IsPrimaryLine: boolean = false;
+    IsPrimaryLine: boolean = null;
 
     @Expose({ name: 'IsOptionRollupLine' })
     IsOptionRollupLine: boolean = false;
@@ -106,102 +106,102 @@ export class CartItem extends AObject {
     ConstraintCheckStatus: string = 'NA';
 
     @Expose({ name: 'PricingStatus' })
-    PricingStatus: 'Pending' | 'Complete' | null = null;
+    PricingStatus: 'Pending' | 'Complete' = null;
 
     @Expose({ name: 'ParentBundleNumber' })
-    ParentBundleNumber: number | null = null;
+    ParentBundleNumber: number = null;
 
     @Expose({ name: 'Term' })
-    PricingTerm: number | null = null;
+    PricingTerm: number = null;
 
     @Expose({ name: 'SellingTerm' })
-    SellingTerm: number | null = null;
+    SellingTerm: number = null;
 
     @Expose({ name: 'AddedByRuleInfo' })
-    AddedByRuleInfo: string | null = null;
+    AddedByRuleInfo: string = null;
 
     @Expose({ name: 'ProductOption' })
     @Type(() => ProductOptionComponent)
-    ProductOption: ProductOptionComponent | null = null;
+    ProductOption: ProductOptionComponent = null;
 
     @Expose({ name: 'AttributeValue' })
     @Type(() => ProductAttributeValue)
-    AttributeValue: ProductAttributeValue | null = null;
+    AttributeValue: ProductAttributeValue = null;
 
     @Expose({ name: 'Currency' })
-    Currency: string | null = null;
+    Currency: string = null;
 
     @Expose({ name: 'PriceListItem' })
     @Type(() => PriceListItem)
-    PriceListItem: PriceListItem | null = null;
+    PriceListItem: PriceListItem = null;
 
     @Expose({ name: 'PriceList' })
     @Type(() => PriceList)
-    PriceList: PriceList | null = null;
+    PriceList: PriceList = null;
 
     @Expose({ name: 'SummaryGroup' })
     @Type(() => SummaryGroup)
-    SummaryGroup: SummaryGroup | null = null;
+    SummaryGroup: SummaryGroup = null;
 
     @Expose({ name: 'IncentiveAdjustmentAmount' })
-    IncentiveAdjustmentAmount: string | null = null;
+    IncentiveAdjustmentAmount: string = null;
 
     @Expose({ name: 'LineStatus' })
-    LineStatus: string | null = null;
+    LineStatus: string = null;
 
     @Expose({ name: 'CouponCode' })
-    CouponCode: string | null = null;
+    CouponCode: string = null;
 
     @Expose({ name: 'ChargeType' })
-    ChargeType: string | null = null;
+    ChargeType: string = null;
 
     @Expose({ name: 'PriceType' })
-    PriceType: string | null = null;
+    PriceType: string = null;
 
     @Expose({ name: 'IsTaxable' })
     IsTaxable: boolean = false;
 
     @Expose({ name: 'TaxCode' })
-    TaxCode: string | null = null;
+    TaxCode: string = null;
 
     @Expose({ name: 'IsTaxInclusive' })
     IsTaxInclusive: boolean = false;
 
     @Expose({ name: 'ShipToAccount' })
     @Type(() => Account)
-    ShipToAccount: Account | null = null;
+    ShipToAccount: Account = null;
 
     @Expose({ name: 'BillToAccount' })
     @Type(() => Account)
-    BillToAccount: Account | null = null;
+    BillToAccount: Account = null;
 
     @Expose({ name: 'AdjustmentLineItems' })
     @Type(() => AdjustmentItem)
-    AdjustmentLineItems: Array<AdjustmentItem> | null = null;
+    AdjustmentLineItems: Array<AdjustmentItem> = null;
 
     @Expose({ name: 'ExtendedDescription' })
-    ExtendedDescription: string | null = null;
+    ExtendedDescription: string = null;
 
     @Expose({ name: 'Classification' })
-    Classification: string | null = null;
+    Classification: string = null;
 
     @Expose({ name: 'ClassificationHierarchy' })
-    ClassificationHierarchy: string | null = null;
+    ClassificationHierarchy: string = null;
 
     @Expose({ name: 'ClassificationHierarchyInfo' })
-    ClassificationHierarchyInfo: string | null = null;
+    ClassificationHierarchyInfo: string = null;
 
     @Expose({ name: 'ProductVersion' })
-    ProductVersion: number | null = null;
+    ProductVersion: number = null;
 
     @Expose({ name: 'ExternalId' })
-    ExternalId: number | null = null;
+    ExternalId: number = null;
 
     @Expose({ name: 'AdjustmentType' })
-    AdjustmentType: string | null = null;
+    AdjustmentType: string = null;
 
     @Expose({ name: 'AdjustmentAmount' })
-    AdjustmentAmount: number | null = null;
+    AdjustmentAmount: number = null;
 
-    private _quantity: number = 0;
+    private _quantity: number = null;
 }

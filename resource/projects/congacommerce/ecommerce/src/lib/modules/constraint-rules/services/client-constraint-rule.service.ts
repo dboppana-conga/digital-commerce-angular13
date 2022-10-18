@@ -3,7 +3,7 @@ import { ProductOptionComponent, Product } from '../../catalog/classes/index';
 import { ProductOptionService } from '../../catalog/services/product-option.service';
 import { ConstraintRuleService } from './constraint-rule.service';
 import { ConstraintRule, ConstraintRuleCondition, AppliedRuleActionInfo } from '../classes/index';
-import { filter, set, get, forEach, uniqBy, includes, cloneDeep, isEmpty, first, map as _map, uniq, isNil, intersection, difference, flatMap, concat, some, compact } from 'lodash';
+import { filter, set, get, forEach, uniqBy, includes, cloneDeep, isEmpty, first, map as _map, uniq, isNil, intersection, difference, flatMap, concat, some, compact, join } from 'lodash';
 import { BehaviorSubject, Observable, of, forkJoin, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PerformAction, ConstraintActionsMode, ConstraintActionsType, ConstraintActionsIntent, ActionToPerform } from '../interfaces/constraint-rule-interface';
@@ -99,7 +99,7 @@ export class ClientConstraintRuleService {
                 const productValid = conditions.filter(condition =>
                   (condition.ProductScope === 'Product' && product.Id === condition.ProductId)
                   || (condition.ProductScope === 'Product Family' && product.Family === condition.ProductFamily)
-                  || (condition.ProductScope === 'Product Group' && filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroupId === condition.ProductGroupId).length > 0)
+                  || (condition.ProductScope === 'Product Group' && filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroup.Id === condition.ProductGroupId).length > 0)
                 ).length > 0;
                 if (productValid) {
                   valid = true;
@@ -110,7 +110,7 @@ export class ClientConstraintRuleService {
                 const actionProductValid = actions.filter(action =>
                   (action.ProductScope === 'Product' && product.Id === action.ProductId)
                   || (action.ProductScope === 'Product Family' && product.Family === action.ProductFamily)
-                  || (action.ProductScope === 'Product Group' && filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroupId === action.ProductGroupId).length > 0)
+                  || (action.ProductScope === 'Product Group' && filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroup.Id === action.ProductGroupId).length > 0)
                 ).length === actions.length;
                 if (actionProductValid) {
                   valid = true;
@@ -123,7 +123,7 @@ export class ClientConstraintRuleService {
             }
           });
         }),
-        map(rules => filter(rules, r => r.get('actionProductList')))
+        map(rules => filter(rules, r => r.get('actionProductList')) as Array<ConstraintRule>)
       );
   }
 
@@ -199,7 +199,7 @@ export class ClientConstraintRuleService {
               loadRuleMessages.push({ rule: rule, pending: true });
           } else {
             // condition option of DisableExclusionRules is not seelcted then enable the option and remove the error message if displayed.
-            forEach(comps, (comp) => {
+            forEach(comps, (comp: ProductOptionComponent) => {
               comp.set('disabled', false);
               actionToPerform.disableOrHideOption.push(comp);
               comp.set('ruleAction', null);
@@ -262,7 +262,7 @@ export class ClientConstraintRuleService {
           }
         }
       }
-    }, this);
+    });
 
     this.appliedRuleActionInfoRec = this.loadAlertMessages(loadRuleMessages, product);
     return actionToPerform;
@@ -301,9 +301,9 @@ export class ClientConstraintRuleService {
     }
     const primaryProd = this.checkMatchInPrimaryLine(rule, product);
     appliedRule.ConstraintRuleAction = first(rule.ConstraintRuleActions);
-    appliedRule.TriggeringProductIds = _map(rule.get('productList'), 'Id');
+    appliedRule.TriggeringProductIds = join(_map(rule.get('productList'), 'Id'), ',');
     if (primaryProd) appliedRule.TriggeringProductIds = appliedRule.TriggeringProductIds.concat(product.Id);
-    appliedRule.ActionProductIds = _map(rule.get('actionProductList'), 'Id');
+    appliedRule.ActionProductIds = join(_map(rule.get('actionProductList'), 'Id'), ',');
     appliedRule.Message = first(rule.ConstraintRuleActions).Message;
     appliedRule.IsTargetOption = true;
     return appliedRule;
@@ -313,7 +313,7 @@ export class ClientConstraintRuleService {
    * @ignore
    */
   checkMatchInPrimaryLine(rule: ConstraintRule, product: Product): boolean {
-    return filter(rule.ConstraintRuleConditions, (r) => r.MatchInPrimaryLines && (r.ProductId === product.Id || r.ProductFamily === product.Family || filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroupId === r.ProductGroupId).length > 0)).length > 0;
+    return filter(rule.ConstraintRuleConditions, (r) => r.MatchInPrimaryLines && (r.ProductId === product.Id || r.ProductFamily === product.Family || filter(get(product, 'ProductGroups', []), groupMember => groupMember.ProductGroup.Id === r.ProductGroup.Id).length > 0)).length > 0;
   }
 
   /**

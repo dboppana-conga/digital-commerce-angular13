@@ -12,21 +12,21 @@ export class ProductAttributeGroupMember extends AObject {
     AttributeGroup: AttributeGroup = new AttributeGroup();
 
     @Expose({ name: 'DisplayType' })
-    DisplayType: string  | null = null;
+    DisplayType: string = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number  | null = null;
+    Sequence: number = null;
 
     @Expose({ name: 'Attribute' })
     @Type(() => ProductAttribute)
     Attribute: ProductAttribute = new ProductAttribute();
 
     @Expose({ name: 'IsHidden' })
-    IsHidden: boolean = false;
+    IsHidden: boolean = null;
 
     @Expose({ name: 'IsPrimary' })
-    IsPrimary: boolean = false;
+    IsPrimary: boolean = null;
 
     @Expose({ name: 'IsReadOnly' })
-    IsReadOnly: boolean = false;
+    IsReadOnly: boolean = null;
 }

@@ -6,9 +6,9 @@ import { AObject, ATable } from '@congacommerce/core';
 })
 export class ProductAttributeValue extends AObject {
 
-    public LineItem: string | null= null;
+    public LineItem: string = null;
 
     get LineItemId(): string {
-        return get(this, 'LineItem') as string;
+        return get(this, 'LineItem');
     }
 }

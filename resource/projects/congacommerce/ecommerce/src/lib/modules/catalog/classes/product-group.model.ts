@@ -7,13 +7,13 @@ import { Product } from './product.model';
 export class ProductGroup extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string | null= null;
+    Name: string = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null= null;
+    Description: string = null;
 
     @Expose({ name: 'GroupType' })
-    GroupType: string | null= null;
+    GroupType: string = null;
 
 }
 
@@ -24,14 +24,14 @@ export class ProductGroupMember extends AObject {
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
-    Product: Product | null = null;
+    Product: Product = null;
 
     @Expose({ name: 'ProductGroup' })
     ProductGroup: ProductGroup = new ProductGroup();
 
     @Expose({ name: 'Ratio' })
-    Ratio: string | null = null;
+    Ratio: string = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: string | null = null;
+    Sequence: string = null;
 }

@@ -3,7 +3,7 @@ import { AObject, ATable, AField } from '@congacommerce/core';
 import { Account } from './account.model';
 @ATable({
     sobjectName: 'Contact',
-    route:'common/v1/contacts'
+    route:'data/v1/objects/Contact'
 })
 export class Contact extends AObject {
 

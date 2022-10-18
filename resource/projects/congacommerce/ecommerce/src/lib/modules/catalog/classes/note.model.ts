@@ -7,16 +7,16 @@ import { User } from '../../crm/classes';
 export class Note extends AObject {
 
     @Expose({ name: 'Description' })
-    Description: string | null = null;
+    Description: string = null;
 
     @Expose({ name: 'Name' })
-    Name: string  | null = null;
+    Name: string = null;
 
     @Expose({ name: 'Parent' })
     @Type(() => Note)
-    Parent: Note  | null = null;
+    Parent: Note = null;
 
     @Expose({ name: 'CreatedBy' })
     @Type(() => User)
-    CreatedBy: User  | null = null;
+    CreatedBy: User = null;
 }

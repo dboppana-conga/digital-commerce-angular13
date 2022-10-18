@@ -7,34 +7,34 @@ import { Attachment } from './attachment.model';
 export class ProductInformation extends AObject {
 
     @Expose({ name: 'Type' })
-    Type: string | null= null;
+    Type: string = null;
 
     @Expose({ name: 'Name' })
-    Name: string | null= null;
+    Name: string = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number | null= null;
+    Sequence: number = null;
 
     @Expose({ name: 'ProductId' })
-    ProductId: string | null= null;
+    ProductId: string = null;
 
     @Expose({ name: 'InformationType' })
-    InformationType: string | null= null;
+    InformationType: string = null;
 
     @Expose({ name: 'FileId' })
-    FileId: string | null= null;
+    FileId: string = null;
 
     @Expose({ name: 'EmbedCode' })
-    EmbedCode: string | null= null;
+    EmbedCode: string = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null= null;
+    Description: string = null;
 
     @Expose({ name: 'ContentUrl' })
-    ContentUrl: string | null= null;
+    ContentUrl: string = null;
 
     @Expose({ name: 'ClassificationId' })
-    ClassificationId: string | null= null;
+    ClassificationId: string = null;
 
     @Expose({ name: 'Attachments' })
     @Type(() => Attachment)

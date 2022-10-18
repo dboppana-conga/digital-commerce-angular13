@@ -17,90 +17,90 @@ import { ProductAttributeGroup } from './product-attribute-group.model';
 export class Product extends AObject {
 
     @Expose({ name: 'ImageURL' })
-    IconId: string | null= null;
+    IconId: string = null;
 
     @Expose({ name: 'Name' })
-    Name: string | null= null;
+    Name: string = null;
 
     @Expose({ name: 'ConfigurationType' })
-    ConfigurationType: string | null= null;
+    ConfigurationType: string = null;
 
     @Expose({ name: 'Uom' })
-    Uom: string | null= null;
+    Uom: string = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null= null;
+    Description: string = null;
 
     @Expose({ name: 'Family' })
-    Family: string | null= null;
+    Family: string = null;
 
     @Expose({ name: 'ProductCode' })
-    ProductCode: string | null= null;
+    ProductCode: string = null;
 
     @Expose({ name: 'IsActive' })
-    IsActive: boolean = false;
+    IsActive: boolean = null;
 
     @Expose({ name: 'HasAttributes' })
-    HasAttributes: boolean = false;
+    HasAttributes: boolean = null;
 
     @Expose({ name: 'HasDefaults' })
-    HasDefaults: boolean = false;
+    HasDefaults: boolean = null;
 
     @Expose({ name: 'HasOptions' })
-    HasOptions: boolean = false;
+    HasOptions: boolean = null;
 
     @Expose({ name: 'ExpirationDate' })
-    ExpirationDate: Date | null= null;
+    ExpirationDate: Date = null;
 
     @Expose({ name: 'EffectiveStartDate' })
-    EffectiveStartDate: Date | null= null;
+    EffectiveStartDate: Date = null;
 
     @Expose({ name: 'EffectiveDate' })
-    EffectiveDate: Date | null= null;
+    EffectiveDate: Date = null;
 
     @Expose({ name: 'Version' })
-    Version: number | null= null;
+    Version: number = null;
 
     @Type(() => ProductCategory)
     @Expose({ name: 'Categories' })
-    Categories: Array<ProductCategory> | null= null;
+    Categories: Array<ProductCategory> = null;
 
     @Type(() => PriceListItem)
     @Expose({ name: 'Prices' })
-    PriceLists: Array<PriceListItem> | null= null;
+    PriceLists: Array<PriceListItem> = null;
 
     @Type(() => ProductFeatureValue)
     @Expose({ name: 'ProductFeatureValues' })
-    ProductFeatureValues: Array<ProductFeatureValue> | null= null;
+    ProductFeatureValues: Array<ProductFeatureValue> = null;
 
     @Type(() => AssetLineItemExtended)
     @Expose({ name: 'AssetLineItems' })
-    AssetLineItems?: Array<AssetLineItemExtended> | null= null;
+    AssetLineItems?: Array<AssetLineItemExtended> = null;
 
     @Type(() => ProductOptionGroup)
     @Expose({ name: 'ProductOptionGroups' })
-    OptionGroups: Array<ProductOptionGroup> | null= null;
+    OptionGroups: Array<ProductOptionGroup> = null;
 
     @Type(() => ProductAttributeGroup)
     @Expose({ name: 'ProductAttributeGroups' })
-    AttributeGroups: Array<ProductAttributeGroup> | null= null;
+    AttributeGroups: Array<ProductAttributeGroup> = null;
 
     @Type(() => ProductGroupMember)
     @Expose({ name: 'ProductGroups' })
-    ProductGroups: Array<ProductGroupMember> | null= null;
+    ProductGroups: Array<ProductGroupMember> = null;
 
     @Type(() => ProductAttributeMatrixView)
     @Expose({ name: 'ProductAttributeMatrixViews' })
-    ProductAttributeMatrixViews: Array<ProductAttributeMatrixView> | null= null;
+    ProductAttributeMatrixViews: Array<ProductAttributeMatrixView> = null;
 
     @Type(() => ProductTranslation)
     @Expose({ name: 'Translation' })
-    Translation: Array<ProductTranslation> | null= null;
+    Translation: Array<ProductTranslation> = null;
 
     validate(): void {
         const errors = this.get('error');
         this.clearError();
-        let childErrors : any= [];
+        let childErrors = [];
         const handleComponent = (c: ProductOptionComponent) => {
             if (filter(this.get('cartItems'), item => get(item, 'ProductOption.ComponentProduct.Id') === get(c, 'ComponentProduct.Id') && get(item, 'ProductOption.ProductOptionGroup.Id') === get(c, 'ProductOptionGroup.Id')).length > 0)
                 forEach(get(c, 'ComponentProduct.OptionGroups', []), handleGroup);
@@ -123,8 +123,8 @@ export class ProductResult {
 
     @Type(() => Product)
     @Expose({ name: 'Products' })
-    Products: Array<Product> | null= null;
+    Products: Array<Product> = null;
 
     @Expose({ name: 'TotalCount' })
-    TotalCount: number | null= null;
+    TotalCount: number = null;
 }

@@ -8,19 +8,19 @@ import { Product } from './product.model';
 export class ProductAttributeGroup extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string | null= null;
+    Name: string = null;
 
     @Expose({ name: 'AttributeGroup' })
     @Type(() => AttributeGroup)
-    AttributeGroup: Array<AttributeGroup> | null= null;
+    AttributeGroup: Array<AttributeGroup> = null;
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
-    Product: Array<Product> | null= null;
+    Product: Array<Product> = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number | null= null;
+    Sequence: number = null;
     
     @Expose({ name: 'FieldUpdateCriteriaIds' })
-    FieldUpdateCriteriaIds: number | null= null;
+    FieldUpdateCriteriaIds: number = null;
 }

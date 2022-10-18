@@ -9,24 +9,24 @@ export class ProductCategory extends AObject {
 
     @Expose({ name: 'Category', })
     @Type(() => Category)
-    Classification: Category | null= null;
+    Classification: Category = null;
 
     @Expose({ name: 'Default' })
-    Default: boolean = false;
+    Default: boolean = null;
 
     @Expose({ name: 'DefaultQuantity' })
-    DefaultQuantity: number | null= null;
+    DefaultQuantity: number = null;
 
     @Expose({ name: 'MaxQuantity' })
-    MaxQuantity: number | null= null;
+    MaxQuantity: number = null;
 
     @Expose({ name: 'MinQuantity' })
-    MinQuantity: number | null= null;
+    MinQuantity: number = null;
 
     @Expose({ name: 'Sequence' })
-    Sequence: number | null= null;
+    Sequence: number = null;
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
-    Product: Product | null= null;
+    Product: Product = null;
 }

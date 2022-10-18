@@ -6,50 +6,50 @@ import { AObject, ATable } from '@congacommerce/core';
 export class ProductAttributeRule extends AObject {
 
     @Expose({ name: 'AccountScope' })
-    AccountScope: string | null= null;
+    AccountScope: string = null;
 
     @Expose({ name: 'AccountScopeOper' })
-    AccountScopeOper: string | null= null;
+    AccountScopeOper: string = null;
 
     @Expose({ name: 'IsActive' })
-    IsActive: boolean = false;
+    IsActive: boolean = null;
 
     @Expose({ name: 'ConditionCriteria' })
-    ConditionCriteria: string | null= null;
+    ConditionCriteria: string = null;
 
     @Expose({ name: 'ConditionCriteriaExpression' })
-    ConditionCriteriaExpression: string | null = null;
+    ConditionCriteriaExpression: string = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null= null;
+    Description: string = null;
 
     @Expose({ name: 'EffectiveDate' })
-    EffectiveDate: Date | null= null;
+    EffectiveDate: Date = null;
 
     @Expose({ name: 'ExpirationDate' })
-    ExpirationDate: Date | null= null;
+    ExpirationDate: Date = null;
 
     @Expose({ name: 'ProductFamilyScope' })
-    ProductFamilyScope: string | null= null;
+    ProductFamilyScope: string = null;
 
     @Expose({ name: 'ProductFamilyScopeOper' })
-    ProductFamilyScopeOper: string | null= null;
+    ProductFamilyScopeOper: string = null;
 
     @Expose({ name: 'ProductGroupScope' })
-    ProductGroupScope: string | null= null;
+    ProductGroupScope: string = null;
 
     @Expose({ name: 'ProductGroupScopeOper' })
-    ProductGroupScopeOper: string | null= null;
+    ProductGroupScopeOper: string = null;
 
     @Expose({ name: 'ProductScope' })
-    ProductScope: string | null= null;
+    ProductScope: string = null;
 
     @Expose({ name: 'ProductScopeOper' })
-    ProductScopeOper: string | null= null;
+    ProductScopeOper: string = null;
 
     @Expose({ name: 'ProductAttributeRuleActions' })
     @Type(() => ProductAttributeRuleAction)
-    ProductAttributeRuleActions: Array<ProductAttributeRuleAction> | null= null;
+    ProductAttributeRuleActions: Array<ProductAttributeRuleAction> = null;
 }
 
 @ATable({
@@ -58,11 +58,11 @@ export class ProductAttributeRule extends AObject {
 export class ProductAttributeRuleView extends AObject {
 
     @Expose({ name: 'ProductAttributeRuleId' })
-    ProductAttributeRuleId: string | null= null;
+    ProductAttributeRuleId: string;
 
     @Expose({ name: 'ProductAttributeRule' })
     @Type(() => ProductAttributeRule)
-    ProductAttributeRule: ProductAttributeRule | null= null;
+    ProductAttributeRule: ProductAttributeRule = null;
 }
 
 @ATable({
@@ -71,49 +71,49 @@ export class ProductAttributeRuleView extends AObject {
 export class ProductAttributeRuleAction extends AObject {
 
     @Expose({ name: 'AccountScope' })
-    AccountScope: string | null= null;
+    AccountScope: string = null;
 
     @Expose({ name: 'AccountScopeOper' })
-    AccountScopeOper: string | null= null;
+    AccountScopeOper: string = null;
 
     @Expose({ name: 'Action' })
-    Action: string | null= null;
+    Action: string = null;
 
     @Expose({ name: 'ActionCriteria' })
-    ActionCriteria: string | null= null;
+    ActionCriteria: string = null;
 
     @Expose({ name: 'ActionCriteriaExpression' })
-    ActionCriteriaExpression: string | null= null;
+    ActionCriteriaExpression: string = null;
 
     @Expose({ name: 'Message' })
-    Message: string | null= null;
+    Message: string = null;
 
     @Expose({ name: 'ProductAttributeRuleId' })
-    ProductAttributeRuleId: string | null= null;
+    ProductAttributeRuleId: string = null;
 
     @Expose({ name: 'ProductFamilyScope' })
-    ProductFamilyScope: string | null= null;
+    ProductFamilyScope: string = null;
 
     @Expose({ name: 'ProductGroupScope' })
-    ProductGroupScope: string | null= null;
+    ProductGroupScope: string = null;
 
     @Expose({ name: 'ProductGroupScopeOper' })
-    ProductGroupScopeOper: string | null= null;
+    ProductGroupScopeOper: string = null;
 
     @Expose({ name: 'ProductScope' })
-    ProductScope: string | null= null;
+    ProductScope: string = null;
 
     @Expose({ name: 'ProductScopeOper' })
-    ProductScopeOper: string | null= null;
+    ProductScopeOper: string = null;
 
     @Expose({ name: 'Field' })
-    Field: string | null= null;
+    Field: string = null;
     get FieldVal(): string {
         return (this.Field) ? this.Field.substring(this.Field.indexOf('.') + 1) : '';
     }
 
     @Expose({ name: 'ValueExpression' })
-    ValueExpression: string | null= null;
+    ValueExpression: string = null;
     get Values(): Array<string> {
         return (this.ValueExpression && this.ValueExpression.length > 0) ? this.ValueExpression.replace(/'/g, '').split(';') : [];
     }

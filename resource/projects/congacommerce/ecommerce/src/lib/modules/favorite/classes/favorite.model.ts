@@ -9,35 +9,35 @@ import { User } from '../../crm/classes/user.model';
 export class Favorite extends AObject {
 
     @Expose({ name: 'Name' })
-    Name: string | null = null;
+    Name: string = null;
 
     @Expose({ name: 'CreatedBy' })
     @Type(() => User)
     CreatedBy: User = new User();
 
     @Expose({ name: 'OwnerId' })
-    OwnerId: string | null = null;
+    OwnerId: string = null;
 
     @Expose({ name: 'Active' })
-    Active: boolean = false;
+    Active: boolean;
 
     @Expose({ name: 'ConfigurationId' })
-    ConfigurationId: string | null = null;
+    ConfigurationId: string = null;
 
     @Expose({ name: 'Configuration' })
     @Type(() => Cart)
-    Configuration: Cart | null = null;
+    Configuration: Cart = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null = null;
+    Description: string = null;
 
     @Expose({ name: 'PriceListId' })
-    PriceListId: string | null = null;
+    PriceListId: string = null;
 
     @Expose({ name: 'PriceList' })
     @Type(() => PriceList)
-    PriceList: PriceList | null = null;
+    PriceList: PriceList = null;
 
     @Expose({ name: 'Scope' })
-    Scope: string | null = null;
+    Scope: string = null;
 }

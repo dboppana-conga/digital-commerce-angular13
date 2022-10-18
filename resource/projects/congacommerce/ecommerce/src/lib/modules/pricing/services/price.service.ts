@@ -240,7 +240,7 @@ export class MyComponent implements OnInit{
         return this.priceListService.getPriceList().pipe(mergeMap(priceList => {
 
             const priceListItem = get(product, 'PriceLists')
-                .filter(pli => (pli != null) ? pli.PriceListId === priceList.Id : false)[0];
+                .filter(pli => (pli != null) ? pli.PriceList.Id === priceList.Id : false)[0];
             const price = (priceListItem) ? (priceListItem.ContractPrice) ? priceListItem.ContractPrice : priceListItem.ListPrice : null;
             if (!priceListItem)
                 return observableThrowError(new Error('Product does not have a valid price list item'));
@@ -585,7 +585,7 @@ export class MyComponent implements OnInit{
      */
     private ruleAdjustment(p: Price, priceRules: Array<PriceRule>, lineItem: CartItem): Price {
         const product = lineItem.Product;
-        const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroupId);
+        const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroup.Id);
         // Get matching rule sets
         const matchingRules = priceRules.filter(rule =>
             (rule.Ruleset.ProductFamily === product.Family || rule.Ruleset.ProductFamily == null)

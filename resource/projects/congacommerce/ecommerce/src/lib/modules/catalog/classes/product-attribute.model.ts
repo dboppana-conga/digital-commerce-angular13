@@ -8,31 +8,31 @@ export class ProductAttribute extends AObject {
 
     @Expose({ name: 'AttributeGroup' })
     @Type(() => ProductAttributeGroup)
-    AttributeGroup: ProductAttributeGroup | null= null;
+    AttributeGroup: ProductAttributeGroup = null;
 
     @Expose({ name: 'IsRequired' })
-    IsRequired: boolean | null= null;
+    IsRequired: boolean = null;
 
     @Expose({ name: 'Name' })
-    Field: string | null= null;
+    Field: string = null;
    
 
     @Expose({ name: 'LookupObjectName' })
-    LookupObjectName: string | null= null;
+    LookupObjectName: string = null;
 
     @Expose({ name: 'PickListValue' })
-    PickListValue: string | null= null;
+    PickListValue: string = null;
 
 
     @Expose({ name: 'DefaultValue' })
-    DefaultValue: string | null= null;
+    DefaultValue: string = null;
 
     @Expose({ name: 'Type' })
-    Type: string | null= null;
+    Type: string = null;
 
     @Expose({ name: 'DisplayName' })
-    DisplayName: string | null= null;
+    DisplayName: string = null;
 
     @Expose({ name: 'Description' })
-    Description: string | null= null;
+    Description: string = null;
 }

@@ -259,7 +259,7 @@ export class OrderService extends AObjectService {
      */
     getAllOrders(filters?: Array<FieldFilter> | string): Observable<Array<Order>> {
         let queryparam = new URLSearchParams();
-        forEach(filters, (filter) => {
+        forEach(filters as Array<FieldFilter>, (filter) => {
             filter.field && queryparam.append('filter', `${filter.filterOperator}(${filter.field}:'${filter.value}')`);
         });
         let params = isEmpty(queryparam.toString()) ? '' : `${queryparam.toString()}`;

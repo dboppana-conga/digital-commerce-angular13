@@ -108,7 +108,7 @@ export class AccountBase extends AObject {
 
 @ATable({
     sobjectName: 'Account',
-    route: 'common/v1/accounts'
+    route: 'data/v1/objects/Account'
 })
 export class Account extends AccountBase {
 

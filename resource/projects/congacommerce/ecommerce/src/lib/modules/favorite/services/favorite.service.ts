@@ -130,7 +130,7 @@ export class FavoriteService extends AObjectService {
     const requestObj = map(payload, (item) => item.strip());
     return this.apiService
       .post(`/favorites`, requestObj, this.type)
-      .pipe(rmap(first));
+      .pipe(rmap(first)) as Observable<Favorite>;
   }
 
   /**
@@ -166,7 +166,7 @@ export class FavoriteService extends AObjectService {
     const favorites = filter(favoriteList, f => !isNil(f));
     const payload = every(favorites, fav => typeof (fav) === 'string') ?
       map(favorites, fav => ({ Id: fav }))
-      : map(favorites, fav => ({ Id: fav.Id }));
+      : map(favorites, fav => ({ Id: get(fav, 'Id') }));
     return this.apiService.post(`/favorites/delete`, payload, this.type);
   }
 }
