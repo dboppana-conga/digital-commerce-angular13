@@ -17,7 +17,7 @@ import { FavoriteItemRequest } from '../interfaces/index';
   providedIn: 'root'
 })
 export class FavoriteService extends AObjectService {
-  type = Favorite;
+  override type = Favorite;
 
   protected cartService: CartService = this.injector.get(CartService);
   protected priceListService: PriceListService = this.injector.get(PriceListService);
@@ -39,7 +39,7 @@ export class FavoriteService extends AObjectService {
    * @param lookups string value representing the lookups to be fetched for a given favorite.
    * @returns observable containing the favorite record.
    */
-  getFavoriteById(favoriteId: string, lookups: string = null): Observable<Favorite> {
+  getFavoriteById(favoriteId: string, lookups: string | null = null): Observable<Favorite> {
     const queryParam = lookups ? `?lookups=${lookups}` : '';
     return this.apiService.get(`/Apttus_Config2__FavoriteConfiguration__c/${favoriteId}${queryParam}`, this.type);
   }
@@ -101,7 +101,7 @@ export class FavoriteService extends AObjectService {
    */
   addFavoriteToCart(favorite: string | Favorite): Observable<Array<CartItem>> {
     const favoriteId = favorite instanceof Favorite ? favorite.Id : favorite;
-    return this.cartService.addItem({ 'FavoriteId': favoriteId });
+    return this.cartService.addItem({ 'FavoriteId': favoriteId as string });
   }
 
   /**
@@ -130,7 +130,7 @@ export class FavoriteService extends AObjectService {
     const requestObj = map(payload, (item) => item.strip());
     return this.apiService
       .post(`/favorites`, requestObj, this.type)
-      .pipe(rmap(first)) as Observable<Favorite>;
+      .pipe(rmap(res => first(res) as Favorite));
   }
 
   /**
