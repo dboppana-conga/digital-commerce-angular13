@@ -148,7 +148,7 @@ export class ProductOptionService extends ProductService {
 
                         return cartItems$.pipe(
                             map(cartItems => {
-                                const bundleProduct: Product = cloneDeep(product);
+                                const bundleProduct = cloneDeep(product) as Product;
                                 const cartItem = find(cartItems, (i) => get(i, 'LineType') === 'Product/Service');
                                 const attrValue = isNil(changes) ? defaultTo(defaultTo(get(relatedTo, 'AttributeValue'), get(cartItem, 'AttributeValue')), new ProductAttributeValue()) : get(cartItem, 'AttributeValue');
                                 set(cartItem, 'AttributeValue', attrValue);
@@ -472,12 +472,12 @@ export class ProductOptionService extends ProductService {
 
         const reqdOptionsNeeded = filter(productOptionComponents,
             (optionComponent) => !isEmpty(get(optionComponent, 'ComponentProduct.OptionGroups'))
-                && filter(get(optionComponent, 'ComponentProduct.OptionGroups'), (optionGrp) => !optionGrp.IsHidden && includes(requiredUncheckedOptionGroups, optionGrp.OptionGroupId)));
+                && filter(get(optionComponent, 'ComponentProduct.OptionGroups'), (optionGrp) => !optionGrp.IsHidden && includes(requiredUncheckedOptionGroups, optionGrp.OptionGroupId))) as Array<ProductOptionComponent> ;
 
         if (reqdOptionsNeeded.length > 0) {
             // Get all required suboptions for the bundle options.
-            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent as ProductOptionComponent, cartItems) && _map(optionComponent.ComponentProduct.OptionGroups, (optionGrp) => filter(optionGrp.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
-            reqdOptions = concat(filter(productOptionComponents, (optionComponent) => !get(optionComponent, 'ProductOptionGroup.IsHidden') && optionComponent.ComponentProduct.IsActive && optionComponent.Required && optionComponent.ParentProduct.Id === first(reqdOptionsNeeded).ParentProduct.Id), reqdOptions);
+            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent as ProductOptionComponent, cartItems) && _map(get(optionComponent,'ComponentProduct.OptionGroups'), (optionGrp) => filter(optionGrp.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
+            reqdOptions = concat(filter(productOptionComponents, (optionComponent) => !get(optionComponent, 'ProductOptionGroup.IsHidden') && optionComponent.ComponentProduct.IsActive && optionComponent.IsRequired && optionComponent.ParentProduct.Id === first(reqdOptionsNeeded).ParentProduct.Id), reqdOptions);
             return reqdOptions;
         }
         return requiredUncheckedOptions as Array<ProductOptionComponent>;

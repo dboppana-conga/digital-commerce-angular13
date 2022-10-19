@@ -583,18 +583,19 @@ export class MyComponent implements OnInit{
     /**
      * @ignore
      */
-    private ruleAdjustment(p: Price, priceRules: Array<PriceRule>, lineItem: CartItem): Price {
-        const product = lineItem.Product;
-        const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroup.Id);
-        // Get matching rule sets
-        const matchingRules = priceRules.filter(rule =>
-            (rule.Ruleset.ProductFamily === product.Family || rule.Ruleset.ProductFamily == null)
-            && (rule.Ruleset.ProductCategory === get(product, 'Categories[0].Name') || rule.Ruleset.ProductCategory == null)
-            && (productGroups.indexOf(get(rule.Ruleset.ProductGroup, 'Id') >= 0 || get(rule.Ruleset.ProductGroup, 'Id') == null))
-            && this.validateCriteria(rule.Ruleset.Criteria, lineItem)
-        );
-        matchingRules.forEach(rule => this.processEntries(rule, rule.RuleEntries, p, lineItem.Quantity, lineItem.AttributeValue, lineItem));
-        return p;
+     private ruleAdjustment(p: Price, priceRules: Array<PriceRule>, lineItem: CartItem): Price {
+    //     const product = lineItem.Product;
+    //     const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroup.Id);
+    //     // Get matching rule sets
+    //     const matchingRules = priceRules.filter(rule =>
+    //         (rule.Ruleset.ProductFamily === product.Family || rule.Ruleset.ProductFamily == null)
+    //         && (rule.Ruleset.ProductCategory === get(product, 'Categories[0].Name') || rule.Ruleset.ProductCategory == null)
+    //         && (productGroups.indexOf(rule.Ruleset.ProductGroup.Id >= 0 || rule.Ruleset.ProductGroup.Id == null))
+    //         && this.validateCriteria(rule.Ruleset.Criteria, lineItem)
+    //     );
+    //     matchingRules.forEach(rule => this.processEntries(rule, rule.RuleEntries, p, lineItem.Quantity, lineItem.AttributeValue, lineItem));
+    //     return p;
+        return null;
     }
 
     /**
