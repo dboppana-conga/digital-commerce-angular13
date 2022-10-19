@@ -15,6 +15,7 @@ import { TranslatorLoaderService } from '../../../services/translator-loader.ser
 import { CategoryService, ProductCategoryService } from './category.service';
 import { TurboApiService } from '../../../services/turbo-api.service';
 import { AssetService } from '../../abo/services/asset.service';
+import { PriceListItem } from '../../pricing/classes';
 
 /** @ignore */
 const _moment = moment;
@@ -62,12 +63,12 @@ export class ProductService extends AObjectService {
         if (get(products, 'length') > 0) {
             const today = _moment(new Date()).valueOf();
             productList = _filter(products, p => {
-                const pli = defaultTo(find(get(p, 'PriceLists', []), (item) => item.ChargeType === ChargeType.StandardPrice || item.ChargeType === ChargeType.Subscription), get(p, 'PriceLists[0]'));
-                const isProductExpired = (!isNil(p.ExpirationDate) && p.ExpirationDate < today) || (!isNil(p.EffectiveDate) && p.EffectiveDate > today);
+                const pli: PriceListItem= defaultTo(find(get(p, 'PriceLists', []), (item) => item.ChargeType === ChargeType.StandardPrice || item.ChargeType === ChargeType.Subscription), get(p, 'PriceLists[0]'));
+                const isProductExpired = (!isNil(p.ExpirationDate) && p.ExpirationDate.valueOf() < today) || (!isNil(p.EffectiveDate) && p.EffectiveDate.valueOf() > today);
 
-                const isPliExpired = isNil(pli) || isNil(pli.ListPrice) || (!isNil(pli.ExpirationDate) && pli.ExpirationDate < today) || (!isNil(pli.EffectiveDate) && pli.EffectiveDate > today);
+                const isPliExpired = isNil(pli) || isNil(pli.ListPrice) || (!isNil(pli.ExpirationDate) && pli.ExpirationDate.valueOf() < today) || (!isNil(pli.EffectiveDate) && pli.EffectiveDate.valueOf() > today);
                 if (!isProductExpired && !isPliExpired) return p;
-            });
+            }) as Array<Product>;
         }
         return productList;
     }

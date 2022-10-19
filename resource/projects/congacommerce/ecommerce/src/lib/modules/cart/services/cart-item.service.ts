@@ -212,31 +212,32 @@ export class MyComponent implements OnInit{
      * @ignore
      */
     getBundleItemsForCartItem(item: CartItem | AssetLineItem | QuoteLineItem | OrderLineItem, context?: Array<CartItem | AssetLineItem | QuoteLineItem | OrderLineItem>): Observable<Array<CartItem | AssetLineItem | QuoteLineItem | OrderLineItem>> {
+        return of(null);
         // If the item is a cart item and has a related asset
-        const service = this.metadataService.getAObjectServiceForType(item);
-        if (service && item) {
+        // const service = this.metadataService.getAObjectServiceForType(item);
+        // if (service && item) {
 
-            let field = 'ConfigurationId';
-            if (item instanceof AssetLineItem)
-                field = 'BusinessObjectId';
-            else if (item instanceof QuoteLineItem)
-                field = 'QuoteId';
-            else if (item instanceof OrderLineItem)
-                field = 'OrderId';
+        //     let field = 'ConfigurationId';
+        //     if (item instanceof AssetLineItem)
+        //         field = 'BusinessObjectId';
+        //     else if (item instanceof QuoteLineItem)
+        //         field = 'QuoteId';
+        //     else if (item instanceof OrderLineItem)
+        //         field = 'OrderId';
 
 
-            // const item$ = service.get([get(item, 'Id')]).pipe(map(res => res[0]));
-            // return (!isNil(context) && !(item instanceof AssetLineItem))
-            //     ? of(filter(context, i => isEqual(i.LineNumber, get(item, 'PrimaryLineNumber'))))
-            //     : item$.pipe(
-            //         mergeMap((i: CartItem | AssetLineItem | QuoteLineItem | OrderLineItem) => service.where([
-            //             new ACondition(service.type, 'LineNumber', 'Equal', get(i, 'PrimaryLineNumber')),
-            //             new ACondition(service.type, field, 'Equal', get(i, field))
-            //         ]))
-            //     );
-            return null;
-        } else
-            return of(null);
+        //     // const item$ = service.get([get(item, 'Id')]).pipe(map(res => res[0]));
+        //     // return (!isNil(context) && !(item instanceof AssetLineItem))
+        //     //     ? of(filter(context, i => isEqual(i.LineNumber, get(item, 'PrimaryLineNumber'))))
+        //     //     : item$.pipe(
+        //     //         mergeMap((i: CartItem | AssetLineItem | QuoteLineItem | OrderLineItem) => service.where([
+        //     //             new ACondition(service.type, 'LineNumber', 'Equal', get(i, 'PrimaryLineNumber')),
+        //     //             new ACondition(service.type, field, 'Equal', get(i, field))
+        //     //         ]))
+        //     //     );
+        //     return null;
+        // } else
+        //     return of(null);
     }
 
 
@@ -247,33 +248,35 @@ export class MyComponent implements OnInit{
      * @ignore
     */
     getCartItemsForAsset(cartItem: CartItem, context?: Cart): Observable<Array<CartItem>> {
-        if (isNil(cartItem, 'AssetLineItem'))
-            return throwError(new Error('You must provide a cart item with a related asset generated from the amend or configure asset API'));
-        return zip(this.getOptionsForItem(get(cartItem, 'AssetLineItem')), this.getOptionsForItem(cartItem, context))
-            .pipe(
-                map(([assetItems, cartItems]) => {
-                    // Map the asset lines
-                    return concat(
-                        _map(assetItems,
-                            // To a new cart item
-                            asset => {
-                                const existing = find(cartItems, (i) => get(i, 'AssetLineItem.Id') === get(asset, 'Id'));
-                                if (!isNil(existing))
-                                    return existing;
-                                else {
-                                    // Line copies the details of an asset line item to a new cart item ommiting the default Salesforce fields
-                                    const attributeValue = assign(new ProductAttributeValue(), omit(pick(get(asset, 'AttributeValue'), keys(new ProductAttributeValue())), AObjectService.defaultFields));
-                                    const newCartItem = assign(new CartItem(), omit(pick(asset, keys(new CartItem())), AObjectService.defaultFields));
-                                    newCartItem.AttributeValue = attributeValue;
-                                    newCartItem.AssetLineItem = cloneDeep(asset);
-                                    newCartItem.AssetLineItemId = get(asset, 'Id');
-                                    newCartItem.LineStatus = LineStatus.Existing;
-                                    return newCartItem;
-                                }
-                            }
-                        ), filter(cartItems, i => isNil(get(i, 'AssetLineItem'))));
-                })
-            );
+        /* TO DO : We're not using this method at the moment. */
+        return of(null);
+        // if (isNil(cartItem, 'AssetLineItem'))
+        //     return throwError(new Error('You must provide a cart item with a related asset generated from the amend or configure asset API'));
+        // return zip(this.getOptionsForItem(get(cartItem, 'AssetLineItem')), this.getOptionsForItem(cartItem, context))
+        //     .pipe(
+        //         map(([assetItems, cartItems]) => {
+        //             // Map the asset lines
+        //             return concat(
+        //                 _map(assetItems,
+        //                     // To a new cart item
+        //                     asset => {
+        //                         const existing = find(cartItems, (i) => get(i, 'AssetLineItem.Id') === get(asset, 'Id'));
+        //                         if (!isNil(existing))
+        //                             return existing;
+        //                         else {
+        //                             // Line copies the details of an asset line item to a new cart item ommiting the default Salesforce fields
+        //                             const attributeValue = assign(new ProductAttributeValue(), omit(pick(get(asset, 'AttributeValue'), keys(new ProductAttributeValue())), AObjectService.defaultFields));
+        //                             const newCartItem = assign(new CartItem(), omit(pick(asset, keys(new CartItem())), AObjectService.defaultFields));
+        //                             newCartItem.AttributeValue = attributeValue;
+        //                             newCartItem.AssetLineItem = cloneDeep(asset);
+        //                             newCartItem.AssetLineItemId = get(asset, 'Id');
+        //                             newCartItem.LineStatus = LineStatus.Existing;
+        //                             return newCartItem;
+        //                         }
+        //                     }
+        //                 ), filter(cartItems, i => isNil(get(i, 'AssetLineItem'))));
+        //         })
+        //     );
     }
 
 
@@ -323,7 +326,7 @@ export class MyComponent implements OnInit{
                         );
                         if (priceListItem) {
                             const startDate = new Date();
-                            const endDate = _moment(this.getEndDate(new Date(), defaultTo(get(priceListItem, 'DefaultSellingTerm'), 1), defaultTo(get(priceListItem, 'DefaultSellingTerm'), defaultTo(get(priceListItem, 'Frequency'), '--None--'))));
+                            const endDate = _moment(this.getEndDate(new Date(), defaultTo(get(priceListItem, 'DefaultSellingTerm'), 1), defaultTo(get(priceListItem, 'Frequency'), '--None--')));
                             const categoryList = this.categoryService.getCategoryBranchForProductSync((optionComponent != null) ? get(optionComponent, 'ComponentProduct') : bundleProduct);
                             const classification = first(categoryList);
                             const classificationHierarchy = join(_map(categoryList, 'Name'), ' | ');
@@ -346,7 +349,6 @@ export class MyComponent implements OnInit{
                             set(cartItem, 'ShipToAccount.Id', defaultTo(get(cart, 'ShipToAccount.Id'), get(account, 'Id')));
                             set(cartItem, 'BillToAccount.Id', defaultTo(get(cart, 'BillToAccount.Id'), get(account, 'Id')));
                             cartItem.IsTaxable = priceListItem.Taxable;
-                            set(cartItem, 'TaxCode.Id', priceListItem.TaxCodeId);
                             cartItem.HasOptions = bundleProduct.HasOptions;
                             cartItem.HasAttributes = isNil(optionComponent) ? bundleProduct.HasAttributes : optionComponent.ComponentProduct.HasAttributes;
                             cartItem.ItemSequence = itemSequence;

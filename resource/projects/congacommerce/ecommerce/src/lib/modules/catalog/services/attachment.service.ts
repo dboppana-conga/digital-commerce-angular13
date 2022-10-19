@@ -3,7 +3,6 @@ import {throwError as observableThrowError,  Observable, Subscriber } from 'rxjs
 import { Attachment } from '../classes/attachment.model';
 import { AObjectService } from '@congacommerce/core';
 import { Injectable } from '@angular/core';
-import { get } from 'lodash'
 
 /**
  * The attachment represents a file that can be associated with an order, quote, etc as an attachment.

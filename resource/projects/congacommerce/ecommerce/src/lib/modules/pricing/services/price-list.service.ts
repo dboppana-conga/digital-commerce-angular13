@@ -169,7 +169,7 @@ export class MyComponent implements OnInit{
         return this.priceList.pipe(
             filter(r => r != null),
             map(r => get(r, 'BasedOnPriceList', r))
-        )
+        ) as Observable<PriceList>
     }
 
     /**

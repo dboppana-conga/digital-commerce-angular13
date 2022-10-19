@@ -82,7 +82,7 @@ export class MyComponent implements OnInit{
     * To DO:
     */
     public getAssetLineItemForAccount(accountId?: string): Observable<Array<AssetLineItemExtended>> {
-        return null;
+        return of(null);
         // return this.accountService.getCurrentAccount().pipe(mergeMap(account => {
         //     if (account === null) return of(null);
         //     let conditionList = [];
@@ -133,20 +133,22 @@ export class MyComponent implements OnInit{
         * @param renewTerm renew term for asset renewal
         * @param farthestAssetEndDate farthest asset end date for asset renewal
         * @returns Observable<Array<AssetLineItemExtended>> returns an observable list of all line items with all their field values.
+        * To DO:  Add back when API is available
     */
     public renewAssets(assetIds: Array<string>, renewEndDate: Date, renewTerm: number, farthestAssetEndDate: boolean): Observable<AssetLineItemExtended> {
-        if(isEmpty(assetIds))
-            throw 'List of asset ids is not valid';
+        return of(null);
+        // if(isEmpty(assetIds))
+        //     throw 'List of asset ids is not valid';
        
-        const payload = {
-            assetIds : assetIds,
-            renewEndDate: renewEndDate ? _moment(renewEndDate).format('YYYY-MM-DD HH:mm:ss') : null,
-            renewTerm: renewTerm,
-            farthestAssetEndDate: farthestAssetEndDate
-        }
+        // const payload = {
+        //     assetIds : assetIds,
+        //     renewEndDate: renewEndDate ? _moment(renewEndDate).format('YYYY-MM-DD HH:mm:ss') : null,
+        //     renewTerm: renewTerm,
+        //     farthestAssetEndDate: farthestAssetEndDate
+        // }
             
-        return this.apiService.post(`/assets/${CartService.getCurrentCartId()}/renew`, payload, this.type, null, false)
-            .pipe(tap(() => this.cartService.reprice()));
+        // return this.apiService.post(`/assets/${CartService.getCurrentCartId()}/renew`, payload, this.type, null, false)
+        //     .pipe(tap(() => this.cartService.reprice()));
     }
 
     /**
@@ -173,27 +175,29 @@ export class MyComponent implements OnInit{
         * @param assetIds list of asset ids to terminate
         * @param cancelDate cancel date for asset termination
         * @returns Observable<Array<any>> returns an observable list of all line items with all their field values.
+        * To DO:  Add back when API is available
     */
     public cancelAssets(assetIds: Array<string>, cancelDate: Date): Observable<any> {
-        return this.cartService.getMyCart().pipe(take(1), mergeMap(
-            cart => {
-                if (get(assetIds, 'length', 0) === 0)
-                    return observableThrowError('List of asset ids is not valid');
+        // return this.cartService.getMyCart().pipe(take(1), mergeMap(
+        //     cart => {
+        //         if (get(assetIds, 'length', 0) === 0)
+        //             return observableThrowError('List of asset ids is not valid');
 
-                if (!cancelDate)
-                    return observableThrowError('CancelDate is not valid or undefined');
+        //         if (!cancelDate)
+        //             return observableThrowError('CancelDate is not valid or undefined');
 
-                let date = new SimpleDate(cancelDate);
+        //         let date = new SimpleDate(cancelDate);
 
-                let cancelAssetRequest = {
-                    assetIds: assetIds,
-                    cancelDate: date.getSimpleDate()
-                };
+        //         let cancelAssetRequest = {
+        //             assetIds: assetIds,
+        //             cancelDate: date.getSimpleDate()
+        //         };
 
-                return this.apiService.post(`/assets/${cart.Id}/terminate`, cancelAssetRequest, this.type, null, false)
-                .pipe(tap(() => this.cartService.reprice()));
-            }
-        ));
+        //         return this.apiService.post(`/assets/${cart.Id}/terminate`, cancelAssetRequest, this.type, null, false)
+        //         .pipe(tap(() => this.cartService.reprice()));
+        //     }
+        // ));
+        return of(null);
     }
 
     /**
@@ -219,22 +223,24 @@ export class MyComponent implements OnInit{
         * @override
         * @param incrementAssetDOs list of increment asset data objects for incrementing the existing assets
         * @returns Observable<Array<any>> returns an observable list of all line items with all their field values.
+        * To DO:  Add back when API is available
     */
     public incrementAssets(incrementAssetDOs: Array<IncrementAssetDO>): Observable<any> {
-        return this.cartService.getMyCart().pipe(take(1), mergeMap(
-            cart => {
-                if (get(incrementAssetDOs, 'length', 0) === 0)
-                    return observableThrowError('List of increment asset object is not valid');
+        // return this.cartService.getMyCart().pipe(take(1), mergeMap(
+        //     cart => {
+        //         if (get(incrementAssetDOs, 'length', 0) === 0)
+        //             return observableThrowError('List of increment asset object is not valid');
 
-                let incrementAssetRequest = {
-                    cartId: cart.Id,
-                    incrementAssetDOs: incrementAssetDOs
-                };
+        //         let incrementAssetRequest = {
+        //             cartId: cart.Id,
+        //             incrementAssetDOs: incrementAssetDOs
+        //         };
 
-                return this.apiService.post(`/assets/${cart.Id}/increment`, incrementAssetRequest, this.type, null, false)
-                .pipe(tap(() => this.cartService.reprice()));
-            }
-        ));
+        //         return this.apiService.post(`/assets/${cart.Id}/increment`, incrementAssetRequest, this.type, null, false)
+        //         .pipe(tap(() => this.cartService.reprice()));
+        //     }
+        // ));
+        return of(null);
     }
 
     /**
@@ -260,32 +266,34 @@ export class MyComponent implements OnInit{
     * @override
     * @param assetIds list of asset ids to amend
     * @returns Observable<Array<any>> returns an observable list of all line items with all their field values.
+    * To DO:  Add back when API is available
     */
     public amendAssets(assetIds: Array<string>): Observable<any> {
-        return this.cartService.getMyCart().pipe(take(1), mergeMap(
-            cart => {
-                if (get(assetIds, 'length', 0) === 0)
-                    return observableThrowError('List of asset ids is not valid');
+        // return this.cartService.getMyCart().pipe(take(1), mergeMap(
+        //     cart => {
+        //         if (get(assetIds, 'length', 0) === 0)
+        //             return observableThrowError('List of asset ids is not valid');
 
-                let amendAssetRequest = {
-                    assetIds: assetIds
-                };
+        //         let amendAssetRequest = {
+        //             assetIds: assetIds
+        //         };
 
-                return this.apiService.post(`/assets/${cart.Id}/amend`, amendAssetRequest, null, null, false)
-                    .pipe(
-                        switchMap((res)=> combineLatest([of(values(res)), this.getAssetsLineItemsById(keys(res))])),
-                        map(([cartItems, assetLineItems]) => {
-                            forEach(cartItems,(cartItem)=>{
-                                const assetLineItem = find(assetLineItems, { 'Id': cartItem.Apttus_Config2__AssetLineItemId__c});
-                                set(cartItem, 'AssetLineItem', assetLineItem);
-                            });
-                            set(cart, 'LineItems', cartItems);
-                            this.cartService.publish(cart);
-                        }),
-                        tap(() => this.cartService.reprice()),
-                    );
-            }
-        ));
+        //         return this.apiService.post(`/assets/${cart.Id}/amend`, amendAssetRequest, null, null, false)
+        //             .pipe(
+        //                 switchMap((res)=> combineLatest([of(values(res)), this.getAssetsLineItemsById(keys(res))])),
+        //                 map(([cartItems, assetLineItems]) => {
+        //                     forEach(cartItems,(cartItem)=>{
+        //                         const assetLineItem = find(assetLineItems, { 'Id': cartItem.Apttus_Config2__AssetLineItemId__c});
+        //                         set(cartItem, 'AssetLineItem', assetLineItem);
+        //                     });
+        //                     set(cart, 'LineItems', cartItems);
+        //                     this.cartService.publish(cart);
+        //                 }),
+        //                 tap(() => this.cartService.reprice()),
+        //             );
+        //     }
+        // ));
+        return of(null);
     }
 
     public groupFormItems(items: Array<any>): Object {
@@ -299,12 +307,12 @@ export class MyComponent implements OnInit{
      * To Do:
      */
     public getBundleItemsForAssetLineItem(assetLineItem: string | AssetLineItemExtended): Observable<Array<AssetLineItemExtended>> {
-        const assetLineItem$ = (typeof assetLineItem === 'string') ? this.fetch(assetLineItem).pipe(map(res => res[0])) : of(assetLineItem);
+        //const assetLineItem$ = (typeof assetLineItem === 'string') ? this.fetch(assetLineItem).pipe(map(res => res[0])) : of(assetLineItem);
 
         // return assetLineItem$.pipe(mergeMap(item => this.where([
         //     new ACondition(this.type, 'BundleAssetId', 'Equal', item.Id)
         // ])));
-        return null;
+        return of(null);
     }
 
     /**
@@ -332,17 +340,19 @@ export class MyComponent implements OnInit{
     * @param productIds list of ids of the product with which the asset is being swapped
     * @param newStartDate new asset start date on swapping
     * @returns Observable<Array<any>> returns an observable list of all line items with all their field values.
+    * To DO:  Add back when API is available
     */
     public swapAssets(assetIds: Array<string>, productIds: Array<string>, newStartDate: Date): Observable<any> {
-        return this.cartService.getMyCart().pipe(take(1), mergeMap(
-            cart => {
-                if (get(assetIds, 'length', 0) === 0 || get(productIds, 'length', 0) === 0)
-                    return of(null);
+        // return this.cartService.getMyCart().pipe(take(1), mergeMap(
+        //     cart => {
+        //         if (get(assetIds, 'length', 0) === 0 || get(productIds, 'length', 0) === 0)
+        //             return of(null);
 
-                return  this.apiService.post('swapAssets', { cartId: cart.Id, assetIds: assetIds, productIds: productIds, newStartDate: newStartDate },this.type, null, false)
-                    .pipe(tap(() => this.cartService.reprice()));
-            }
-        ));
+        //         return  this.apiService.post('swapAssets', { cartId: cart.Id, assetIds: assetIds, productIds: productIds, newStartDate: newStartDate },this.type, null, false)
+        //             .pipe(tap(() => this.cartService.reprice()));
+        //     }
+        // ));
+        return of(null);
     }
 
     /**
@@ -368,20 +378,21 @@ export class MyComponent implements OnInit{
     * @override
     * @param productList array of products or an array of string representing product ids.
     * @returns Observable<Array<AssetLineItemExtended>> returns an observable list of asset line item records.
-    * To Do:
+    * To Do: Add back when API is available
     */
    @memoize()
     public getAssetLineItemsforProducts(productList: Array<Product> | Array<string>): Observable<Array<AssetLineItemExtended>> {
-        if (get(productList, 'length') > 0) {
-            let productIds = null;
-            if (every(productList, item => typeof (item) === 'string')) {
-                productIds = _map(productList, p => p).join(',');
-            }
-            else {
-                productIds = _map(productList, p => p.Id).join(',');
-                return null;
-            }
-        }
+        return of(null);
+        // if (get(productList, 'length') > 0) {
+        //     let productIds = null;
+        //     if (every(productList, item => typeof (item) === 'string')) {
+        //         productIds = _map(productList, p => p).join(',');
+        //     }
+        //     else {
+        //         productIds = _map(productList, p => p.Id).join(',');
+        //         return of(null);
+        //     }
+        // }
                 // return this.storefrontService.getStorefront()
                 // .pipe(
                 //     switchMap(storefront => {
@@ -431,6 +442,6 @@ export class MyComponent implements OnInit{
         //       }
         //     ],
         //   }, this.type, null, false);          
-        return of([]);
-    }
+        return of(null);
+        }
 }

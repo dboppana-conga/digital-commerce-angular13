@@ -10,7 +10,7 @@ export class ConstraintRuleAction extends AObject {
 
     @Expose({ name: 'Product' })
     @Type(() => Product)
-    Product: Product;
+    Product: Product = null;
 
     @Expose({ name: 'ActionType' })
     ActionType: 'Inclusion' | 'Exclusion' | 'Validation' | 'Recommendation' | 'Replacement' = null;
@@ -75,5 +75,5 @@ export class ConstraintRuleAction extends AObject {
     ActionIntent: 'Auto Include' | 'Prompt' | 'Show Message' | 'Check on Finalization' | 'Disable Selection' | 'Hide' = null;
 
     @Expose({ name: 'ActionDisposition' })
-    ActionDisposition: string = null;
+    ActionDisposition: 'Error' | 'Warning' = null;
 }

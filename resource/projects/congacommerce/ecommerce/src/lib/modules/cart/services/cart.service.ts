@@ -236,13 +236,11 @@ export class MyComponent implements OnInit{
         }),
         switchMap(res => {
           const loggedIn = first(res);
-          const cartId = last(flatten(res)) ? last(flatten(res)).Id : CartService.getCurrentCartId();
-          const cartItemResp$ = this.apiService.get(`/cart/v1/carts/${cartId}/items1`);
+          const cartId = last(flatten(res)) ? get(last(flatten(res)), 'Id') : CartService.getCurrentCartId();
+          const cartItemResp$ = this.apiService.get(`/cart/v1/carts/${cartId}/items`);
           const obsv$ = cartItemResp$
             .pipe(
-              switchMap(data => {
-                return combineLatest([of(data), this.cartItemProductService.addProductInfoToLineItems(get(data, 'LineItems'))])
-        }),
+              switchMap(data => combineLatest([of(data), this.cartItemProductService.addProductInfoToLineItems(get(data, 'LineItems'))])),
               switchMap(([res, cartItems]) => {
                 const cart = plainToClass(this.type, get(res, 'Cart'));
                 const lineItems = plainToClass(CartItem, cartItems, { ignoreDecorators: true });
@@ -342,7 +340,7 @@ export class MyComponent implements OnInit{
       switchMap(data => (isNil(get(data, 'Id'))) ? this.createNewCart() : of(data)),
       switchMap((cart: Cart) => {
         cartId = cart.Id
-        return this.apiService.post(`/cart/v1/carts/${cart.Id}/items1`, cartRequestList)
+        return this.apiService.post(`/cart/v1/carts/${cart.Id}/items`, cartRequestList)
       }),
       switchMap(() => this.apiService.get(`/cart/v1/carts/${cartId}/items`)),
       switchMap(data => this.cartItemProductService.addProductInfoToLineItems(get(data, 'LineItems'))),
@@ -352,7 +350,7 @@ export class MyComponent implements OnInit{
         }
         else {
           if (!isEmpty(cartTemp.LineItems))
-            _map(cartItems, item => cartTemp.LineItems.push(item));
+            _map(cartItems, (item: CartItem) => cartTemp.LineItems.push(item));
           else
             cartTemp.LineItems = cartItems as Array<CartItem>;
           cartTemp.NumberOfItems = cartTemp.LineItems.length;
@@ -422,21 +420,21 @@ export class MyComponent implements OnInit{
   * @ignore
   */
   cloneCart(cartId: string = CartService.getCurrentCartId(), targetId: string = null): Observable<Cart> {
-    const params = targetId ? `&target=${targetId}` : '';
+    //const params = targetId ? `&target=${targetId}` : '';
     // TODO: Integrate with RLP API to clone cart.
     return of(null)
   }
 
-/**
- * @ignore
- * To DO:
- */
+  /**
+   * @ignore
+   * To DO:
+   */
   updateItems(cartItems: Array<CartItem>): Observable<Array<CartItem>> {
     return this.cacheService.buffer(
       'cart-item-update',
       cartItems,
       data => {
-        const lineItems = _map(data, cartItem => {          
+        const lineItems = _map(data, cartItem => {
           return {
             'PrimaryLineNumber': cartItem.PrimaryLineNumber,
             'LineNumber': cartItem.LineNumber,
@@ -530,11 +528,11 @@ export class MyComponent{
         return this.apiService.post(`/cart/v1/carts`, new Array(cartPayload.strip()), this.type, null, false)
       }),
       switchMap(cartResult => {
-        const cart = first(cartResult);
+        const cart = first(cartResult) as Cart;
         const cartpayload = { 'Id': cart.Id, 'Name': cart.Id };
         return isNil(cartData.Name) ? this.apiService.patch(`/cart/v1/carts`, [cartpayload], this.type, false) : of([cart]);
       }),
-      tap(cart => CartService.setCurrentCartId(first(cart).Id)),
+      tap(cart => CartService.setCurrentCartId(get(first(cart), 'Id'))),
       tap(c => this.publish(first(c))),
       take(1)
     );
@@ -561,7 +559,7 @@ export class MyComponent{
      * @returns a cold boolean observable representing the success state of the delete operation
      */
   deleteCart(cart: Cart | Array<Cart>): Observable<boolean> {
-    const cartId = flatten(_map(cart, (cartElement) => [{ 'Id': cartElement.Id }]));
+    const cartId = flatten(_map(cart, (cartElement) => [{ 'Id': get(cartElement, 'Id') }]));
     const obsv$ = this.apiService.delete(`/cart/v1/carts`, cartId)
     return obsv$.pipe(
       map(deleteList => every(deleteList, l => l === 'Deleted successfully!')),
@@ -596,7 +594,7 @@ export class MyComponent implements OnInit{
       lineItemRes$
     ]).pipe(
       map(([cartList, lineItemRes]) => {
-        const cart = first(cartList);
+        const cart = first(cartList) as Cart;
         CartService.setCurrentCartId(get(cart, 'Id'));
         if (priceCart) {
           cart.LineItems = lineItemRes;
@@ -642,7 +640,7 @@ export class MyComponent implements OnInit{
   ): Observable<Array<CartItem>> {
 
     const cartItem = find(cartItems, { IsPrimaryLine: true });
-    const request = _map(cartItems, (item) => ({
+    const request = _map(cartItems, item => ({
       Id: item.Id,
       ExternalId: item.ExternalId,
       LineNumber: item.LineNumber,
@@ -654,7 +652,7 @@ export class MyComponent implements OnInit{
       PricingStatus: item.PricingStatus,
       ParentBundleNumber: item.ParentBundleNumber,
     })
-    );
+    ) as unknown as  Array<CartRequest>;
     if (get(cartItem, 'Id'))
       return this.updateItem(get(cartItem, 'Id'), request, false);
     else if (!isEmpty(request))
@@ -683,7 +681,7 @@ export class MyComponent implements OnInit{
             'PrimaryTxnLineNumber': this.getNextPrimaryLineNumber(this.state.value.LineItems, this.state.value),
             'ExternalId': this.guid(),
             'ProductId': product.Id,
-            'OptionId': option.ComponentProductId,
+            'OptionId': option.ComponentProduct.Id,
             'Quantity': option.DefaultQuantity,
             'TxnParentBundleNumber': lineNumber,
             'LineType': 'Option',
@@ -722,10 +720,11 @@ export class MyComponent {
     payload: CartRequest
   ): Observable<Array<CartItem>> {
     // TODO: Integrate with RLP API.
-    const resp$ = of(null);
-    return this.actionQueue.queueAction(resp$, bind(() => {
-      this.refreshCart();
-    }));
+    // const resp$ = of(null);
+    // return this.actionQueue.queueAction(resp$, bind(() => {
+    //   this.refreshCart();
+    // }));
+    return of(null)
   }
   /**
    * Update fields on the items specified in the cart item array. Will trigger a reprice cart operation.
@@ -773,7 +772,7 @@ export class MyComponent implements OnInit{
                 return concat(options, cartItem);
               })
             ), 'Id');
-            this.republish(true);
+          this.republish(true);
           return this.updateItems(itemsAndOptions);
         })
       );
@@ -819,19 +818,20 @@ export class MyComponent implements OnInit{
    * @ignore
    */
   removeCartItems(cartItems: Array<CartItem>): Observable<void> {
+    const payload = [];
     const cartItemIds = _map(cartItems, 'Id');
-    const primaryLineNumbers = _map(cartItems, 'PrimaryLineNumber');
-    const removeCartItems$ = this.apiService.delete(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`, primaryLineNumbers).pipe(
+    _map(cartItems, item => payload.push({ 'PrimaryLineNumber': item.PrimaryLineNumber }));
+    const removeCartItems$ = this.apiService.delete(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`, payload).pipe(
       tap(c => {
         const lines = get(this.state, 'value.LineItems');
         const lineNumbers = _map(filter(lines, (l) => includes(cartItemIds, l.Id)), 'LineNumber');
         const PrimaryLineItem = filter(lines, (i) => includes(cartItemIds, i.Id) && i.LineType === 'Product/Service');
         if (PrimaryLineItem.length > 0) {
-          remove(get(this.state, 'value.LineItems', []), o =>
+          remove(get(this.state, 'value.LineItems', []), (o:CartItem) =>
             includes(lineNumbers, o.LineNumber)
           );
         } else {
-          remove(get(this.state, 'value.LineItems', []), o =>
+          remove(get(this.state, 'value.LineItems', []), (o: CartItem) =>
             includes(cartItemIds, o.Id)
           );
         }
@@ -840,7 +840,7 @@ export class MyComponent implements OnInit{
 
     return this.actionQueue.queueAction(removeCartItems$, bind(() => {
       this.priceCart();
-    }));
+    }, this));
   }
 
   /**
@@ -896,14 +896,15 @@ export class MyComponent implements OnInit{
    * @ignore
    */
   getCartWithId(cartId: string): Observable<Cart> {
-    return this.fetch(cartId).pipe(map(first));
+    return this.fetch(cartId) as Observable<Cart>;
   }
 
   /**
    * @ignore
    */
   abandonCart(cartId: string): Observable<boolean> {
-    return this.apiService.post(`/carts/${cartId}/abandon`);
+    //return this.apiService.post(`/carts/${cartId}/abandon`);
+    return of(null)
   }
 
   /**
@@ -930,17 +931,18 @@ export class MyComponent implements OnInit{
    * @ignore
    */
   clonePrimaryLines(lineItems: Array<CartItem>): Observable<Array<CartItem>> {
-    const lineNumbers = _map(lineItems, item => item.LineNumber);
-    return this.getMyCart().pipe(
-      take(1),
-      // TODO: Integrate with RLP API to clone primary lines.
-      switchMap(cart => of(null)),
-      map(res => {
-        const resp = plainToClass(this.metadataService.getTypeByApiName('Apttus_Config2__LineItem__c'), get(res, 'LineItems'), { ignoreDecorators: true }) as unknown as Array<CartItem>;
-        return resp;
-      }),
-      tap(lineItems => this.onAdd(lineItems))
-    )
+    // const lineNumbers = _map(lineItems, item => item.LineNumber);
+    // return this.getMyCart().pipe(
+    //   take(1),
+    //   // TODO: Integrate with RLP API to clone primary lines.
+    //   switchMap(cart => of(null)),
+    //   map(res => {
+    //     const resp = plainToClass(this.metadataService.getTypeByApiName('Apttus_Config2__LineItem__c'), get(res, 'LineItems'), { ignoreDecorators: true }) as unknown as Array<CartItem>;
+    //     return resp;
+    //   }),
+    //   tap(lineItems => this.onAdd(lineItems))
+    // )
+    return of(null)
   }
 
   /**

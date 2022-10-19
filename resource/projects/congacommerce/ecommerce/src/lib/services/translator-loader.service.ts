@@ -179,7 +179,7 @@ export class TranslatorLoaderService implements TranslateLoader {
                     this.applyTranslation(record, get(record, 'Translation', []), language);
                 }
                 if (has(record, 'Categories')) {
-                    getTranslations(_map(record.Categories, cat => cat.Classification));
+                    getTranslations(_map(get(record, 'Categories'), cat => cat.Classification));
                 }
             })
         };

@@ -33,23 +33,24 @@ export class AppliedRuleActionInfoService extends AObjectService {
     private state: BehaviorSubject<Array<AppliedRuleActionInfo>> = new BehaviorSubject<Array<AppliedRuleActionInfo>>(null);
 
     onInit() {
-        if (this.configService.get('skipRules')) {
-            this.state.next(null);
-        }
-        else {
-            this.cartService.getMyCart()
-                .pipe(
-                    filter(cart => cart && !cart.IsPricePending),
-                    switchMap(cart => {
-                        if (isNil(get(cart, 'LineItems')) || isEmpty(get(cart, 'LineItems')))
-                            return of(null);
-                        const cartId: string = !isNil(cart) && !isNil(get(cart, 'Id')) ? cart.Id : 'active';
-                        return of(null);
-                    })
-                ).subscribe(rules => {
-                    this.state.next(rules);
-                });
-        }
+        /* TO DO : */
+        // if (this.configService.get('skipRules')) {
+        //     this.state.next(null);
+        // }
+        // else {
+        //     this.cartService.getMyCart()
+        //         .pipe(
+        //             filter(cart => cart && !cart.IsPricePending),
+        //             switchMap(cart => {
+        //                 if (isNil(get(cart, 'LineItems')) || isEmpty(get(cart, 'LineItems')))
+        //                     return of(null);
+        //                 const cartId: string = !isNil(cart) && !isNil(get(cart, 'Id')) ? cart.Id : 'active';
+        //                 return of(null);
+        //             })
+        //         ).subscribe(rules => {
+        //             this.state.next(rules);
+        //         });
+        // }
     }
 
     /**
@@ -58,20 +59,24 @@ export class AppliedRuleActionInfoService extends AObjectService {
      * @returns An observable array of AppliedRuleActionInfo
      */
     getAppliedActionsForCart(cart?: Cart): Observable<Array<AppliedRuleActionInfo>> {
-        return this.state;
+        /* TO DO : */
+        return of(null);
+        // return this.state;
     }
     /**
      * Deletes constraint rules for the given cart.
      * @param cart The cart on which to delete constraint rules. If left blank, will use the current cart.
      */
     deleteRulesForCart(cart?: Cart): Observable<any> {
-        const obsv = (cart) ? of(cart) : this.cartService.getMyCart();
-        return obsv.pipe(take(1), switchMap(c =>
-            this.delete(concat(get(c, 'AppliedRuleActionInfo'), get(c, 'AppliedRuleInfo')), false)
-        ),
-            catchError(e => {
-                console.log(e);
-                return e;
-            }));
+        /* TO DO : */
+        return of(null);
+        // const obsv = (cart) ? of(cart) : this.cartService.getMyCart();
+        // return obsv.pipe(take(1), switchMap(c =>
+        //     this.delete(concat(get(c, 'AppliedRuleActionInfo'), get(c, 'AppliedRuleInfo')), false)
+        // ),
+        //     catchError(e => {
+        //         console.log(e);
+        //         return e;
+        //     }));
     }
 }
