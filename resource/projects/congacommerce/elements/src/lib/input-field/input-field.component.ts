@@ -517,7 +517,7 @@ export class InputFieldComponent
 
   /** @ignore */
   getsetValue(val) {
-    if (defaultTo(this.value) && this.value.indexOf(val) > -1) {
+    if (this.value && this.value.indexOf(val) > -1) {
       return {
         value: true,
       };

@@ -118,14 +118,14 @@ export class ChangeConfigurationModalComponent implements OnInit {
       .subscribe(
         res => {
            this.cartService.getMyCart().pipe(
-              filter(cart => _.some(cart.LineItems, (item => _.get(item, 'LineStatus') === 'Amended' && item.AssetLineItemId === this._assetItem.Id))),
+              filter(cart => _.some(cart.LineItems, (item => _.get(item, 'LineStatus') === 'Amended' && item.AssetLineItem.Id === this._assetItem.Id))),
               take(1)
             )
             .subscribe(cart =>{
               this.loading = false;
               this.bsModalRef.hide();
               this.exceptionService.showSuccess('ASSETS.CHANGECONFIGURATION_SUCCESS');
-              const amendItem = _.find(cart.LineItems, (item => _.get(item, 'LineStatus') === 'Amended' && item.AssetLineItemId === this._assetItem.Id));
+              const amendItem = _.find(cart.LineItems, (item => _.get(item, 'LineStatus') === 'Amended' && item.AssetLineItem.Id === this._assetItem.Id));
               this.router.navigate(['/products', _.get(this, '_assetItem.ProductId'), amendItem.Id]);
             });
         },

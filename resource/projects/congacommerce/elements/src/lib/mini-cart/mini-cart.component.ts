@@ -98,7 +98,7 @@ export class MiniCartComponent implements OnInit {
                 this.lineItemPriceComplete = filter(cart.LineItems, r => r.PricingStatus === 'Complete').length > 0;
                 this.lineItemPricePending = filter(cart.LineItems, r => r.PricingStatus === 'Pending').length > 0 || ((cart.IsPricePending || get(cart, 'IsPriced')) && get(cart.LineItems, 'length') > 0);
                 const primaryLines = compact(flatten(_map(LineItemService.groupItems(isArray(cart) ? defaultTo(get(cart, '[0].LineItems'), []) : defaultTo(get(cart, 'LineItems'), [])), 'PrimaryLines')));
-                return primaryLines;
+                return primaryLines as Array<CartItem>;
             })
         );
     }

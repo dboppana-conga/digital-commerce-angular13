@@ -62,7 +62,7 @@ export class AssetBatchActionService extends BatchActionService {
           });
         }
         _.forEach(_.get(cart, 'LineItems'), lineItem => {
-          if (lineItem.AssetLineItemId === asset.Id) {
+          if (lineItem.AssetLineItem.Id === asset.Id) {
             this.actionMap['Renew'].setDisabled(true);
             this.actionMap['Terminate'].setDisabled(true);
             this.translateService.stream('SERVICES.ITEMS_ARE_ALREADY_ADDED_TO_CART_TOOLTIP').subscribe((val: string) => {

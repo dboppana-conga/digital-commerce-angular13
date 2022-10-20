@@ -94,28 +94,28 @@ export class FavoriteModalComponent implements OnInit, OnDestroy {
    * @ignore
    * */
   setFavLookupFieldData(searchString: string = '') {
-    this.searchTerm =
-      searchString.trim().length > 0
-        ? `'${searchString.trim()}'`
-        : searchString.trim();
-    this.lookUpLoading = true;
+    // this.searchTerm =
+    //   searchString.trim().length > 0
+    //     ? `'${searchString.trim()}'`
+    //     : searchString.trim();
+    // this.lookUpLoading = true;
 
-    let options = {
-      conditions: null,
-      expressionOperator: 'AND',
-      filters: null,
-      sortOrder: null,
-      fieldList: ['Name', 'Id']
-    };
-    if (searchString) options['searchString'] = searchString;
+    // let options = {
+    //   conditions: null,
+    //   expressionOperator: 'AND',
+    //   filters: null,
+    //   sortOrder: null,
+    //   fieldList: ['Name', 'Id']
+    // };
+    // if (searchString) options['searchString'] = searchString;
 
-    let recordObsv$: Observable<any> = of(null);
-    if (!isNil(this.value)) recordObsv$ = this.favService.fetch(this.value);
+    // let recordObsv$: Observable<any> = of(null);
+    // if (!isNil(this.value)) recordObsv$ = this.favService.fetch(this.value);
 
-    combineLatest([this.userService.getCurrentUser(), this.plService.getPriceListId()])
-      .pipe(
-        switchMap(([user, plId]) => {
-          let filters = [];
+    // combineLatest([this.userService.getCurrentUser(), this.plService.getPriceListId()])
+    //   .pipe(
+    //     switchMap(([user, plId]) => {
+    //       let filters = [];
           // filters.push(new AFilter(this.favService.type, [
           //   new ACondition(this.favService.type, 'Scope', 'Equal', 'Private'),
           //   new ACondition(this.favService.type, 'CreatedById', 'Equal', get(user, 'Id')),
@@ -130,21 +130,20 @@ export class FavoriteModalComponent implements OnInit, OnDestroy {
           //     ? this.favService.query(assign(options))
           //     : of(this.lookupResults);
           // return combineLatest([obsv$, recordObsv$])
-          return of(null);
-        }),
-        take(1))
-      .subscribe(
-        ([results, record]) => {
-          this.lookUpLoading = false;
-          if (!isNil(record) && !isEmpty(results)) results.unshift(record);
-          this.lookupResults = results;
-          this.view$.next(this.lookupResults);
-        },
-        (err) => {
-          this.lookUpLoading = false;
-          this.view$.next(null);
-        }
-      );
+        // }),
+      //   take(1))
+      // .subscribe(
+      //   ([results, record]) => {
+      //     this.lookUpLoading = false;
+      //     if (!isNil(record) && !isEmpty(results)) results.unshift(record);
+      //     this.lookupResults = results;
+      //     this.view$.next(this.lookupResults);
+      //   },
+      //   (err) => {
+      //     this.lookUpLoading = false;
+      //     this.view$.next(null);
+      //   }
+      // );
   }
 
   /**
@@ -225,7 +224,7 @@ export class FavoriteModalComponent implements OnInit, OnDestroy {
     if (this._items[0] instanceof CartItem)
       payload = _map(this._items, 'LineNumber');
     if (this._items[0] instanceof Product) {
-      payload = _map(this._items, (item) => ({
+      payload = _map(this._items, (item: CartItem) => ({
         ProductId: item.Id,
         Quantity: item.Quantity ? item.Quantity : 1,
       }));

@@ -60,7 +60,7 @@ export class BatchActionComponent implements OnInit, OnDestroy {
     this.subs.push(this.batchSelectionService.getSelectedProducts().subscribe(res => this.products = res));
     this.subs.push(this.batchSelectionService.getSelectedLineItems().subscribe(res => this.cartItems = res));
     this.subs.push(this.batchActionService.getBatchActions().pipe(
-      map(actions => filter(actions, action => !action.disabled))
+      map(actions => filter(actions, action => !action.isDisabled()))
     ).subscribe(res => {
       // TODO: Uncomment below, on integrating with Favorite RLP APIs.
       // this.actionList = res;

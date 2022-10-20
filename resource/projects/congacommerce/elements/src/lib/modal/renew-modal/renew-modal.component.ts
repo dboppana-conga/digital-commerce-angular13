@@ -135,7 +135,7 @@ export class RenewModalComponent implements OnChanges, OnInit {
         };
       })).filter(y => y != null);
     if(_.get(options, 'length', 0) === 0)
-      options.push(1);
+    //  options.push(1);
     return options;
   }
   /**

@@ -123,7 +123,7 @@ export class BatchSelectionService {
    * @param cart Cart to check pricelist of the cart
    */
   private updateProductSelections(cart: Cart) {
-    const nonExistingSelections = this.plService.isValidPriceList(get(cart, 'PriceList')) ? filter(this._products.value, p => !includes(_map(get(p, 'PriceLists'), item => item.PriceListId), get(cart, 'PriceList.Id'))) : this._products.value;
+    const nonExistingSelections = this.plService.isValidPriceList(get(cart, 'PriceList')) ? filter(this._products.value, p => !includes(_map(get(p, 'PriceLists'), item => item.PriceList.Id), get(cart, 'PriceList.Id'))) : this._products.value;
     _map(nonExistingSelections, selection => this.removeProductFromSelection(selection));
   }
 

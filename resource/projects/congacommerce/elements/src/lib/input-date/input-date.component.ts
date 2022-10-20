@@ -139,7 +139,7 @@ export class InputDateComponent implements OnChanges, OnInit, OnDestroy {
     if (get(this, 'cartItem.StartDate') !== startDate) {
       this.cartItem.StartDate = startDate;
       this.endDate = this.moment(
-        this.cartItemService.getEndDate(get(this.cartItem, 'StartDate'), get(this.cartItem, 'PriceListItem.DefaultSellingTerm', 1), get(this.cartItem, 'PricingFrequency')).getTime()
+        this.cartItemService.getEndDate(get(this.cartItem, 'StartDate') as unknown as Date, get(this.cartItem, 'PriceListItem.DefaultSellingTerm', 1), get(this.cartItem, 'PricingFrequency')).getTime()
       ).toDate();
       this.cartItem.EndDate = this.moment(this.endDate).format('YYYY-MM-DD');
       this.cartItem.SellingTerm = this.cartItemService.getTerm(this.moment(get(this.cartItem, 'StartDate'), 'YYYY-MM-DD'), this.moment(get(this.cartItem, 'EndDate'), 'YYYY-MM-DD'), get(this.cartItem, 'PricingFrequency'));

@@ -175,7 +175,7 @@ export class ProductAttributeComponent implements OnChanges, OnDestroy {
      * @ignore
      */
     applyMatrixViews(matrixResult: Array<AllowedValues>, attributeGroupList: Array<ProductAttributeGroup>, attrValue: ProductAttributeValue) {
-        const attributes = _.flatten(attributeGroupList.map(r => _.get(r, 'AttributeGroup')).map(r => r.ProductAttributes));
+        const attributes = _.flatten(attributeGroupList.map(r => _.get(r, 'AttributeGroup')).map(r => _.get(r, 'ProductAttributes')));
         _.forEach(matrixResult, (view) => {
             if (view.allowedValues && !_.isEmpty(view.resetValues)) {
                 const resttemp = Object.keys(view.resetValues);

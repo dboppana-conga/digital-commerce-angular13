@@ -129,7 +129,7 @@ export class MyComponent implements OnInit{
             'ParentBundleNumber': cartItem.ParentBundleNumber,
             'LineType': 'Option',
             'PricingStatus': 'Pending'
-          } as CartRequest;
+          } as unknown as CartRequest;
         });
         return this.cartService.addItem(lineItems)
       },

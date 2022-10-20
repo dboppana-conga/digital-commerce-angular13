@@ -288,17 +288,15 @@ export class OutputFieldComponent implements OnChanges, OnDestroy {
    * @ignore
    */
   getValue(instance: AObject, field: string, metadata: any) {
-    return defaultTo(
-      get(instance,
+    return get(instance,
 
         // If display value input is populated, use the records display value field
         get(this, 'displayValue', field)
-      ),
+      )
       // If default is set to true, default the output to salesforce's default value if no value is found
       // TODO: Update with RLP integration
       // (this.default === true) ? SalesforceUtils.getDefaultValue(metadata) : undefined
 
-    );
   }
 
   getPopoverFields(instance: AObject): Array<FieldLabel> {

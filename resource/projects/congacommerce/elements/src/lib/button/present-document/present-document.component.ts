@@ -85,7 +85,7 @@ export class PresentDocumentComponent implements OnInit {
             this.orderService.update([this.record]).pipe(take(1)).subscribe((order) => {
                 const attachmentId = get(first(orderBy(this.record.Attachments, ['LastModifiedDate'], ['desc'])), 'Id');
                 this.exceptionService.showSuccess('SUCCESS.PRESENTED', 'SUCCESS.DOCUMENT_PRESENTED_TITLE', { primary_contact: get(order[0], 'PrimaryContact.Name') });
-                this.emailService.orderStatusChangeNotification('CustomerOrderEmailNotificationsTemplate', this.record.Id, primaryContactId, null, get(this, 'ccEmail'), (attachmentId ? [attachmentId] : null)).pipe(take(1)).subscribe();
+                this.emailService.orderStatusChangeNotification('CustomerOrderEmailNotificationsTemplate', this.record.Id, primaryContactId, null, get(this, 'ccEmail') as unknown as Array<string>, (attachmentId ? [attachmentId] : null)).pipe(take(1)).subscribe();
             });
         } else {
             this.quoteService.update([this.record]).pipe(take(1)).subscribe((quote) => {

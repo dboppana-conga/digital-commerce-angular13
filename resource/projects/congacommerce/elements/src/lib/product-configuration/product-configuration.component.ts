@@ -182,7 +182,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
     searchChange() {
         if (get(this.searchText, 'length') > 2) {
             // Hide attribute groups that don't have names matching the search text.
-            each(this.view$.value.product.AttributeGroups, (group: ProductAttributeGroupMember) => {
+            each(this.view$.value.product.AttributeGroups, (group) => {
                 let lowercaseSearchTerm = lowerCase(get(group, 'AttributeGroup.Name'));
                 if (lowercaseSearchTerm) {
                     if (lowercaseSearchTerm.indexOf(lowerCase(this.searchText)) > -1) {
@@ -218,7 +218,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
         }
         else {
             // Set all the hide flags back to false.
-            each(this.view$.value.product.AttributeGroups, (group: ProductAttributeGroupMember) => {
+            each(this.view$.value.product.AttributeGroups, (group) => {
                 group.set('hide', false);
                 this.cdr.detectChanges();
             });
@@ -248,12 +248,12 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
                     const item = get(c, 'ComponentProduct._metadata.item');
                     // Mark the item amended if the cart item doesn't match the asset item
                     if (!isNil(get(item, 'AssetLineItem')) && get(item, 'LineStatus') !== LineStatus.Cancel) {
-                        const attributeFields = map(flatten(map(get(c, 'ComponentProduct.AttributeGroups'), 'AttributeGroup.Attributes')), 'Field');
+                        const attributeFields = _map(flatten(_map(get(c, 'ComponentProduct.AttributeGroups'), 'AttributeGroup.Attributes')), 'Field');
                         if (
                             get(item, 'Quantity') !== get(item, 'AssetLineItem.Quantity')
                             || !isEqual(
                                 pickBy(pick(get(item, 'AssetLineItem.AttributeValue'), attributeFields), identity)
-                                , pickBy(pick(get(item, 'AttributeValue'), attributeFields)), identity)
+                                , pickBy(pick(get(item, 'AttributeValue'), attributeFields)))
                         ) {
                             set(item, 'LineStatus', LineStatus.Amend);
                         } else if (get(item, 'LineStatus') === LineStatus.Amend) {
@@ -291,11 +291,11 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
         };
 
         const handleGroup = (g: ProductOptionGroup, p?: ProductOptionComponent) => {
-            forEach(get(g, 'ChildOptionGroups', []), handleGroup);
+            forEach(get(g, 'ChildOptionGroups', []),g => handleGroup(g));
             forEach(get(g, 'Options'), c => handleComponent(c, p));
         };
 
-        forEach(get(product, 'OptionGroups'), handleGroup);
+        forEach(get(product, 'OptionGroups'),(g) => handleGroup(g));
         return parentComponent;
     }
     /** @ignore */
@@ -327,7 +327,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
         set(component, 'ComponentProduct._metadata.loading', true);
         // this.clientConstraintRuleService.setCurrentSelection(selectedList);
         // Add the component
-        const allItems = compact(this.getItems(view.product, view), CartItem);
+        const allItems = compact(this.getItems(view.product, view));
         const parentComponent = this.getParentComponent(component, get(view, 'product'));
         const parentBundleNumber = defaultTo(get(parentComponent, 'ComponentProduct._metadata.item.PrimaryLineNumber'), get(view, 'product._metadata.item.PrimaryLineNumber'));
         const lineNumber = defaultTo(get(this, 'relatedTo.LineNumber'), get(view, 'product._metadata.item.LineNumber'));

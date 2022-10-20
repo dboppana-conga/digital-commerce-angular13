@@ -27,9 +27,9 @@ export class ConstraintPopoverService {
                 // then checks for condition with only matchInOptions/ only matchInPrimaryLines or both are selected.
                 let isvalid = false;
                 if (condition.MatchInPrimaryLines)
-                    isvalid = ((condition.ProductScope === 'Product' && condition.ProductId === parentProduct.Id) ||
+                    isvalid = ((condition.ProductScope === 'Product' && condition.Product.Id === parentProduct.Id) ||
                         (condition.ProductScope === 'Product Family' && condition.Product.Family === parentProduct.Family) ||
-                        (condition.ProductScope === 'Product Group' && filter(get(parentProduct, 'ProductGroups', []), groupMember => groupMember.ProductGroupId === condition.ProductGroupId).length > 0));
+                        (condition.ProductScope === 'Product Group' && filter(get(parentProduct, 'ProductGroups', []), groupMember => groupMember.ProductGroupId === condition.ProductGroup.Id).length > 0));
                 else
                     isvalid = includes(_map(get(rule, '_metadata.productList', []), 'Id'), product.Id);
                 return isvalid;
@@ -69,14 +69,14 @@ export class ConstraintPopoverService {
         // if not prompt rule then close the popover.
         if (promptRules.length === 0) return popoverClose = true;
         const crActionList = [];
-        filter(promptRules, rule => {
-          const applyAction: boolean = filter(rule.ConstraintRuleConditions, (condition) =>
-            // checks for condition with product scope as Product/ product Family/ product Group and
-            // then checks for condition with only matchInOptions/ only matchInPrimaryLines or both are selected.
-            this.clientConstraintRuleService.validateCRCondition(condition, condition.MatchInPrimaryLines ? parentProduct : product, this.clientConstraintRuleService.getCurrentSelection())
-          ).length === rule.ConstraintRuleConditions.length;
-          if (applyAction) crActionList.push(rule);
-        });
+        // filter(promptRules, rule => {
+        //    const applyAction: boolean = filter(rule.ConstraintRuleConditions, (condition) =>
+        // //     // checks for condition with product scope as Product/ product Family/ product Group and
+        // //     // then checks for condition with only matchInOptions/ only matchInPrimaryLines or both are selected.
+        // //    // this.clientConstraintRuleService.validateCRCondition(condition, condition.MatchInPrimaryLines ? parentProduct : product, this.clientConstraintRuleService.getCurrentSelection())
+        // //   ).length === rule.ConstraintRuleConditions.length;
+        //   if (applyAction) crActionList.push(rule);
+        // });
         // if condition is satisfied applyAction flag is true.
         // creating temporary array which has list of rule condition got satisfied for single selected option.
         if (crActionList.length > 0) {

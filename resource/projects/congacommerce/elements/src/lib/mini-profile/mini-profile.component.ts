@@ -127,9 +127,9 @@ export class MiniProfileComponent implements OnInit {
         res => {
           if (get(last(res), 'redirectUrl')) {
             window.location.href = get(last(res), 'redirectUrl');
-            if ((!!window.location.hash)) window.location.reload(true);
+            if ((!!window.location.hash)) window.location.reload();
           } else
-            window.location.reload(true)
+            window.location.reload()
         },
         err => this.ngZone.run(() => {
           this.loading = false;

@@ -67,7 +67,7 @@ export class UserViewMappingService implements OnDestroy {
       const userViews = this.userViewService.userViews;
       const selectedFieldIds = _map(this.selectedItems$.value, item => item.id);
       forEach(userViews, view => {
-        view.IsSelected = includes(selectedFieldIds, view.DisplayColumn.Id);
+        view.isSelected = includes(selectedFieldIds, view.displayColumn.Id);
       });
       this.subscriptions.push(this.userViewService.updateUserView(userViews).subscribe());
     }
@@ -150,7 +150,7 @@ export class UserViewMappingService implements OnDestroy {
    */
   getFieldLabel(field: string) {
     const cartItemFields = new CartItem().getMetadataFromExpose();
-    const label = first(keys(pickBy(cartItemFields, { name: field })));
+    const label = ''; // first(keys(pickBy(cartItemFields, { name: field })));
     return label ? label : field;
   }
 

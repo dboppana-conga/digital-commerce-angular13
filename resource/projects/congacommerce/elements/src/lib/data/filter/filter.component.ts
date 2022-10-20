@@ -51,7 +51,7 @@ export class DataFilterComponent implements OnInit {
   /**
    * List of default filters to initialize the component with.
    */
-  @Input() filterList: any;
+  @Input() filterList: Array<FieldFilter>;
   /**
    * List of default custom filters to initialize the component with.
    */
@@ -111,7 +111,7 @@ export class DataFilterComponent implements OnInit {
             fieldList: _.sortBy(fieldList, 'label'),
             conditionList: _.map(_.flatten(_.map(_.get(this, 'filterList'), 'conditions')), c => new ConditionView(c, fieldList)),
             appliedConditions: _.map(_.flatten(_.map(_.get(this, 'filterList'), 'conditions')), c => new ConditionView(c, fieldList)),
-            operatorList: _.defaultTo(_.get(this.filterOptions, 'visibleOperators', _.values(Operator))),
+            operatorList: _.get(this.filterOptions, 'visibleOperators', _.values(Operator)),
             fieldListWithOperators: this.getFieldListWithOperators(_.get(this.filterOptions, 'visibleFieldsWithOperators'))
           } as FilterView;
         })
@@ -317,6 +317,7 @@ export interface FilterOptions {
    */
   visibleFieldsWithOperators?: Array<FieldWithOperators>;
 }
+
 /**
  * Field name with an associated list of operators.
  */
