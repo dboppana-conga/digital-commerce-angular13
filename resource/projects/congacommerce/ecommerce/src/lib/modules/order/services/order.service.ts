@@ -129,12 +129,12 @@ export class OrderService extends AObjectService {
         //     expand: false
         // });
         // To Do: Replace with RLP API with same conditions.
-        return null;
+        return of(null);
     }
 
     /**@ignore */
     getOrderTotal(): Observable<any[]> {
-        return null;
+        return of(null);
     }
 
     /**
@@ -155,69 +155,69 @@ export class OrderService extends AObjectService {
         return zip(account$, cart$)
             .pipe(
                 mergeMap(([_account, _cart]) => {
-
                     order.ShipToAccount = defaultTo(get(_account, 'ShipToAccount.Id') ? get(_account, 'ShipToAccount.Id') : get(_cart, 'ShipToAccount.Id'), get(_account, 'Id'));
                     order.BillToAccount = get(_account, 'BillToAccount.Id') ? get(_account, 'BillToAccount.Id') : defaultTo(get(_cart, 'BillToAccount.Id'), get(_account, 'Id'));
                     order.SoldToAccount = get(_account, 'SoldToAccount.Id') ? get(_account, 'SoldToAccount.Id') : get(_account, 'Id');
-                    let orderReq = { Order: order, Contact: primaryContact };
-                    return this.apiService.post(`/carts/${CartService.getCurrentCartId()}/checkout`, orderReq, this.type)
+
+                    // TODO: Pass orderReq object in the payload when checkokut API has the support.
+                    // let orderReq = { Order: order, Contact: primaryContact };
+                    return this.apiService.post(`/cart/v1/carts/${cart.Id}/order`, null, this.type)
                         .pipe(tap(() => {
                             CartService.deleteLocalCart();
-                            //  this.cacheService.refresh(this.type);
                             this.cartService.refreshCart();
                         }));
                 })
             );
-
-
     }
 
     /**
      * @ignore
      */
     convertOrderToCart(order: Order): Observable<Cart> {
-        return this.createCart(order.Id).pipe(
-            mergeMap(cartId => this.cartService.getCartWithId(cartId)),
-            delayWhen(cart => this.cartItemService.delete(filter(get(cart, 'LineItems'), item => (item.LineType === 'Misc' && item.ChargeType === 'Sales Tax')), false)),
-            mergeMap(cart => this.cartService.setCartActive(cart))
-        ) as Observable<Cart>;
+        // return this.createCart(order.Id).pipe(
+        //     mergeMap(cartId => this.cartService.getCartWithId(cartId)),
+        //     delayWhen(cart => this.cartItemService.delete(filter(get(cart, 'LineItems'), item => (item.LineType === 'Misc' && item.ChargeType === 'Sales Tax')), false)),
+        //     mergeMap(cart => this.cartService.setCartActive(cart))
+        // ) as Observable<Cart>;
+        return of(null);
     }
 
     /**
      * @ignore
      */
     mergeCartItems(orderItemList: Array<OrderLineItem>, cart?: Cart): Observable<void> {
-        return observableIif(() => cart != null, of(cart), this.cartService.getMyCart().pipe(take(1))).pipe(mergeMap(tempCart => this.priceListService.getPriceListId().pipe(take(1), mergeMap(priceListId => {
-            let cartItemInsertList: Array<CartItem> = [];
-            let cartItemUpdateList: Array<CartItem> = [];
+        // return observableIif(() => cart != null, of(cart), this.cartService.getMyCart().pipe(take(1))).pipe(mergeMap(tempCart => this.priceListService.getPriceListId().pipe(take(1), mergeMap(priceListId => {
+        //     let cartItemInsertList: Array<CartItem> = [];
+        //     let cartItemUpdateList: Array<CartItem> = [];
 
-            for (let oldCartItem of orderItemList) {
-                let cartItem = new CartItem();
-                if (tempCart.LineItems && tempCart.LineItems) {
-                    let currentCartItem = tempCart.LineItems.filter(item => get(item, 'Product.Id') === oldCartItem.Product.Id)[0];
-                    if (currentCartItem) {
-                        cartItem.Id = currentCartItem.Id;
-                        cartItem.Quantity = currentCartItem.Quantity;
-                        cartItemUpdateList.push(cartItem);
-                    }
-                }
+        //     for (let oldCartItem of orderItemList) {
+        //         let cartItem = new CartItem();
+        //         if (tempCart.LineItems && tempCart.LineItems) {
+        //             let currentCartItem = tempCart.LineItems.filter(item => get(item, 'Product.Id') === oldCartItem.Product.Id)[0];
+        //             if (currentCartItem) {
+        //                 cartItem.Id = currentCartItem.Id;
+        //                 cartItem.Quantity = currentCartItem.Quantity;
+        //                 cartItemUpdateList.push(cartItem);
+        //             }
+        //         }
 
-                if (!cartItem.Id) {
-                    cartItem.Product = oldCartItem.Product;
-                    cartItem.PriceList.Id = priceListId;
-                    cartItem.ItemSequence = tempCart.NumberOfItems + 1;
-                    cartItem.LineNumber = tempCart.NumberOfItems + 1;
-                    cartItem.PrimaryLineNumber = tempCart.NumberOfItems + 1;
-                    set(cartItem, 'Configuration.Id', tempCart.Id);
-                    cartItemInsertList.push(cartItem);
-                }
-                cartItem.Quantity += oldCartItem.Quantity;
-            }
+        //         if (!cartItem.Id) {
+        //             cartItem.Product = oldCartItem.Product;
+        //             cartItem.PriceList.Id = priceListId;
+        //             cartItem.ItemSequence = tempCart.NumberOfItems + 1;
+        //             cartItem.LineNumber = tempCart.NumberOfItems + 1;
+        //             cartItem.PrimaryLineNumber = tempCart.NumberOfItems + 1;
+        //             set(cartItem, 'Configuration.Id', tempCart.Id);
+        //             cartItemInsertList.push(cartItem);
+        //         }
+        //         cartItem.Quantity += oldCartItem.Quantity;
+        //     }
 
-            return observableIif(() => cartItemUpdateList.length > 0, this.itemService.update(cartItemUpdateList), of(null)).pipe(
-                mergeMap(() => observableIif(() => cartItemInsertList.length > 0, this.itemService.create(cartItemInsertList), of(null))));
+        //     return observableIif(() => cartItemUpdateList.length > 0, this.itemService.update(cartItemUpdateList), of(null)).pipe(
+        //         mergeMap(() => observableIif(() => cartItemInsertList.length > 0, this.itemService.create(cartItemInsertList), of(null))));
 
-        }), tap(() => this.cartService.priceCart()))));
+        // }), tap(() => this.cartService.priceCart()))));
+        return of(null);
     }
 
     /**
@@ -225,7 +225,7 @@ export class OrderService extends AObjectService {
      */
     getOrderByName(orderName: string): Observable<Order> {
         // ToDo: Replace with RLP API
-        return null; // this.where([new ACondition(this.type, 'Name', 'Equal', orderName)]).pipe(map(res => res[0]));
+        return of(null); // this.where([new ACondition(this.type, 'Name', 'Equal', orderName)]).pipe(map(res => res[0]));
     }
 
     /**
@@ -246,12 +246,13 @@ export class OrderService extends AObjectService {
      * @ignore
      */
     createCart(orderId: string): Observable<string> {
-        if (!orderId) {
-            this.translateService.stream('SERVICES.INVALID_ORDER_ID').subscribe((val: string) => {
-                return observableThrowError(val);
-            });
-        }
-        return this.apiService.post(`/orders/${orderId}/carts`);
+        // if (!orderId) {
+        //     this.translateService.stream('SERVICES.INVALID_ORDER_ID').subscribe((val: string) => {
+        //         return observableThrowError(val);
+        //     });
+        // }
+        // return this.apiService.post(`/orders/${orderId}/carts`);
+        return of(null);
     }
 
     /**
@@ -259,12 +260,12 @@ export class OrderService extends AObjectService {
      */
     getAllOrders(filters?: Array<FieldFilter> | string): Observable<Array<Order>> {
         let queryparam = new URLSearchParams();
-        forEach(filters as Array<FieldFilter>, (filter) => {
+        forEach(filters  as Array<FieldFilter>, (filter) => {
             filter.field && queryparam.append('filter', `${filter.filterOperator}(${filter.field}:'${filter.value}')`);
         });
         let params = isEmpty(queryparam.toString()) ? '' : `${queryparam.toString()}`;
         if (typeof (filters) === 'string') params = filters
-        return this.apiService.get(`/order/v1/orders?${params}`)
+        return this.apiService.get(`/order/v1/orders?${params}`, null, true, false)//to stop toaster messages from api service
     }
 
     /**

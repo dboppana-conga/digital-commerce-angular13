@@ -160,7 +160,9 @@ export class QuoteService extends AObjectService {
      * @returns a an observable array of quote instances for the current user
      */
     getMyQuotes(days?: number, limit: number = 10, pageNumber: number = 0, orderBy: string = 'CreatedDate', orderDirection: 'ASC' | 'DESC' = 'DESC'): Observable<Array<Quote>> {
-        return this.apiService.get(`/quotes?lookups=PriceListId&children=SummaryGroups&sort[field]=${orderBy}&sort[direction]=${orderDirection}&page[limit]=${limit}&page[current]=${pageNumber}`, this.type);
+        /* TO DO : */
+        return of(null);
+        // return this.apiService.get(`/quotes?lookups=PriceListId&children=SummaryGroups&sort[field]=${orderBy}&sort[direction]=${orderDirection}&page[limit]=${limit}&page[current]=${pageNumber}`, this.type);
     }
 
     /**
@@ -189,14 +191,16 @@ export class QuoteService extends AObjectService {
      * @returns an observable of the quote instance that was created from the cart
      */
     convertCartToQuote(quote: Quote = new Quote()): Observable<Quote> {
-        quote.PrimaryContact = (quote.PrimaryContact.Id) ? quote.PrimaryContact.Id : get(quote, 'PrimaryContact.Id');
-        const q = quote;
-        return this.apiService.post(`/carts/${CartService.getCurrentCartId()}/proposal`, q, this.type)
-            .pipe(tap(() => {
-                //  this.cacheService.refresh(this.type);
-                CartService.deleteLocalCart();
-                this.cartService.refreshCart();
-            }));
+        /* TO DO : When API available  */
+        return of(null);
+        // quote.PrimaryContact = (quote.PrimaryContact.Id) ? quote.PrimaryContact.Id : get(quote, 'PrimaryContact.Id');
+        // const q = quote;
+        // return this.apiService.post(`/carts/${CartService.getCurrentCartId()}/proposal`, q, this.type)
+        //     .pipe(tap(() => {
+        //         //  this.cacheService.refresh(this.type);
+        //         CartService.deleteLocalCart();
+        //         this.cartService.refreshCart();
+        //     }));
     }
 
     /**
@@ -226,11 +230,13 @@ export class QuoteService extends AObjectService {
      */
 
     convertQuoteToCart(quoteId: string): Observable<Cart> {
-        return this.createCart(quoteId).pipe(
-            mergeMap(cartId => this.cartService.getCartWithId(cartId)),
-            delayWhen(cart => this.cartItemService.delete(_filter(get(cart, 'LineItems'), item => (item.LineType === 'Misc' && item.ChargeType === 'Sales Tax')), false)),
-            mergeMap(cart => this.cartService.setCartActive(cart))
-        );
+        /* TO DO : When API available  */
+        return of(null);
+        // return this.createCart(quoteId).pipe(
+        //     mergeMap(cartId => this.cartService.getCartWithId(cartId)),
+        //     delayWhen(cart => this.cartItemService.delete(_filter(get(cart, 'LineItems'), item => (item.LineType === 'Misc' && item.ChargeType === 'Sales Tax')), false)),
+        //     mergeMap(cart => this.cartService.setCartActive(cart))
+        // );
     }
 
     /**
@@ -336,11 +342,13 @@ export class QuoteService extends AObjectService {
      * @returns <code>true</code> if the operation was successful, <code>false</code> otherwise
      */
     abandonCart(): Observable<boolean> {
-        return this.cartService.getMyCart().pipe(take(1), mergeMap(
-            cart => {
-                return this.apiService.post(`/carts/${cart.Id}/abandon`);
-            }
-        ));
+        /* TO DO : */
+        return of(null);
+        // return this.cartService.getMyCart().pipe(take(1), mergeMap(
+        //     cart => {
+        //         return this.apiService.post(`/carts/${cart.Id}/abandon`);
+        //     }
+        // ));
     }
 
     /**
@@ -423,12 +431,14 @@ export class QuoteService extends AObjectService {
      * @returns Id of generated document
      */
     generateDocument(generateDocumentRequest: GenerateDocument): Observable<string> {
-        if (!generateDocumentRequest) {
-            this.translateService.stream('SERVICES.INVALID_GENERATE_DOC_REQ').subscribe((val: string) => {
-                return observableThrowError(val);
-            });
-        }
-        return this.apiService.post(`quotes/generate-document`, generateDocumentRequest);
+        /* TO DO : When API available  */
+        return of(null);
+        // if (!generateDocumentRequest) {
+        //     this.translateService.stream('SERVICES.INVALID_GENERATE_DOC_REQ').subscribe((val: string) => {
+        //         return observableThrowError(val);
+        //     });
+        // }
+        // return this.apiService.post(`quotes/generate-document`, generateDocumentRequest);
     }
 
     /**
@@ -452,39 +462,41 @@ export class QuoteService extends AObjectService {
    * @returns Aggregate of quote total object based on the Approval Stage.
    */
     getGrandTotalByApprovalStage(): Observable<object> {
-        return combineLatest(this.userService.me(), this.accountService.getCurrentAccount()).pipe(mergeMap(([user, account]) => {
-            return this.apiService.post('/Apttus_QPConfig__ProposalSummaryGroup__c/query', {
-                'aggregate': true,
-                'groupBy': ['apttus_qpconfig__proposalid__r.Approval_Stage'],
-                'aggregateFields': [{
-                    'field': 'NetPrice',
-                    'aggregateType': 'SUM'
-                }],
-                'conditions': [{
-                    'field': 'apttus_qpconfig__proposalid__r.OwnerId',
-                    'filterOperator': 'In',
-                    'value': user.Id
-                },
-                {
-                    'field': 'Name',
-                    'filterOperator': 'Equal',
-                    'value': 'Grand Total'
-                },
-                {
-                    'field': 'apttus_qpconfig__proposalid__r.AccountId',
-                    'filterOperator': 'Equal',
-                    'value': account.Id
-                }]
-            })
-                .pipe(
-                    map(res => _map(res, rec => {
-                        return {
-                            'Stage': get(rec, 'Apttus_Proposal__Approval_Stage__c'),
-                            'NetPrice': get(rec, 'SUM_NetPrice')
-                        };
-                    }))
-                );
-        }));
+        /* TO DO : */
+        return of(null);
+        // return combineLatest(this.userService.me(), this.accountService.getCurrentAccount()).pipe(mergeMap(([user, account]) => {
+        //     return this.apiService.post('/Apttus_QPConfig__ProposalSummaryGroup__c/query', {
+        //         'aggregate': true,
+        //         'groupBy': ['apttus_qpconfig__proposalid__r.Approval_Stage'],
+        //         'aggregateFields': [{
+        //             'field': 'NetPrice',
+        //             'aggregateType': 'SUM'
+        //         }],
+        //         'conditions': [{
+        //             'field': 'apttus_qpconfig__proposalid__r.OwnerId',
+        //             'filterOperator': 'In',
+        //             'value': user.Id
+        //         },
+        //         {
+        //             'field': 'Name',
+        //             'filterOperator': 'Equal',
+        //             'value': 'Grand Total'
+        //         },
+        //         {
+        //             'field': 'apttus_qpconfig__proposalid__r.AccountId',
+        //             'filterOperator': 'Equal',
+        //             'value': account.Id
+        //         }]
+        //     })
+        //         .pipe(
+        //             map(res => _map(res, rec => {
+        //                 return {
+        //                     'Stage': get(rec, 'Apttus_Proposal__Approval_Stage__c'),
+        //                     'NetPrice': get(rec, 'SUM_NetPrice')
+        //                 };
+        //             }))
+        //         );
+        // }));
     }
 
     /**
@@ -506,12 +518,14 @@ export class QuoteService extends AObjectService {
      * @returns <code>true</code> if the operation was successful, <code>false</code> otherwise.
      */
     finalizeQuote(quoteId: string): Observable<boolean> {
-        if (!quoteId) {
-            this.translateService.stream('SERVICES.INVALID_QUOTE_ID').subscribe((val: string) => {
-                return observableThrowError(val);
-            });
-        }
-        return this.apiService.post(`/quotes/${quoteId}/finalize`);
+        /* TO DO : When API available  */
+        return of(null);
+        // if (!quoteId) {
+        //     this.translateService.stream('SERVICES.INVALID_QUOTE_ID').subscribe((val: string) => {
+        //         return observableThrowError(val);
+        //     });
+        // }
+        // return this.apiService.post(`/quotes/${quoteId}/finalize`);
     }
 
     /**
@@ -571,7 +585,7 @@ export class QuoteService extends AObjectService {
             filter.field && queryparam.append('filter', `${filter.filterOperator}(${filter.field}:'${filter.value}')`);
         });
         const params = isEmpty(queryparam.toString()) ? '' : `${queryparam.toString()}`;
-        return this.apiService.get(`/quote/v1/quotes?${params}&includeTotalCount=true`).pipe(
+        return this.apiService.get(`/quote/v1/quotes?${params}&includeTotalCount=true`, null, true, false).pipe( //to stop toaster messages from api service
             map(result => {
                 return {
                     QuoteList: plainToClass(this.type, result, { excludeExtraneousValues: true }) as unknown as Array<Quote>,

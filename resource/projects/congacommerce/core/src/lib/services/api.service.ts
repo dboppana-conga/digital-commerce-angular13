@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, SecurityContext } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import { from, Observable, of, throwError, timer } from 'rxjs';
-import { get, startsWith, isNil, set, split, last , map as _map} from 'lodash';
+import { get, startsWith, isNil, set, split, last, first } from 'lodash';
 import {
   map,
   switchMap,
@@ -21,6 +21,7 @@ import { ConfigurationService } from './configuration.service';
 })
 export class ApiService {
   onRefresh: EventEmitter<string> = new EventEmitter<string>();
+  onApiError: EventEmitter<string> = new EventEmitter<string>();
   apiVersion: string = '1';
 
   constructor(
@@ -36,21 +37,18 @@ export class ApiService {
     const isRevoke = endpoint.indexOf('/users/token') >= 0 && method === 'DELETE';
 
     let headers = new HttpHeaders({
-      'OrganizationId': this.configService.get('organizationId'),
       'StorefrontId': this.configService.get('storefrontId')
     });
 
     if (!isNil(accountId)) headers = headers.set('AccountId', accountId);
-
-    if (!isNil(userId)) headers = headers.set('UserId', userId);
 
     if (!isNil(priceListId)) headers = headers.set('PriceListId', priceListId);
 
     return this.httpClient.request(method, endpoint, { body: payload, responseType: responseType, headers: headers, observe: 'response' });
   }
 
-  get(location: string, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
+  get(location: string, type?: ClassType<any>, ignoreDecorators: boolean = true, showErrorToaster: boolean = true) {
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('GET', url)),
@@ -64,6 +62,7 @@ export class ApiService {
         ),
         catchError(error => {
             const errorMsg = this.getServerErrorMessage(error);
+            if(showErrorToaster) this.onApiError.emit(errorMsg);
             return throwError(errorMsg);
         }),
         map(res => this.mapResult(res)),
@@ -71,7 +70,7 @@ export class ApiService {
       );
   }
 
-  post(location: string, payload: any = {}, type?: ClassType<any>, retry: boolean = true, ignoreDecorators: boolean = true) {
+  post(location: string, payload: any = {}, type?: ClassType<any>, retry: boolean = true, ignoreDecorators: boolean = true, showErrorToaster: boolean = true) {
     let post$ = this.getEndpoint(location).pipe(
       switchMap(url => this.callout('POST', url, payload))
     );
@@ -91,6 +90,7 @@ export class ApiService {
     return post$.pipe(
       catchError(error => {
         const errorMsg = this.getServerErrorMessage(error);
+        if(showErrorToaster) this.onApiError.emit(errorMsg);
         return throwError(errorMsg);
     }),
       map(res => this.mapResult(res)),
@@ -98,13 +98,14 @@ export class ApiService {
     );
   }
 
-  put(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
+  put(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true, showErrorToaster: boolean = true) {
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('PUT', url, payload)),
         catchError(error => {
           const errorMsg = this.getServerErrorMessage(error);
+          if(showErrorToaster) this.onApiError.emit(errorMsg);
           return throwError(errorMsg);
       }),
         map(res => this.mapResult(res)),
@@ -112,13 +113,14 @@ export class ApiService {
       );
   }
 
-  patch(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
+  patch(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true, showErrorToaster: boolean = true) {
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('PATCH', url, payload)),
         catchError(error => {
           const errorMsg = this.getServerErrorMessage(error);
+          if(showErrorToaster) this.onApiError.emit(errorMsg);
           return throwError(errorMsg);
       }),
         map(res => this.mapResult(res)),
@@ -126,13 +128,14 @@ export class ApiService {
       );
   }
 
-  delete(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true) {
-    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
+  delete(location: string, payload: any = {}, type?: ClassType<any>, ignoreDecorators: boolean = true, showErrorToaster: boolean = true) {
+    const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, location);
     return this.getEndpoint(sanitizedUrl)
       .pipe(
         switchMap(url => this.callout('DELETE', url, payload)),
         catchError(error => {
           const errorMsg = this.getServerErrorMessage(error);
+          if(showErrorToaster) this.onApiError.emit(errorMsg);
           return throwError(errorMsg);
       }),
         map(res => this.mapResult(res)),
@@ -166,12 +169,12 @@ export class ApiService {
         )
       ),
       tap(creds => {
-        if (creds && !isNil(get(creds, 'accessToken'))) {
+        if (!isNil(get(creds, 'accessToken'))) {
           localStorage.setItem(
             PlatformConstants.ACCESS_TOKEN,
-            get(creds, 'accessToken')
+            creds.accessToken
           );
-          this.onRefresh.emit(get(creds, 'accessToken'));
+          this.onRefresh.emit(creds.accessToken);
           if (!isNil(get(creds, 'LoginURL'))) {
             const authenticationUrl = decodeURIComponent(get(creds, 'LoginURL'));
             let url = authenticationUrl.replace('#URL#', encodeURIComponent(window.location.toString()));
@@ -204,7 +207,7 @@ export class ApiService {
     username?: string,
     password?: string
   ): Observable<string> {
-    if (isNil(username) || isNil(password)) return of('');
+    if (isNil(username) || isNil(password)) return of(null);
     else {
       return this.getAuthKey().pipe(
         switchMap(key => {
@@ -218,9 +221,9 @@ export class ApiService {
           };
 
           // Supporting function to convert the hex key into an ArrayBuffer object
-          const hexToArrayBuffer = (hex: string) => {
+          const hexToArrayBuffer = hex => {
             const typedArray = new Uint8Array(
-              _map(hex.match(/[\da-f]{2}/gi), (h) => {
+              hex.match(/[\da-f]{2}/gi).map(function (h) {
                 return parseInt(h, 16);
               })
             );
@@ -228,7 +231,7 @@ export class ApiService {
           };
 
           // Supporting function converts a string into an ArrayBuffer
-          const getUtf8Bytes = (str: string) =>
+          const getUtf8Bytes = str =>
             new Uint8Array(
               [...unescape(encodeURIComponent(str))].map(c => c.charCodeAt(0))
             );
@@ -274,7 +277,7 @@ export class ApiService {
     }
   }
 
-  public mapResult(result: any): any {
+  public mapResult(result): any {
     const data = get(result.body, 'Data') ? get(result.body, 'Data') : result.body;
     const count = last(split(result.headers.get('content-range'), '/'));
     if (count) set(data, 'TotalCount', count);
@@ -283,7 +286,7 @@ export class ApiService {
   }
 
   public getEndpoint(location: string): Observable<string> {
-    location = this.sanitizer.sanitize(SecurityContext.URL, location) as string;
+    location = this.sanitizer.sanitize(SecurityContext.URL, location);
     if (!startsWith(location, '/')) location = '/' + location;
     const endpoint = `${this.configService.endpoint()}/api${location}`;
     return of(endpoint);
@@ -301,18 +304,25 @@ export class ApiService {
   }
 
   private getServerErrorMessage(error: HttpErrorResponse): string {
+    const errorMsg = (error.error && get(error, 'error.errors.length')) ?
+                      first(get(first(get(error, 'error.errors')), 'Detail')) : 
+                      error.message;
+
     switch (error.status) {
         case 404: {
-            return `Not Found: ${error.message}`;
+            return `Not Found: ${errorMsg}`;
         }
         case 403: {
-            return `Access Denied: ${error.message}`;
+            return `Access Denied: ${errorMsg}`;
         }
         case 500: {
-            return `Internal Server Error: ${error.message}`;
+            return `Internal Server Error: ${errorMsg}`;
+        }
+        case 400: {
+            return `Bad Request: ${errorMsg}`;
         }
         default: {
-            return `Server Error: ${error.message}`;
+            return `Unknown Server Error: ${errorMsg}`;
         }
 
     }
@@ -323,7 +333,7 @@ export const genericRetryStrategy = ({
   maxRetryAttempts = 3,
   scalingDuration = 1000,
   excludedStatusCodes = [],
-  onError = of(null)
+  onError = null
 }: {
   maxRetryAttempts?: number;
   scalingDuration?: number;

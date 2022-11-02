@@ -3,7 +3,7 @@ import { Observable, of, combineLatest, BehaviorSubject } from 'rxjs';
 import { take, map, tap, retryWhen, delay, switchMap, filter as rfilter, catchError } from 'rxjs/operators';
 import {
   map as _map, get, set, first, flatten, find, filter, concat, isEmpty, forEach, isNil, cloneDeep, every,
-  keyBy, merge, values, remove, includes, uniqBy, compact, join, uniq, bind, defaultTo, debounce, last
+  keyBy, merge, values, remove, includes, uniqBy, compact, omit, uniq, bind, defaultTo, debounce, last, isArray
 } from 'lodash';
 import * as moment from 'moment';
 import { plainToClass } from 'class-transformer';
@@ -323,9 +323,8 @@ export class MyComponent implements OnInit{
     );
   }
 
-  private onAdd(cartItemList?: Array<any>): void {
-    const lineNumbers: Array<number> = uniq(_map(cartItemList, 'LineNumber'));
-    this.priceCart();
+  private onAdd(cartItemList?: Array<CartItem>): void {
+       this.priceCart();
   }
 
   /**
@@ -333,7 +332,6 @@ export class MyComponent implements OnInit{
    * @ignore
    */
   addItem(cartRequestList: Array<CartRequest> | FavoriteRequest): Observable<Array<CartItem>> {
-    let cartTemp = this.state.value;
     let cartId;
     const addItemResp$ = this.getMyCart().pipe(
       take(1),
@@ -342,27 +340,24 @@ export class MyComponent implements OnInit{
         cartId = cart.Id
         return this.apiService.post(`/cart/v1/carts/${cart.Id}/items`, cartRequestList)
       }),
-      switchMap(() => this.apiService.get(`/cart/v1/carts/${cartId}/items`)),
-      switchMap(data => this.cartItemProductService.addProductInfoToLineItems(get(data, 'LineItems'))),
-      map(cartItems => {
-        if (isEmpty(cartItems)) {
+      switchMap(data => {
+        if(get(data, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED){
+          this.priceCart();
+          return of(null);
+        } else  {
+          const items= get(data, 'CartResponse.LineItems');
+          return this.cartItemProductService.addProductInfoToLineItems(items);
+        }
+      }),
+      map(result => {
+        if (get(result, 'length') === 0) {
           throw 'Failed to add item(s)';
         }
         else {
-          if (!isEmpty(cartTemp.LineItems))
-            _map(cartItems, (item: CartItem) => cartTemp.LineItems.push(item));
-          else
-            cartTemp.LineItems = cartItems as Array<CartItem>;
-          cartTemp.NumberOfItems = cartTemp.LineItems.length;
-          this.state.next(cartTemp);
-          return plainToClass(CartItem, cartItems, { ignoreDecorators: true }) as unknown as Array<CartItem>;
-        }
-      }),
-      catchError((e) => {
-        throw new Array();
-      })
+          return plainToClass(CartItem, result, { ignoreDecorators: true }) as unknown as Array<CartItem>;
+      }})
     );
-    return this.actionQueue.queueAction(addItemResp$, bind(this.onAdd, this)).pipe(
+    return this.actionQueue.queueAction(addItemResp$,  bind(()=>{}, this)).pipe(
       tap(cartItemList => {
         this.mergeCartItems(cartItemList);
       })
@@ -370,15 +365,13 @@ export class MyComponent implements OnInit{
   }
 
   private mergeCartItems(cartItemList: Array<any>) {
-    if (!isNil(cartItemList) && !isEmpty(cartItemList)) {
+    if (!isNil(cartItemList) && !isEmpty(cartItemList) && isArray(cartItemList)) {
 
-      const keyFn = (r) => r.LineNumber + '.' + r.PrimaryLineNumber + '.' + r.ItemSequence;
+      const keyFn = (r) => r.LineNumber + '.' + r.PrimaryLineNumber + '.' + r.ItemSequence; 
 
       remove(get(this.state.value, 'LineItems'), (l) => includes(_map(cartItemList, 'LineNumber'), l.LineNumber) && l.LineType === 'Option' && !includes(cartItemList, (i) => keyFn(i) === keyFn(l)));
 
       set(this.state.value, 'LineItems', values(merge(keyBy(get(this.state.value, 'LineItems'), keyFn), keyBy(cartItemList, keyFn))));
-
-      set(this.state.value, 'LineItems', cartItemList);
 
       this.republish(true);
 
@@ -402,14 +395,14 @@ export class MyComponent implements OnInit{
       cartRequestList
     );
     return updateItem$.pipe(
-      switchMap(() => this.apiService.get(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`)),
       map(result => {
-        if (isEmpty(result.LineItems)) {
-          throw 'Failed to update item(s)';
+        const items= result.CartResponse.LineItems;
+        if (isEmpty(items)) {
+          throw ErrorMessage.FAILED_TO_UPDATE;
         }
-        else return plainToClass(this.metadataService.getTypeByApiName('LineItem'), result.LineItems) as unknown as Array<CartItem>;
+        else return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>;
       }),
-      tap(response => this.onAdd(response))
+     tap(response => this.onAdd(response))
     );
   }
 
@@ -453,8 +446,10 @@ export class MyComponent implements OnInit{
         });
         const updateItemsResp$ = this.apiService.patch(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`, lineItems)
           .pipe(
-            switchMap(() => this.apiService.get(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`)),
-            map(response => plainToClass(this.metadataService.getTypeByApiName('LineItem'), response.LineItems) as unknown as Array<CartItem>)
+            map(response => {
+              const items= response.CartResponse.LineItems;
+              return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>
+            })
           );
         return this.actionQueue.queueAction(updateItemsResp$, bind(this.onAdd, this));
       },
@@ -640,7 +635,7 @@ export class MyComponent implements OnInit{
   ): Observable<Array<CartItem>> {
 
     const cartItem = find(cartItems, { IsPrimaryLine: true });
-    const request = _map(cartItems, item => ({
+    const request = _map(cartItems, (item) => ({
       Id: item.Id,
       ExternalId: item.ExternalId,
       LineNumber: item.LineNumber,
@@ -831,7 +826,7 @@ export class MyComponent implements OnInit{
             includes(lineNumbers, o.LineNumber)
           );
         } else {
-          remove(get(this.state, 'value.LineItems', []), (o: CartItem) =>
+          remove(get(this.state, 'value.LineItems', []), (o:CartItem) =>
             includes(cartItemIds, o.Id)
           );
         }
@@ -841,6 +836,30 @@ export class MyComponent implements OnInit{
     return this.actionQueue.queueAction(removeCartItems$, bind(() => {
       this.priceCart();
     }, this));
+  }
+
+  /**
+    * Updates a given cart based on the cart object passed.
+    *
+    * ### Example:
+```typescript
+import { CartService } from '@congacommerce/ecommerce';
+export class MyComponent implements OnInit{
+
+    constructor(private cartService: CartService){}
+    updateCart(cart: Cart): Observable<Cart> {
+        this.cartService.updateCart(cart).subscribe(
+            () => {...},
+            err => {...}
+        );
+    }
+}
+```
+    * @param cart instance of cart to be updated.
+    * @returns observable instance of the updated cart.
+   */
+  updateCart(cart: Cart): Observable<Cart> {
+    return this.apiService.patch(`/cart/v1/carts`, new Array(omit(cart, ['LineItems', 'SummaryGroups']).strip()), this.type, false);
   }
 
   /**
@@ -1020,6 +1039,13 @@ export interface CartRequest {
 export interface LineItem {
   Rules: Array<AppliedRuleActionInfo>;
   LineItems: Array<CartItem>;
+}
+
+/**@ignore*/
+export enum ErrorMessage {
+  SERVER_IS_TAKING_LONGER_THAN_EXPECTED = 'The server is taking longer than expected to respond',
+  FAILED_TO_ADD = 'Failed to add item(s)',
+  FAILED_TO_UPDATE = 'Failed to update item(s)'
 }
 
 

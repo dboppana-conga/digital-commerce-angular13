@@ -4,9 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build @congacommerce/core --configuration=production && ng build @congacommerce/ecommerce --configuration=production && ng build @congacommerce/elements --configuration=production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build-ecommerce": "ng build --project=ecommerce",
+    "build-pcommerce": "ng build --project=partner-commerce"
   },
   "private": true,
   "dependencies": {

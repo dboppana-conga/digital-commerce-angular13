@@ -14,7 +14,6 @@ export class Configuration {
     hashRouting?: boolean = false;
     clientId: string | null = null;
     authority: string | null= null;
-    enableTelemetry: boolean = false;
 }
 export interface Provider {
     provide: any;

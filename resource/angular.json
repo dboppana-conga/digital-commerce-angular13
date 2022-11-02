@@ -96,109 +96,6 @@
         }
       }
     },
-    "partner-commerce": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
-      "root": "projects/partner-commerce",
-      "sourceRoot": "projects/partner-commerce/src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/partner-commerce",
-            "index": "projects/partner-commerce/src/index.html",
-            "main": "projects/partner-commerce/src/main.ts",
-            "polyfills": "projects/partner-commerce/src/polyfills.ts",
-            "tsConfig": "projects/partner-commerce/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/partner-commerce/src/favicon.ico",
-              "projects/partner-commerce/src/assets"
-            ],
-            "styles": [
-              "projects/partner-commerce/src/styles.scss"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/partner-commerce/src/environments/environment.ts",
-                  "with": "projects/partner-commerce/src/environments/environment.prod.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "browserTarget": "partner-commerce:build:production"
-            },
-            "development": {
-              "browserTarget": "partner-commerce:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "partner-commerce:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/partner-commerce/src/test.ts",
-            "polyfills": "projects/partner-commerce/src/polyfills.ts",
-            "tsConfig": "projects/partner-commerce/tsconfig.spec.json",
-            "karmaConfig": "projects/partner-commerce/karma.conf.js",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/partner-commerce/src/favicon.ico",
-              "projects/partner-commerce/src/assets"
-            ],
-            "styles": [
-              "projects/partner-commerce/src/styles.scss"
-            ],
-            "scripts": []
-          }
-        }
-      }
-    },
     "ecommerce": {
       "projectType": "application",
       "schematics": {
@@ -296,6 +193,128 @@
             ],
             "styles": [
               "projects/ecommerce/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "partner-commerce": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/partner-commerce",
+      "sourceRoot": "projects/partner-commerce/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/partner-commerce",
+            "index": "projects/partner-commerce/src/index.html",
+            "main": "projects/partner-commerce/src/main.ts",
+            "polyfills": "projects/partner-commerce/src/polyfills.ts",
+            "tsConfig": "projects/partner-commerce/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/partner-commerce/src/favicon.ico",
+              "projects/partner-commerce/src/assets"
+            ],
+            "styles": [
+                "projects/partner-commerce/src/styles.scss",
+                "node_modules/ladda/dist/ladda-themeless.min.css"
+              ],
+              "scripts": [
+                "./node_modules/jquery/dist/jquery.min.js",
+                "./node_modules/popper.js/dist/umd/popper.min.js",
+                "./node_modules/bootstrap/dist/js/bootstrap.min.js"
+              ],
+              "stylePreprocessorOptions": {
+                "includePaths": [
+                  "projects/partner-commerce/src"
+                ]
+              },
+              "allowedCommonJsDependencies": [
+                "locale-currency",
+                "class-transformer",
+                "lodash-decorators",
+                "chart.js",
+                "currency-codes",
+                "xml-js",
+                "raven-js"
+              ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "6mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "30kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/partner-commerce/src/environments/environment.ts",
+                  "with": "projects/partner-commerce/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "none"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "partner-commerce:build:production"
+            },
+            "development": {
+              "browserTarget": "partner-commerce:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "partner-commerce:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/partner-commerce/src/test.ts",
+            "polyfills": "projects/partner-commerce/src/polyfills.ts",
+            "tsConfig": "projects/partner-commerce/tsconfig.spec.json",
+            "karmaConfig": "projects/partner-commerce/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/partner-commerce/src/favicon.ico",
+              "projects/partner-commerce/src/assets"
+            ],
+            "styles": [
+              "projects/partner-commerce/src/styles.scss"
             ],
             "scripts": []
           }
