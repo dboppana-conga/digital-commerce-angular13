@@ -1,19 +1,18 @@
 export class Configuration {
     production?: boolean;
-    endpoint: string='';
+    endpoint: string;
     authenticationEndpoint?: string = '';
-    organizationId?: string;
-    defaultImageSrc: string='';
+    defaultImageSrc: string;
     defaultCountry?: string = 'US';
     defaultLanguage?: string = 'en-US';
     defaultCurrency?: string = 'USD';
     productIdentifier?: string = 'Id';
     proxy?: string;
     sentryDsn?: string;
-    storefrontId: string | null = null;
+    storefrontId: string = null;
     hashRouting?: boolean = false;
-    clientId: string | null = null;
-    authority: string | null= null;
+    clientId: string = null;
+    authority: string = null;
 }
 export interface Provider {
     provide: any;
@@ -21,7 +20,7 @@ export interface Provider {
     useValue?: any;
 }
 
-export enum PlatformConstants{
+export enum PlatformConstants {
     KEY = 'credentials',
     ACCESS_TOKEN = 'access_token',
     REFRESH_TOKEN = 'refresh_token',

@@ -79,13 +79,13 @@ export abstract class AObjectMetadata {
         if (this.constructor)
             return defaultMetadataStorage.findTypeMetadata(this.constructor, fieldName);
         else
-            return {} as TypeMetadata;
+            return undefined;
     }
     getExposeMetadata(fieldName: string): ExposeMetadata {
         if (this.constructor)
             return defaultMetadataStorage.findExposeMetadata(this.constructor, fieldName);
         else
-        return {} as ExposeMetadata;
+            return undefined;
     }
 
 
@@ -94,7 +94,7 @@ export abstract class AObjectMetadata {
     }
 
     getKey(apiName: string): string {
-        return first(keys(this.getFieldMetadataFromExpose(f => get(f, 'name') === apiName))) as string;
+        return first(keys(this.getFieldMetadataFromExpose(f => get(f, 'name') === apiName)));
 
     }
 
@@ -106,7 +106,7 @@ export abstract class AObjectMetadata {
         forEach(fieldParts, part => {
             let i = defaultTo(instance, this);
 
-            const metadata = i.getTypeMetadata(part) as TypeMetadata;
+            const metadata = i.getTypeMetadata(part)  as TypeMetadata;
             if (get(i, part) instanceof AObject)
                 instance = get(i, part);
             else if (get(metadata, 'typeFunction')) {
@@ -120,11 +120,11 @@ export abstract class AObjectMetadata {
     }
     @memoize()
     getApiName(field?: string) {
-        const memod = (f: any) => {
+        const memod = (f) => {
             if (!isNil(f)) {
                 const fieldParts = split(f, '.');
                 const fieldReference = fieldParts.pop();
-                let instance: any, fields, subField;
+                let instance, fields, subField;
                 let prefix = '';
                 forEach(fieldParts, part => {
                     prefix += (isNil(instance)
@@ -147,7 +147,7 @@ export abstract class AObjectMetadata {
     strip(fields?: Array<string>): AObject {
         let standardFields = ['CreatedDate', 'ModifiedDate', 'ModifiedBy', 'CreatedBy', '_metadata'];
         if (fields) standardFields = standardFields.concat(fields);
-        return omit(pickBy(this, (a, b) => identity(a) && !(endsWith(b, 'Id') && !isEqual(b, 'Id') && b !== 'ExternalId') && b !== 'hasErrors'), standardFields) as unknown as AObject;
+        return omit(pickBy(this, (a, b) => identity(a) && !(endsWith(b, 'Id') && !isEqual(b, 'Id') && b !== 'ExternalId') && b !== 'hasErrors'), standardFields)  as unknown as AObject;;
     }
 
     getReferenceFields(type?: 'Child' | 'Lookup'): Array<string> {
@@ -165,8 +165,8 @@ export abstract class AObjectMetadata {
         }
     }
 
-    getReferenceType(fieldName: string): 'Lookup' | 'Child' | undefined {
-        const metadata = this.getTypeMetadata(fieldName) as TypeMetadata;
+    getReferenceType(fieldName: string): 'Lookup' | 'Child' {
+        const metadata = this.getTypeMetadata(fieldName)  as TypeMetadata;
 
         if (get(metadata, 'reflectedType') && new metadata.reflectedType() instanceof AObject === false && Array.isArray(metadata.reflectedType()))
             return 'Child';
@@ -229,7 +229,7 @@ export abstract class AObjectMetadata {
 
     set hasErrors(e: boolean) { }
 
-    setError(key: string, param?: object | null, type: 'error' | 'warning' | 'info' = 'error', children?: Array<AObjectError> | null, reference?: KeyValue<string, string>): void {
+    setError(key: string, param?: object, type: 'error' | 'warning' | 'info' = 'error', children?: Array<AObjectError>, reference?: KeyValue<string, string>): void {
         this.set(`error['${key}']`, new AObjectError(key, param, type, children as Array<AObjectError>, reference));
     }
     clearError(key?: string): void {
@@ -245,22 +245,22 @@ export abstract class AObjectMetadata {
 export class AObject extends AObjectMetadata {
 
     @Expose({ name: 'Id' })
-    Id: string | null = null;
+    Id: string = null;
 
 
     @Expose({ name: 'CreatedDate' })
-    CreatedDate: Date | null = null;
+    CreatedDate: Date = null;
 
     @Expose({ name: 'ModifiedDate' })
-    ModifiedDate: Date | null = null;
+    ModifiedDate: Date = null;
 
 
     @Expose({ name: 'LastModifiedById' })
-    LastModifiedById: string | null = null;
+    LastModifiedById: string = null;
 
 
     @Expose({ name: 'CreatedById' })
-    CreatedById: string  | null= null;
+    CreatedById: string = null;
 
     _metadata?: any;
     validate(): void { }
@@ -280,7 +280,7 @@ export enum FilterOperator {
 }
 
 export class AObjectError extends Error {
-    constructor(m: string, public parameter?: Object | null, public type: 'error' | 'warning' | 'info' = 'error', public children?: Array<AObjectError>, public reference?: KeyValue<string, string>) {
+    constructor(m: string, public parameter?: Object, public type: 'error' | 'warning' | 'info' = 'error', public children?: Array<AObjectError>, public reference?: KeyValue<string, string>) {
         super(m);
         this.children = compact(this.children);
         if (!isNil(parameter) && !isPlainObject(parameter)) {
