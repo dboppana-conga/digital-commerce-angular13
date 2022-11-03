@@ -7,6 +7,7 @@ import { PromotionService } from '@congacommerce/ecommerce';
 import { ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiService } from '@congacommerce/core';
 
 /**
  * The service is used to show the toaster message based on the message type.
@@ -30,9 +31,10 @@ export class ExceptionService {
     private timeout;
 
 
-    constructor(private cartService: CartService, private constraintRuleService: ConstraintRuleService, private promotionService: PromotionService, private toastr: ToastrService, private translateService: TranslateService) {
+    constructor(private cartService: CartService, private constraintRuleService: ConstraintRuleService, private promotionService: PromotionService, private toastr: ToastrService, private translateService: TranslateService, private apiService: ApiService) {
         /* TO DO :  */
         // this.cartService.onCartError.subscribe(e => this.showError(e));
+        this.apiService.onApiError.subscribe(e => this.showError(e));
     }
 
     /**
@@ -51,9 +53,8 @@ export class MyComponent implements OnInit{
 ```
      * @param error message is of type Error or CartError or string
      */
-    showError(error: CartError | Error | string, positionClass: ToasterPosition = ToasterPosition.BOTTOM_LEFT) {
-        console.error(error);
-        this.translateService.stream([`ERROR.${error}`, 'ERROR.APPLICATION_ERROR_TOASTR_TITLE']).pipe(take(1)).subscribe(val => this.toastr.error(val[`ERROR.${error}`], val['ERROR.APPLICATION_ERROR_TOASTR_TITLE'], { positionClass }));
+    showError(error: CartError | Error | string, title: string = 'ERROR.APPLICATION_ERROR_TOASTR_TITLE', positionClass: ToasterPosition = ToasterPosition.BOTTOM_LEFT) {
+        this.translateService.stream([`ERROR.${error}`, title]).pipe(take(1)).subscribe(val => this.toastr.error(val[`ERROR.${error}`], val[title], { positionClass }));
     }
 
     /**

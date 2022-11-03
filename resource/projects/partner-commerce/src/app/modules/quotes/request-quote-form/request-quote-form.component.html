@@ -1,0 +1,81 @@
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <apt-input-field [entity]="quote" [field]="'ProposalName'" [(ngModel)]="quote.ProposalName"
+            (ngModelChange)="quoteChange()" [label]="'CREATE_QUOTE.QUOTE_TITLE' | translate"></apt-input-field>
+        </div>
+        <div class="form-group">
+          <apt-input-field [entity]="quote" [field]="'RFPResponseDueDate'" [(ngModel)]="quote.RFPResponseDueDate"
+            (ngModelChange)="quoteChange()">
+          </apt-input-field>
+        </div>
+        <div class="form-group">
+          <apt-input-field placeholder="{{'CREATE_QUOTE.SEARCH_CONTACTS' | translate }}" [entity]="quote"
+            [field]="'PrimaryContact'" [lookupOptions]="lookupOptions" [required]="true" [(ngModel)]="contact"
+            (ngModelChange)="primaryContactChange()" [errorMsg]="'Primary contact is mandatory'">
+          </apt-input-field>
+        </div>
+        <div class="form-group">
+          <apt-input-field [entity]="quote" [field]="'ShipToAccount'" [(ngModel)]="quote.ShipToAccount"
+            (ngModelChange)="shipToChange()"></apt-input-field>
+          <small class="px-3 font-italic d-block" *ngIf="shipToAccount$ | async as shipToAccount">
+            <apt-address [ngModel]="quote?.ShipToAccount" [readonly]="true" type="Shipping" [showLabel]="false">
+            </apt-address>
+          </small>
+        </div>
+        <div class="form-group">
+          <apt-input-field [entity]="quote" [field]="'BillToAccount'" [(ngModel)]="quote.BillToAccount"
+            (ngModelChange)="billToChange()"> </apt-input-field>
+          <small class="px-3 font-italic d-block" *ngIf="billToAccount$ | async as billToAccount">
+            <apt-address [ngModel]="quote?.BillToAccount" [readonly]="true" type="Billing" [showLabel]="false">
+            </apt-address>
+          </small>
+        </div>
+        <div class="form-group">
+          <apt-output-field [record]="quote.Account" field="Name" label="Sold To" [editable]="false"
+            [showQuickView]="true">
+          </apt-output-field>
+        </div>
+      </div>
+      <!-- <div class="col-12 col-md-6"> //TODO: Add back once the API is available 
+        <div>
+          <h5 class="py-2" *ngIf="cart.Proposald">
+            {{'COMMON.COMMENTS' | translate}} <span *ngIf="comments?.length > 0">({{comments?.length}})</span>
+          </h5>
+          <div class="form-group">
+            <apt-output-field [record]="quote.PriceList" field="Name" label="Price List" [editable]="false"
+              [showQuickView]="true"></apt-output-field>
+          </div>
+          <div>
+            <div class="note-container" *ngIf="cart?.Proposald">
+              <ng-scrollbar>
+                <ng-container *ngIf="comments?.length > 0; else emptyNotes">
+                  <div class="my-3 pb-3 border-bottom" *ngFor="let note of comments">
+                    <div class="text-muted d-block mb-2"><strong>{{note?.CreatedBy?.Name}}</strong> {{'COMMON.ON' |
+                      translate }}
+                      {{note?.CreatedDate | date:'medium'}}</div>
+                    <div>
+                      {{note?.Body}}
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-template #emptyNotes>
+                  <div class="d-flex align-items-center justify-content-center flex-column h-100 text-muted">
+                    <i class="fa fa-4x fa-comments-o mb-2"></i>
+                    {{ 'COMMON.NO_COMMENTS_TO_DISPLAY' | translate}}
+                  </div>
+                </ng-template>
+              </ng-scrollbar>
+            </div>
+            <div class="form-group">
+              <apt-input-field [entity]="note" [field]="'Body'" rows="5" label="{{'COMMON.COMMENTS' | translate }}"
+                [(ngModel)]="note.Description" name="body" (ngModelChange)="addComment()"></apt-input-field>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

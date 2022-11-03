@@ -62,7 +62,7 @@ export class UserService extends AObjectService {
     refresh(): void {
         this.apiService.refreshToken()
             .pipe(
-                switchMap(() => this.apiService.get(`/usermanagement/v1/userinfo`, this.type)),
+                switchMap(() => this.apiService.get(`/user-management/v1/user/info`, this.type)),
                 take(1)
             ).subscribe(user => {
                 localStorage.setItem('userId', user.Id);
@@ -607,7 +607,7 @@ export class MyComponent implements OnInit{
      */
     updateCurrentUser(user: User): Observable<User> {
         const payload = user.strip();
-        return this.apiService.put(`/usermanagement/v1/users/${user.Id}`, payload, this.type).pipe(
+        return this.apiService.put(`/user-management/v1/users/${user.Id}`, payload, this.type).pipe(
             tap(res => this.publish(res as User))
         )
     }
