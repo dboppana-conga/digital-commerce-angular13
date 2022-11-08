@@ -13,9 +13,9 @@ export class ImagePipe implements PipeTransform {
 
     constructor(public configurationService: ConfigurationService, private dss: DomSanitizer) { }
 
-    public url: string = '';
+    public url: string = null;
 
-    transform(attachmentId: string, asset: boolean = true, defaultImage: boolean = true, productId?: string): string | null {
+    transform(attachmentId: string, asset: boolean = true, defaultImage: boolean = true, productId?: string): string {
         const random = Math.floor(Math.random() * 50) + 1;
         if (this.url)
             return this.url;
@@ -50,14 +50,14 @@ export class ImagePipe implements PipeTransform {
 
             _temp = _temp.substring(_temp.lastIndexOf('http'));
             if (defaultImage)
-                this.checkImage(_temp, () => this.url = (this.dss.sanitize(SecurityContext.URL, _temp) as string), () => this.url = (this.dss.sanitize(SecurityContext.URL, defaultImageSrc)) as string);
+                this.checkImage(_temp, () => this.url = this.dss.sanitize(SecurityContext.URL, _temp), () => this.url = this.dss.sanitize(SecurityContext.URL, defaultImageSrc));
             else
                 this.url = _temp;
             return this.dss.sanitize(SecurityContext.URL, this.url);
         }
     }
 
-    private checkImage(url: string, success: any, failure: any) {
+    private checkImage(url, success, failure) {
         let img = new Image(),
             loaded = false,
             errors = {},
@@ -84,7 +84,7 @@ export class ImagePipe implements PipeTransform {
                 return;
             }
 
-           _.set(errors, 'url', errored = true);
+            errors[url] = errored = true;
 
             if (failure && failure.call) {
                 failure.call(img);
@@ -93,8 +93,8 @@ export class ImagePipe implements PipeTransform {
 
         // If `url` is in the `errors` object, trigger the `onerror`
         // callback.
-        if (_.get(errors, 'url')) {
-            img.onerror.call(img, '');
+        if (errors[url]) {
+            img.onerror.call(img);
             return;
         }
 
@@ -103,9 +103,8 @@ export class ImagePipe implements PipeTransform {
 
         // If the image is already complete (i.e. cached), trigger the
         // `onload` callback.
-        
         if (img.complete) {
-            img.onload.call(img, {} as any as Event);
+            img.onload.call(img);
         }
     }
 }

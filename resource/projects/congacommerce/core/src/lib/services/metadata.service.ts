@@ -22,17 +22,17 @@ export class MetadataService {
 
 
     getTypeByApiName(apiName: string): ClassType<AObject> {
-        const service = find(map(Array.from(get(this.injector, 'records', new Map()).values()), 'value'), (provider: any) => (typeof get(provider, 'type') === 'function') && get(provider, 'type').name === apiName);
+        const service = find(map(Array.from(get(this.injector, 'records', new Map()).values()), 'value'), (provider) => (typeof get(provider, 'type') === 'function') && get(provider, 'type').name === apiName);
         return get(service, 'type');
     }
 
     // Order CreatedBy.Name null
-    getFieldName(ab: AObject | (new (t?: any) => AObject), key: any): string {
+    getFieldName(ab: AObject | (new (t?) => AObject), key): string {
         const fieldParts = split(key, '.');
         const fieldReference = fieldParts.pop();
         let instance = (ab instanceof AObject) ? ab : new ab();
         let prefix = '';
-        forEach(fieldParts, (part: any) => {
+        forEach(fieldParts, part => {
             prefix += this.getFieldName(instance, part) + '.';
             instance = this.getKeyInstance(instance, part);
         });
@@ -41,7 +41,7 @@ export class MetadataService {
         return prefix + get(fields, `${fieldReference}`);
     }
 
-    getKeyName(ab: AObject | (new (t?: any) => AObject), fieldName: string) {
+    getKeyName(ab: AObject | (new (t?) => AObject), fieldName: string) {
         if (ab) {
             let instance;
             try {
@@ -62,30 +62,30 @@ export class MetadataService {
             return undefined;
     }
 
-    getKeyInstance(type: ClassType<AObject> | AObject, fieldName: string = ''): AObject {
+    getKeyInstance(type: ClassType<AObject> | AObject, fieldName?: string): AObject {
         const instance = (type instanceof AObject) ? new (<ClassType<AObject>>type.constructor) : new type();
-        if (!isEmpty(fieldName)) {
+        if (!isNil(fieldName)) {
             const metadata = this.getTypeMetadata(type, fieldName);
             if (get(metadata, 'typeFunction')) {
-                const classType = metadata?.typeFunction() as (new (t?: any) => AObject);
+                const classType = metadata.typeFunction() as (new (t?) => AObject);
                 return new classType();
             } else if (get(instance, fieldName) instanceof AObject)
                 return get(instance, fieldName);//To DO:
             else if (get(instance, `${fieldName}[0]`))
                 return get(instance, `${fieldName}[0]`);
-        }
-        return instance;
+        } else
+            return instance;
     }
 
     getRestResource(type: ClassType<AObject>) {
         return defaultTo(get(this.getMetadata(type), 'route'), null);
     }
 
-    getKeyReferenceType(type: ClassType<AObject> | AObject, fieldName: string): 'Array' | 'Object' | undefined {
+    getKeyReferenceType(type: ClassType<AObject> | AObject, fieldName: string): 'Array' | 'Object' {
         const metadata = this.getTypeMetadata(type, fieldName);
-        const instance = (type instanceof AObject) ? new (<(new (t?: any) => AObject)>type.constructor) : new type();
+        const instance = (type instanceof AObject) ? new (<(new (t?) => AObject)>type.constructor) : new type();
 
-        if (get(metadata, 'reflectedType') && Array.isArray(metadata?.reflectedType()))
+        if (get(metadata, 'reflectedType') && Array.isArray(metadata.reflectedType()))
             return 'Array';
         else if (Array.isArray(get(instance, fieldName)) && get(instance, `${fieldName}[0]`) instanceof AObject)
             return 'Array';
@@ -96,7 +96,7 @@ export class MetadataService {
         } else
             return undefined;
     }
-    getMetadata(aobject: AObject | (new (t?: any) => AObject)) {
+    getMetadata(aobject: AObject | (new (t?) => AObject)) {
         const instance = (aobject instanceof AObject) ? aobject : new aobject();
         return this._reflect.getMetadata('aobject', instance.constructor);
     }
@@ -109,7 +109,7 @@ export class MetadataService {
             return undefined;
     }
 
-    buildTypeModel(type: ClassType<AObject>, describe?: any): Observable<void> | Observable<any> {
+    buildTypeModel(type: ClassType<AObject>, describe?: any): Observable<void> {
         const generator = (subType: ClassType<AObject>, subDescribe?: any) => {
             const service = this.getAObjectServiceForType(subType);
 
@@ -161,8 +161,8 @@ export class MetadataService {
                 return of(null);
         };
 
-        const obsvList: Array<any> = [];
-        const _loop = (instance: any) => {
+        const obsvList = [];
+        const _loop = (instance) => {
             const t = instance.getType();
             if (!includes(this.types, t)) {
                 obsvList.push({
@@ -180,17 +180,17 @@ export class MetadataService {
         };
 
         _loop(this.getKeyInstance(type));
-        const dynamicList = filter(obsvList, (o: any) => o.dynamic === true);
+        const dynamicList = filter(obsvList, o=> o.dynamic === true);
         if (!isEmpty(dynamicList))
             return forkJoin(...map(dynamicList, 'obsv'))
                 .pipe(
                     tap(() => this.types = uniq(concat(this.types, map(obsvList, 'type'))))
-                );
+                ) as Observable<void>;
         else
-            return of();
+            return of(null);
     }
 
-    getAObjectServiceForType(type: ClassType<AObject> | AObject, exactMatch: boolean = false): AObjectService | null {
+    getAObjectServiceForType(type: ClassType<AObject> | AObject, exactMatch: boolean = false): AObjectService {
         if (isNil(type))
             return null;
         else {
@@ -199,12 +199,12 @@ export class MetadataService {
             if (isUndefined(providers) || isEmpty(providers))
                 providers = get(this.injector, '_providers', []);
             let serviceList = filter(providers,
-                (provider: any) =>
+                (provider) =>
                     get(provider, 'type') === type
                     || get(provider, 'type') === type.constructor
                     || (isFunction(get(provider, 'getInstance')) && provider.getInstance() instanceof type.constructor)
                     || (get(provider, 'type') === AObject && Object.getPrototypeOf(Object.getPrototypeOf(provider)).constructor === Object));
-            let typeServices = serviceList.map((service: any) => {
+            let typeServices = serviceList.map(service => {
                 const clone = Object.create(service);
                 clone.setType(instance.constructor);
                 return clone;
@@ -225,7 +225,7 @@ export class MetadataService {
         return Object.keys(this.getFieldMetadata(instance));
     }
 
-    getFieldMetadata(aobject: AObject | ClassType<AObject>, metadataFilter?: (arg: any) => boolean) {
+    getFieldMetadata(aobject: AObject | ClassType<AObject>, metadataFilter?: (arg) => boolean) {
         const instance = (aobject instanceof AObject) ? aobject : new aobject();
         let instanceKey;
         try {
@@ -233,8 +233,8 @@ export class MetadataService {
         } catch {
             instanceKey = instance.constructor.toString();
         }
-        if (!get(this, '_fieldCache[instanceKey]')) {
-            const _loop: any = (i: any, fieldObj = {}) => {
+        if (!this._fieldCache[instanceKey]) {
+            const _loop = (i, fieldObj = {}) => {
                 const fields = Reflect.getMetadata('fields', i.constructor);
                 if (fields) {
                     Object.assign(fieldObj, fields);
@@ -245,12 +245,12 @@ export class MetadataService {
             };
 
             const returnList = _loop(instance);
-            set(this, '_fieldCache[instanceKey]', returnList);
+            this._fieldCache[instanceKey] = returnList;
         }
 
         if (metadataFilter)
-            return pickBy(get(this, '_fieldCache[instanceKey]'), metadataFilter);
+            return pickBy(this._fieldCache[instanceKey], metadataFilter);
         else
-            return get(this, '_fieldCache[instanceKey]');
+            return this._fieldCache[instanceKey];
     }
 }

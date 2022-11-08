@@ -23,6 +23,7 @@ export class CacheService {
 
     private _cache: any;
     private bufferCache = {};
+    private db;
     private CACHE_VERSION = 12;
     private DB_STORE = 'cache';
     private DB_NAME = 'ApttusDC';
@@ -37,11 +38,11 @@ export class CacheService {
 
 
 
-    buffer(bufferKey: string, value: any, executable: (arg: any) => Observable<any>, dataMap?: (arg: any) => any, bufferTimeInMilliseconds?: number, bufferCount?: number, debounceResult: boolean = false): Observable<any> {
+    buffer(bufferKey: string, value: any, executable: (arg) => Observable<any>, dataMap?: (arg) => any, bufferTimeInMilliseconds?: number, bufferCount?: number, debounceResult: boolean = false): Observable<any> {
         let bufferData = _.find(_.get(this.bufferCache, bufferKey), d => _.get(d, 'state.value') === 'open');
 
-        bufferTimeInMilliseconds = _.defaultTo(bufferTimeInMilliseconds, this.configurationService.get('disableBuffer', false) === true ? 0 : this.configurationService.get('bufferTime', 50)) as number;
-        bufferCount = _.defaultTo(bufferCount, this.configurationService.get('disableBuffer', false) === true ? 1 : this.configurationService.get('maxBufferSize', 10)) as number;
+        bufferTimeInMilliseconds = _.defaultTo(bufferTimeInMilliseconds, this.configurationService.get('disableBuffer', false) === true ? 0 : this.configurationService.get('bufferTime', 50));
+        bufferCount = _.defaultTo(bufferCount, this.configurationService.get('disableBuffer', false) === true ? 1 : this.configurationService.get('maxBufferSize', 10));
 
 
         if (_.isNil(bufferData)) {

@@ -3,7 +3,27 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "@congacommerce/ecommerce": [
+        "projects/congacommerce/ecommerce/src/public-api.ts"
+      ],
+      "@congacommerce/ecommerce/*": [
+        "projects/congacommerce/ecommerce/*"
+      ],
+      "@congacommerce/core": [
+        "projects/congacommerce/core/src/public-api.ts"
+      ],
+      "@congacommerce/core/*": [
+        "projects/congacommerce/core/*"
+      ],
+      "@congacommerce/elements": [
+        "projects/congacommerce/elements/src/public-api.ts"
+      ],
+      "@congacommerce/elements/*": [
+        "projects/congacommerce/elements/*"
+      ]     
+    }
   },
   "files": [
     "src/main.ts",

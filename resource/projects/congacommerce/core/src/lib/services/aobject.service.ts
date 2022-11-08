@@ -25,7 +25,7 @@ export class AObjectService {
 
     static arrayToCsv(idArray: Array<string>): string {
         if (!idArray || idArray.length === 0)
-            return '';
+            return null;
         else {
             let result = ``;
             for (const key of idArray) {
@@ -67,7 +67,7 @@ export class AObjectService {
         const replace = (field: string) => field.replace('__r', '__c');
         const referenceField = instance.getReferenceFieldsFromExpose('Lookup');
         if (!_.isEmpty(referenceField) && depth <= this.configurationService.get('expandDepth')) {
-            return _.map(referenceField, (l: string) => {
+            return _.map(referenceField, l => {
                 const expand = _.get(instance.getMetadata(l), 'expand') === 'deep' && deep;
                 return {
                     // field: replace(instance.getApiName(l)),
@@ -76,14 +76,14 @@ export class AObjectService {
                 };
             });
         } else
-            return new Array();
+            return null;
     }
 
     getChildren(instance: AObject, filters?: Array<any>, depth: number = 0, deep: boolean = true): Array<Object> {
         depth += 1;
         const referenceField = instance.getReferenceFieldsFromExpose('Child');
         if (!_.isEmpty(referenceField) && depth <= this.configurationService.get('expandDepth') && deep) {
-            return _.map(referenceField, (c: string) => (
+            return _.map(referenceField, c => (
                 {
                     //  field: instance.getApiName(c),
                     filters: _.compact(_.first(_.map(_.filter(filters, { field: c }), 'filterList'))),
@@ -92,7 +92,7 @@ export class AObjectService {
                 }
             ));
         } else
-            return new Array();
+            return null;
     }
 
     getRestResource() {
@@ -114,13 +114,13 @@ export class AObjectService {
 
     describe(entity?: ClassType<AObject>, field?: string, picklistOnly: boolean = false, useGobalDescribe: boolean = false): Observable<any> {
         const entityClass = (entity != null) ? entity : this.type;
-        let fieldApiName: any, apiName;
+        let fieldApiName, apiName;
         fieldApiName = (apiName === undefined) ? field : apiName;
         return this.describeObject(entity)
             .pipe(
                 map(data => {
-                    const metadata = (!_.isNil(field)) ? _.find(_.get(data, 'FieldMetadata', []), (f: any) => _.toLower(f.FieldName) === _.toLower(_.trim(fieldApiName))) : data;
-                    const picklistValues = _.get(_.find(_.get(data, 'PicklistMetadata', []), (f: any) => _.toLower(f.Name) === _.toLower(_.get(metadata, 'PicklistName'))), 'PicklistEntries');
+                    const metadata = (!_.isNil(field)) ? _.find(_.get(data, 'FieldMetadata', []), (f) => _.toLower(f.FieldName) === _.toLower(_.trim(fieldApiName))) : data;
+                    const picklistValues = _.get(_.find(_.get(data, 'PicklistMetadata', []), (f) => _.toLower(f.Name) === _.toLower(_.get(metadata, 'PicklistName'))), 'PicklistEntries');
                     if (picklistOnly) {
                         return picklistValues;
                     }
@@ -141,12 +141,12 @@ export class AObjectService {
 
     @MemoizeAll()
     fetch(id: string): Observable<AObject> {
-        const route: string = _.defaultTo(_.get(this.getInstance().getMetadata(), 'route'), this.getInstance().getApiName());
-        const subject: BehaviorSubject<AObject> = new BehaviorSubject<AObject>(new AObject());
+       const route: string = _.defaultTo(_.get(this.getInstance().getMetadata(), 'route'), this.getInstance().getApiName());
+        const subject: BehaviorSubject<AObject> = new BehaviorSubject<AObject>(null);
 
         this.apiService.get(`/${route}/${id}`, this.type)
             .pipe(take(1))
-            .subscribe(data => subject.next(_.first(data) as AObject));
+            .subscribe(data => subject.next(_.first(data)));
 
         return subject.pipe(filter(d => !_.isNil(d)));
     }

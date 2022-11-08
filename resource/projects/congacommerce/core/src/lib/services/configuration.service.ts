@@ -32,7 +32,7 @@ export class ConfigurationService {
         return !_.endsWith(location, '/') ? `${location}/` : location;
     }
 
-    get(key: string, defaultValue?: any) {
+    get(key, defaultValue?: any) {
         return _.get(this._config, key, defaultValue);
     }
 
