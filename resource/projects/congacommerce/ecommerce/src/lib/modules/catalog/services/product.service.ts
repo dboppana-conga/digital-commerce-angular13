@@ -306,7 +306,7 @@ export class MyComponent implements OnInit{
      */
     getFieldPickList(fieldName = null): Observable<Array<string>> {
         return this.describe(this.type, fieldName, true)
-            .pipe(map(res => _map(res, item => item.Value)));
+            .pipe(map(res => _map(res, item => item.Value as string)));
     }
 
     /**

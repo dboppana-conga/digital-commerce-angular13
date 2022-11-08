@@ -1,16 +1,16 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+import { Configuration } from '@congacommerce/core';
 
-export const environment = {
-  production: false
+export const environment: Configuration = {
+  production: false,
+  defaultImageSrc: 'https://loremflickr.com/320/240/hardware',
+  defaultCountry: 'US',
+  defaultLanguage: 'en-US',
+  defaultCurrency: 'USD',
+  productIdentifier: 'Id',
+  hashRouting: true,
+  endpoint: 'https://rlp-dev.congacloud.io',
+  storefrontId: 'a8407757-18d8-45de-951a-b629d82742db',
+  clientId: 'rlp-dev-dc-spa',
+  enableTelemetry: false,
+  authority: 'https://login.congacloud.io/int/api/v1/auth'
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
