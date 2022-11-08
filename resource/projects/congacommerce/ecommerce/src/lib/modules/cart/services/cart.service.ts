@@ -323,8 +323,9 @@ export class MyComponent implements OnInit{
     );
   }
 
-  private onAdd(cartItemList?: Array<CartItem>): void {
-       this.priceCart();
+  private onAdd(cart?: Cart): void {
+    set(this.state.value, 'SummaryGroups', get(cart, 'SummaryGroups'));
+    this.state.value.IsPricePending = false;
   }
 
   /**
@@ -333,6 +334,7 @@ export class MyComponent implements OnInit{
    */
   addItem(cartRequestList: Array<CartRequest> | FavoriteRequest): Observable<Array<CartItem>> {
     let cartId;
+    let cartRef: Cart;
     const addItemResp$ = this.getMyCart().pipe(
       take(1),
       switchMap(data => (isNil(get(data, 'Id'))) ? this.createNewCart() : of(data)),
@@ -346,6 +348,7 @@ export class MyComponent implements OnInit{
           return of(null);
         } else  {
           const items= get(data, 'CartResponse.LineItems');
+          cartRef = get(data, 'CartResponse');
           return this.cartItemProductService.addProductInfoToLineItems(items);
         }
       }),
@@ -359,12 +362,13 @@ export class MyComponent implements OnInit{
     );
     return this.actionQueue.queueAction(addItemResp$,  bind(()=>{}, this)).pipe(
       tap(cartItemList => {
+        this.onAdd(cartRef);
         this.mergeCartItems(cartItemList);
       })
     );
   }
 
-  private mergeCartItems(cartItemList: Array<any>) {
+  private mergeCartItems(cartItemList: Array<CartItem>) {
     if (!isNil(cartItemList) && !isEmpty(cartItemList) && isArray(cartItemList)) {
 
       const keyFn = (r) => r.LineNumber + '.' + r.PrimaryLineNumber + '.' + r.ItemSequence; 
@@ -372,9 +376,7 @@ export class MyComponent implements OnInit{
       remove(get(this.state.value, 'LineItems'), (l) => includes(_map(cartItemList, 'LineNumber'), l.LineNumber) && l.LineType === 'Option' && !includes(cartItemList, (i) => keyFn(i) === keyFn(l)));
 
       set(this.state.value, 'LineItems', values(merge(keyBy(get(this.state.value, 'LineItems'), keyFn), keyBy(cartItemList, keyFn))));
-
-      this.republish(true);
-
+      this.publish(this.state.value);
       const configId = get(first(cartItemList), 'Configuration.Id');
       if (!isNil(configId))
         localStorage.setItem(CartService.STORAGE_KEY, configId);
@@ -390,6 +392,7 @@ export class MyComponent implements OnInit{
   * @ignore
   */
   updateItem(cartItemId: string, cartRequestList: Array<CartRequest>, isEmbedded: boolean = false): Observable<Array<CartItem>> {
+
     const updateItem$ = this.apiService.patch(
       `/cart/v1/carts/${CartService.getCurrentCartId()}/items`,
       cartRequestList
@@ -402,7 +405,7 @@ export class MyComponent implements OnInit{
         }
         else return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>;
       }),
-     tap(response => this.onAdd(response))
+      tap(response => this.mergeCartItems(response))
     );
   }
 
@@ -444,14 +447,25 @@ export class MyComponent implements OnInit{
             'ParentBundleNumber': cartItem.ParentBundleNumber
           };
         });
+        let cartRef: Cart;
         const updateItemsResp$ = this.apiService.patch(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`, lineItems)
           .pipe(
             map(response => {
-              const items= response.CartResponse.LineItems;
-              return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>
+              if(get(response, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED){
+                this.priceCart();
+                return of(null);
+              } else  {
+                const items= response.CartResponse.LineItems;
+                cartRef = response.CartResponse;
+                return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>
+              }
             })
           );
-        return this.actionQueue.queueAction(updateItemsResp$, bind(this.onAdd, this));
+        return this.actionQueue.queueAction(updateItemsResp$,  bind(()=>{}, this)).pipe(
+          tap(cartItemList => {
+            this.onAdd(cartRef);
+            this.mergeCartItems(cartItemList);
+          }));
       },
       allItems => {
         filter(allItems, a => includes(_map(cartItems, 'Id'), a.Id));
@@ -554,7 +568,7 @@ export class MyComponent{
      * @returns a cold boolean observable representing the success state of the delete operation
      */
   deleteCart(cart: Cart | Array<Cart>): Observable<boolean> {
-    const cartId = flatten(_map(cart, (cartElement) => [{ 'Id': get(cartElement, 'Id') }]));
+    const cartId = flatten(_map(cart, (cartElement) => [{ 'Id': cartElement.Id }]));
     const obsv$ = this.apiService.delete(`/cart/v1/carts`, cartId)
     return obsv$.pipe(
       map(deleteList => every(deleteList, l => l === 'Deleted successfully!')),
@@ -589,7 +603,7 @@ export class MyComponent implements OnInit{
       lineItemRes$
     ]).pipe(
       map(([cartList, lineItemRes]) => {
-        const cart = first(cartList) as Cart;
+        const cart = first(cartList);
         CartService.setCurrentCartId(get(cart, 'Id'));
         if (priceCart) {
           cart.LineItems = lineItemRes;
@@ -647,7 +661,7 @@ export class MyComponent implements OnInit{
       PricingStatus: item.PricingStatus,
       ParentBundleNumber: item.ParentBundleNumber,
     })
-    ) as unknown as  Array<CartRequest>;
+    );
     if (get(cartItem, 'Id'))
       return this.updateItem(get(cartItem, 'Id'), request, false);
     else if (!isEmpty(request))
@@ -676,7 +690,7 @@ export class MyComponent implements OnInit{
             'PrimaryTxnLineNumber': this.getNextPrimaryLineNumber(this.state.value.LineItems, this.state.value),
             'ExternalId': this.guid(),
             'ProductId': product.Id,
-            'OptionId': option.ComponentProduct.Id,
+            'OptionId': option.ComponentProductId,
             'Quantity': option.DefaultQuantity,
             'TxnParentBundleNumber': lineNumber,
             'LineType': 'Option',
@@ -822,11 +836,11 @@ export class MyComponent implements OnInit{
         const lineNumbers = _map(filter(lines, (l) => includes(cartItemIds, l.Id)), 'LineNumber');
         const PrimaryLineItem = filter(lines, (i) => includes(cartItemIds, i.Id) && i.LineType === 'Product/Service');
         if (PrimaryLineItem.length > 0) {
-          remove(get(this.state, 'value.LineItems', []), (o:CartItem) =>
+          remove(get(this.state, 'value.LineItems', []), o =>
             includes(lineNumbers, o.LineNumber)
           );
         } else {
-          remove(get(this.state, 'value.LineItems', []), (o:CartItem) =>
+          remove(get(this.state, 'value.LineItems', []), o =>
             includes(cartItemIds, o.Id)
           );
         }
@@ -835,7 +849,7 @@ export class MyComponent implements OnInit{
 
     return this.actionQueue.queueAction(removeCartItems$, bind(() => {
       this.priceCart();
-    }, this));
+    }));
   }
 
   /**

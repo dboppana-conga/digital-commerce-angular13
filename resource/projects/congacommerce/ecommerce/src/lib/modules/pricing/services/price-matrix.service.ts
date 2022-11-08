@@ -55,7 +55,8 @@ export class PriceMatrixService extends AObjectService {
      * @returns A hot observable containing an array of price matrix data for the given price list items.
      */
     public getPriceMatrixData(priceListItemList: Array<PriceListItem>, attributeGroupName?: string): Observable<Array<PriceMatrix>> {
-        const ids = priceListItemList.map(r => r.Id);
+        /* TO DO : */
+        // const ids = priceListItemList.map(r => r.Id);
      //   const groupNameFilter = (attributeGroupName) ? [PriceMatrixService.attributeGroupNameQuery(attributeGroupName, this.type)] : null;
         // if (ids && ids.length > 0 && some(ids, (i => !isNil(i))))
         //     return this.where([new ACondition(this.type, 'PriceListItemId', 'In', ids)], 'AND', groupNameFilter);

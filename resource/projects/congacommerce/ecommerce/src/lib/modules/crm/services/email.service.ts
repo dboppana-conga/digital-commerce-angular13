@@ -1,5 +1,5 @@
 import { AObjectService, AObject } from '@congacommerce/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { MailContent, TemplateMailFactory } from '../classes/index';
 import { User } from '../classes/index';
 import { Injectable } from '@angular/core';
@@ -23,7 +23,8 @@ export class EmailService extends AObjectService {
      * @returns an observable
      */
     public sendEmail(emailContentList: MailContent[]): Observable<any> {
-        return this.apiService.post('sendEmail', emailContentList);
+        // return this.apiService.post('sendEmail', emailContentList);
+        return of(null);
     }
 
     /**
@@ -37,10 +38,11 @@ export class EmailService extends AObjectService {
      */
 
     public sendEmailTemplate(templateName: string, to: User, what: AObject): Observable<any> {
-        let content = TemplateMailFactory(templateName, what.Id, to.Id, [to.Email]);
-        return this.apiService.post('sendEmail', [
-            content
-        ]);
+        // let content = TemplateMailFactory(templateName, what.Id, to.Id, [to.Email]);
+        // return this.apiService.post('sendEmail', [
+        //     content
+        // ]);
+        return of(null);
     }
 
 
@@ -56,10 +58,11 @@ export class EmailService extends AObjectService {
      */
 
     public sendEmailToAddress(templateName: string, from: User, to: string, what: AObject): Observable<any> {
-        let content = TemplateMailFactory(templateName, what.Id, from.Id, [to]);
-        return this.apiService.post('sendEmail', [
-            content
-        ]);
+        // let content = TemplateMailFactory(templateName, what.Id, from.Id, [to]);
+        // return this.apiService.post('sendEmail', [
+        //     content
+        // ]);
+        return of(null);
     }
 
     /**
@@ -70,7 +73,8 @@ export class EmailService extends AObjectService {
      */
     //To DO:
     public guestUserNewOrderNotification(orderId: string, orderURL: string): Observable<any> {
-        return this.apiService.post('guestUserNewOrderNotification', { orderId: orderId, ecommerceURL: orderURL });
+        // return this.apiService.post('guestUserNewOrderNotification', { orderId: orderId, ecommerceURL: orderURL });
+        return of(null);
     }
 
     /**
@@ -84,7 +88,8 @@ export class EmailService extends AObjectService {
      * @returns an observable
     */
     orderStatusChangeNotification(templateName: string, orderId: string, recipentId: string, toAddresses?: string[], ccAddresses?: string[], attachmentIds?: string[]): Observable<any> {
-        let content = TemplateMailFactory(templateName, orderId, recipentId, toAddresses, ccAddresses, attachmentIds);
-        return this.apiService.post('sendEmail', {emailData: [content]});
+        // let content = TemplateMailFactory(templateName, orderId, recipentId, toAddresses, ccAddresses, attachmentIds);
+        // return this.apiService.post('sendEmail', {emailData: [content]});
+        return of(null);
     }
 }

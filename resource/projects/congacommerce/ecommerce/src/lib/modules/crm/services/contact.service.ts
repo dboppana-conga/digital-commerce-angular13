@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Contact } from '../classes/index';
 import { AObjectService } from '@congacommerce/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UserService } from './user.service';
 import { map, catchError} from 'rxjs/operators';
 
@@ -71,7 +71,7 @@ export class MyComponent implements OnInit{
         //     else
         //         return of(this.getInstance());
         // }));
-        return null;
+        return of(null);
     }
 
     /**
@@ -98,12 +98,12 @@ export class MyComponent implements OnInit{
      */
     public getContactForUser(): Observable<Contact> {
         //TO Do:
-        return null;
+        return of(null);
         // this.apiService.userId().pipe(
         //     mergeMap(userId => this.where([new ACondition(this.type, 'UserId', 'Equal', userId)])),
         //     map(contacts => contacts[0]),
         //     catchError(e => {
-        //         return null;
+        //         return of(null);
         //     }),);
     }
 
@@ -134,17 +134,17 @@ export class MyComponent implements OnInit{
      */
     public getContact(objQueryParams): Observable<Contact>{
         // To DO: 
-        const conditionList = [];
-        for (const key in objQueryParams) {
+        // const conditionList = [];
+        // for (const key in objQueryParams) {
             // if (objQueryParams[key]) {
             //     conditionList.push(new ACondition(this.type, key, 'Equal', objQueryParams[key]));
             // }
-        }
+       // }
        // return this.where(conditionList,'AND',null,null,null,null,true).pipe(
         // map(res => res[0]),
         // catchError(e => {
-        //     return null;
+        //     return of(null);
         // }),);
-        return null;
+        return of(null);
     }
 }

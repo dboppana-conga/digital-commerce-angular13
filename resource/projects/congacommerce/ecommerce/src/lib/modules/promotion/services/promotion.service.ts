@@ -47,14 +47,16 @@ export class MyComponent implements OnInit{
      * @returns a observable<boolean | HttpErrorResponse> when the operation has completed.
      */
   applyPromotions(promocode: string): Observable<boolean | HttpErrorResponse> {
-    return this.apiService.post(`/carts/${CartService.getCurrentCartId()}/promotions?mode=${this.configService.get('pricingMode')}`, { code: promocode })
-      .pipe(
-        tap(res => {
-          if (res)
-            this.cartService.priceCart();
-        }),
-        catchError(e => of(e))
-      );
+    // TODO: Replace with RLP API
+    // return this.apiService.post(`/carts/${CartService.getCurrentCartId()}/promotions?mode=${this.configService.get('pricingMode')}`, { code: promocode })
+    //   .pipe(
+    //     tap(res => {
+    //       if (res)
+    //         this.cartService.priceCart();
+    //     }),
+    //     catchError(e => of(e))
+    //   );
+    return of(null);
   }
 
   /**
@@ -152,15 +154,17 @@ export class MyComponent implements OnInit{
    * @returns Return list of Incentives for matching criteria.
    */
   getIncentiveByCode(incentiveCodes?: string): Observable<Array<Incentive>> {
-    return this.apiService.post('/Apttus_Config2__Incentive__c/query', {
-      'conditions': [
-        {
-          'field': 'IncentiveCode',
-          'filterOperator': 'In',
-          'value': incentiveCodes
-        }
-      ]
-    }, this.incentiveService.type);
+    // TODO: Replace with RLP API
+    // return this.apiService.post('/Apttus_Config2__Incentive__c/query', {
+    //   'conditions': [
+    //     {
+    //       'field': 'IncentiveCode',
+    //       'filterOperator': 'In',
+    //       'value': incentiveCodes
+    //     }
+    //   ]
+    // }, this.incentiveService.type);
+    return of(null);
   }
 
   /**
@@ -182,11 +186,13 @@ export class MyComponent implements OnInit{
      * @returns a void observable when the operation has completed.
      */
   removeAppliedPromotion(incentive: Incentive): Observable<boolean> {
-    const code = incentive.get('couponCode') ? incentive.get('couponCode') : incentive.IncentiveCode;
-    return this.apiService.delete(
-      `carts/${CartService.getCurrentCartId()}/promotions/${code}?mode=${this.configService.get('pricingMode')}`)
-      .pipe(
-        tap(() => this.cartService.priceCart())
-      );
-  }
+    // TODO: Replace with RLP API
+  //   const code = incentive.get('couponCode') ? incentive.get('couponCode') : incentive.IncentiveCode;
+  //   return this.apiService.delete(
+  //     `carts/${CartService.getCurrentCartId()}/promotions/${code}?mode=${this.configService.get('pricingMode')}`)
+  //     .pipe(
+  //       tap(() => this.cartService.priceCart())
+  //     );
+      return of(null);
+   }
 }

@@ -3,7 +3,7 @@ import { ApttusModule, ApiService, AObjectService } from "@congacommerce/core";
 import { CommerceModule } from "../../../ecommerce.module";
 import { ProductService, PreviousState } from "../services/index";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { mockProductResult, productMockData, test } from "./data/dataManger";
+import { filterValue, mockProductResult, productMockData, test } from "./data/dataManger";
 import { of } from "rxjs";
 import { PriceListService } from '../../pricing/services/price-list.service';
 import { ProductResult } from "../classes";
@@ -88,8 +88,8 @@ describe('ProductService', () => {
         expect(func.length).toEqual(0);
     });
 
-    xit('getFieldPickList() should return picklist based on given field', () => {// visit again
-        apiSpy.get.and.returnValue(of([{
+    it('getFieldPickList() should return picklist based on given field', () => {
+        spyOn(service,'describe').and.returnValue( of([ {
             "Value": "Software",
             "DisplayText": "Software",
             "Sequence": 0,
@@ -106,27 +106,20 @@ describe('ProductService', () => {
             "DisplayText": "Maintenance-HW",
             "Sequence": 2,
             "IsDeprecated": false
-        }]))
-        aOSpy.describe.and.returnValue(of([ {
-            "Value": "Software",
-            "DisplayText": "Software",
-            "Sequence": 0,
-            "IsDeprecated": false
-        },
-        {
-            "Value": "Hardware",
-            "DisplayText": "Hardware",
-            "Sequence": 1,
-            "IsDeprecated": false
-        },
-        {
-            "Value": "Maintenance-HW",
-            "DisplayText": "Maintenance-HW",
-            "Sequence": 2,
-            "IsDeprecated": false
-        }]))
+        }]))   
         const a =service.getFieldPickList('Family')
-        a.subscribe(c=>console.log(c));
+        a.subscribe(c=>{
+            expect(c.length).toEqual(3);
+            expect(c).toEqual( ['Software', 'Hardware', 'Maintenance-HW']);
+        });
+    });
+
+    it('getFieldPickList() should return empty array when picklist not found', () => {
+        spyOn(service,'describe').and.returnValue( of(null)) 
+        const a =service.getFieldPickList('Family')
+        a.subscribe(c=>{
+            expect(c.length).toEqual(0);
+        });
     });
 
     it('getProducts() returns Productlist as null and Totalcount as zero when pricelist is undefined', () => {
@@ -148,12 +141,33 @@ describe('ProductService', () => {
         })
     });
 
-    it('getProducts() returns Productlist and totalcount when additional conditions are passed', () => {
+    it('getProducts() returns Productlist and totalcount as null when additional conditions are passed', () => {
         plSpy.isPricelistId.and.returnValue(true);
         apiSpy.get.and.returnValue(of(test))
-        const a = service.getProducts(null, null, null, null, null, null, null)
-        a.subscribe(c => {
+        const value = service.getProducts(['software', 'rakes'], null, null, null, null, null, ['abd','asd'])
+        value.pipe(take(1)).subscribe(c => {
             expect(plSpy.isPricelistId).toHaveBeenCalled()
+            expect(c.Products).toBeNull();
+            expect(c.TotalCount).toEqual(0);
+        })
+    });
+
+    it('getProducts() returns Productlist and totalcount as null when additional conditions is not  passed', () => {
+        plSpy.isPricelistId.and.returnValue(true);
+        apiSpy.get.and.returnValue(of(test))
+        const value = service.getProducts(['software', 'rakes'], null, null, 'null', null, 'null', null,true,true,filterValue)
+        value.pipe(take(1)).subscribe(c => {
+            expect(plSpy.isPricelistId).toHaveBeenCalled()
+            expect(c.Products).toBeNull();
+            expect(c.TotalCount).toEqual(0);
+        })
+    });
+
+    it('getProducts() returns Productlist and totalcount as null when additional conditions is not  passed', () => {
+        plSpy.isPricelistId.and.returnValue(true);
+        apiSpy.get.and.returnValue(of(test))
+        const value = service.getProducts(['software'], null, null, null, null, null, null)
+        value.pipe(take(1)).subscribe(c => {
             expect(c.Products[0].ProductCode).toEqual(test[0].ProductCode)
         })
     });

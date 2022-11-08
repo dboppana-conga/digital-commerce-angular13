@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { TaxBreakup } from '../classes/tax-breakup.model';
 import { ProposalTaxBreakup } from '../classes/proposal-tax-breakup.model';
 import { OrderTaxBreakup } from '../classes/order-tax-breakup.model';
@@ -43,7 +43,9 @@ export class MyComponent implements OnInit{
      * @override
      */
     public computeTaxForCart(): Observable<any> {
-        return super.computeTaxForCart();
+        /* TO DO : */
+        return of(null);
+        // return super.computeTaxForCart();
     }
 
     /**
@@ -63,7 +65,9 @@ export class MyComponent implements OnInit{
      * @return an observable containing list of tax breakup items for a given line item.
      */
     public getTaxBreakupForLineItem(lineItemId: string): Observable<Array<TaxBreakup>> {
-        return super.getTaxBreakupForLineItem(lineItemId);
+        /* TO DO : */
+        return of(null);
+        // return super.getTaxBreakupForLineItem(lineItemId);
     }
 
     /**
@@ -82,7 +86,9 @@ export class MyComponent implements OnInit{
    * @returns an observable containing list of tax breakup items for the active cart.
    */
     public getTaxBreakUpsForConfiguration(): Observable<Array<TaxBreakup>> {
-        return super.getTaxBreakUpsForConfiguration();
+        /* TO DO : */
+        return of(null);
+        // return super.getTaxBreakUpsForConfiguration();
     }
 }
 
@@ -93,7 +99,9 @@ export class MyComponent implements OnInit{
 })
 export class ProposalTaxService extends ProposalTaxBreakupService {
     public getTaxBreakupForQuote(quoteId: string): Observable<Array<ProposalTaxBreakup>> {
-        return super.getTaxBreakupForQuote(quoteId);
+        /* TO DO : */
+        return of(null);
+        // return super.getTaxBreakupForQuote(quoteId);
     }
 }
 
@@ -105,6 +113,8 @@ export class ProposalTaxService extends ProposalTaxBreakupService {
 })
 export class OrderTaxService extends OrderTaxBreakupService {
     public getTaxBreakupForOrder(orderId: string): Observable<Array<OrderTaxBreakup>> {
-        return super.getTaxBreakupForOrder(orderId);
+        /* TO DO : */
+        return of(null);
+        // return super.getTaxBreakupForOrder(orderId);
     }
 }

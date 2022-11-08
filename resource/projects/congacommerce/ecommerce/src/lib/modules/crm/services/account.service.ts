@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { of, Observable, BehaviorSubject } from 'rxjs';
-import { get, isNil, first } from 'lodash';
+import { get, isNil } from 'lodash';
 import { MemoizeAll } from 'lodash-decorators';
 import { take, filter, tap } from 'rxjs/operators';
 import { AObjectService } from '@congacommerce/core';
 import { Account } from '../classes/account.model';
 import { CartService } from '../../cart/services/cart.service';
 import { CategoryService } from '../../catalog/services/category.service';
-import { Cart } from '../../cart';
 
 /**
  * The account service provides methods for interacting with the accounts the user has access to.

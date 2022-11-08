@@ -25,6 +25,8 @@ import { PriceListItem, PriceMatrix, Price, PriceRule, PriceRuleEntry, PriceMatr
 import { Cart } from '../../cart/classes/cart.model';
 import { CartItem } from '../../cart/classes/cart-item.model';
 import { AssetLineItem } from '../../abo/classes/asset-item.model';
+import { TaxBreakup } from '../../tax/classes/tax-breakup.model';
+import { OrderTaxBreakup } from '../../tax/classes/order-tax-breakup.model';
 
 // Interfaces
 import { LocalCurrencyPipe } from '../pipes/convert.pipe';
@@ -348,54 +350,54 @@ export class MyComponent implements OnInit{
      * Line items can be from a cart, an asset, an order or a quote.
      * @returns A hot observable containing the price of the given item.
      */
-getLineItemPrice(itemList: Array<CartItem | AssetLineItem | OrderLineItem | QuoteLineItem> | CartItem | AssetLineItem | QuoteLineItem | OrderLineItem,
-    options?: Array<AssetLineItem | QuoteLineItem | OrderLineItem>): Observable<Price> {
-    const validLines = [LineStatus.Amend, LineStatus.New, LineStatus.Upgrade, LineStatus.Renew, LineStatus.Increment, LineStatus.Existing, LineStatus.Activate];
+    getLineItemPrice(itemList: Array<CartItem | AssetLineItem | OrderLineItem | QuoteLineItem> | CartItem | AssetLineItem | QuoteLineItem | OrderLineItem,
+        options?: Array<AssetLineItem | QuoteLineItem | OrderLineItem>): Observable<Price> {
+        const validLines = [LineStatus.Amend, LineStatus.New, LineStatus.Upgrade, LineStatus.Renew, LineStatus.Increment, LineStatus.Existing, LineStatus.Activate];
 
-    const getItemPrice = (item: CartItem | AssetLineItem | OrderLineItem | QuoteLineItem, chargeType?: ChargeType): Observable<Price> => {
-        const product = (get(item, 'LineType') === 'Option') ? get(item, 'Option') : get(item, 'Product');
-        set(item, 'PriceListItem.Frequency', defaultTo(get(item, 'PriceListItem.Frequency'), '--None--'));
+        const getItemPrice = (item: CartItem | AssetLineItem | OrderLineItem | QuoteLineItem, chargeType?: ChargeType): Observable<Price> => {
+            const product = (get(item, 'LineType') === 'Option') ? get(item, 'Option') : get(item, 'Product');
+            set(item, 'PriceListItem.Frequency', defaultTo(get(item, 'PriceListItem.Frequency'), '--None--'));
 
-        const empty$ = of(new Price(this.localCurrencyPipe, 0, 0, 0, 0, 0));
+            const empty$ = of(new Price(this.localCurrencyPipe, 0, 0, 0, 0, 0));
 
-        if (isNil(item))
-            return empty$;
+            if (isNil(item))
+                return empty$;
 
-        if (item.IsOptionRollupLine) {
-            return this.getRollupItemPrice(item);
-        }
-        let breakupItems = (item instanceof OrderLineItem) ? 'OrderTaxBreakups' : 'TaxBreakups';
-        if (includes(validLines, get(item, 'LineStatus') || get(item, 'AssetStatus')) || isNil(get(item, 'LineStatus'))) {
-            return this.storefrontService.getStorefront()
+            if (item.IsOptionRollupLine) {
+                return this.getRollupItemPrice(item);
+            }
+            let breakupItems = (item instanceof OrderLineItem) ? 'OrderTaxBreakups' : 'TaxBreakups';
+            if (includes(validLines, get(item, 'LineStatus') || get(item, 'AssetStatus')) || isNil(get(item, 'LineStatus'))) {
+                return this.storefrontService.getStorefront()
+                    .pipe(
+                        take(1),
+                        map(store =>
+                            new Price(this.localCurrencyPipe
+                                , item.NetPrice
+                                + ((get(store, 'EnableTaxCalculations', false) && get(item, breakupItems)) ? sumBy(get(item, breakupItems), 'TaxAmount') : 0)
+                                + (get(store, 'EnableTaxCalculations', false) ? (sumBy(flatten(compact(_map(options, breakupItems))), 'TaxAmount')) : 0)
+                                , item.BasePrice
+                                , (item.LineType === 'Misc' ? 0 : defaultTo(get(item, 'ListPrice.Value'), get(item, 'ListPrice')))
+                                , (item.LineType === 'Misc' ? 0 : defaultTo(get(item, 'ListPrice.Value'), get(item, 'ListPrice')) * item.Quantity)
+                                , item.ExtendedPrice)
+                        ) // Close map
+                    ); // Close pipe
+            } else {
+                return empty$;
+            }
+        };
+
+        if (isArray(itemList)) {
+            const items = compact(filter(itemList, i => includes(validLines, get(i, 'LineStatus') || get(i, 'AssetStatus'))));
+            return combineLatest(_map(items, i => getItemPrice(i, ChargeType.StandardPrice)))
                 .pipe(
-                    take(1),
-                    map(store =>
-                        new Price(this.localCurrencyPipe
-                            , item.NetPrice
-                            + ((get(store, 'EnableTaxCalculations', false) && get(item, breakupItems)) ? sumBy(get(item, breakupItems), 'TaxAmount') : 0)
-                            + (get(store, 'EnableTaxCalculations', false) ? (sumBy(flatten(compact(_map(options, breakupItems))), 'TaxAmount')) : 0)
-                            , item.BasePrice
-                            , (item.LineType === 'Misc' ? 0 : defaultTo(get(item, 'ListPrice.Value'), get(item, 'ListPrice')))
-                            , (item.LineType === 'Misc' ? 0 : defaultTo(get(item, 'ListPrice.Value'), get(item, 'ListPrice')) * item.Quantity)
-                            , item.ExtendedPrice)
-                    ) // Close map
-                ); // Close pipe
-        } else {
-            return empty$;
-        }
-    };
-
-    if (isArray(itemList)) {
-        const items = compact(filter(itemList, i => includes(validLines, get(i, 'LineStatus') || get(i, 'AssetStatus'))));
-        return combineLatest(_map(items, i => getItemPrice(i, ChargeType.StandardPrice)))
-            .pipe(
-                map(prices => {
-                    return reduce(prices, (acc, val) => acc.addPrice(val));
-                })
-            );
-    } else
-        return getItemPrice(itemList as CartItem | AssetLineItem | QuoteLineItem | OrderLineItem);
-}
+                    map(prices => {
+                        return reduce(prices, (acc, val) => acc.addPrice(val));
+                    })
+                );
+        } else
+            return getItemPrice(itemList as CartItem | AssetLineItem | QuoteLineItem | OrderLineItem);
+    }
 
     /**
      * @ignore
@@ -494,7 +496,7 @@ export class MyComponent implements OnInit{
             .pipe(mergeMap(store => {
                 const quotePrice = new Price(this.localCurrencyPipe);
                 filter(get(quote, 'QuoteLineItems')
-                    , i => ((i.LineType === 'Product/Service' && i.PriceType !== 'Usage') ||
+                    , (i: QuoteLineItem) => ((i.LineType === 'Product/Service' && i.PriceType !== 'Usage') ||
                         (get(store, 'EnableTaxCalculations', false) && i.LineType === 'Misc'))).forEach(lineItem => {
                             const linePrice = new Price(this.localCurrencyPipe
                                 , lineItem.NetPrice
@@ -533,9 +535,9 @@ export class MyComponent implements OnInit{
      */
     getOrderLineItemPrice(orderLI: OrderLineItem): Observable<Price> {
         return this.storefrontService.getStorefront().pipe(mergeMap(store => {
-            if (get(store, 'EnableTaxCalculations', false) && get(orderLI, 'Taxable', false)) {
+            if (orderLI && get(store, 'EnableTaxCalculations', false) && get(orderLI, 'Taxable', false)) {
                 return of(new Price(this.localCurrencyPipe
-                    , (orderLI.NetPrice + sum(get(orderLI, 'OrderTaxBreakups').map(res => res.TaxAmount)))
+                    , (orderLI.NetPrice + sum(_map(get(orderLI, 'OrderTaxBreakups'), (breakup: OrderTaxBreakup) => breakup.TaxAmount)))
                     , orderLI.BasePrice
                     , orderLI.ListPrice));
             }
@@ -571,7 +573,7 @@ export class MyComponent implements OnInit{
         return this.storefrontService.getStorefront().pipe(mergeMap(store => {
             if (get(store, 'EnableTaxCalculations', false) && get(quoteLI, 'Taxable', false)) {
                 return of(new Price(this.localCurrencyPipe
-                    , (quoteLI.NetPrice + sum(get(quoteLI, 'TaxBreakups').map(res => res.TaxAmount)))
+                    , (quoteLI.NetPrice + sum(_map(get(quoteLI, 'TaxBreakups'), (breakup: TaxBreakup) => breakup.TaxAmount)))
                     , quoteLI.BasePrice
                     , quoteLI.ListPrice));
             }
@@ -583,18 +585,18 @@ export class MyComponent implements OnInit{
     /**
      * @ignore
      */
-     private ruleAdjustment(p: Price, priceRules: Array<PriceRule>, lineItem: CartItem): Price {
-    //     const product = lineItem.Product;
-    //     const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroup.Id);
-    //     // Get matching rule sets
-    //     const matchingRules = priceRules.filter(rule =>
-    //         (rule.Ruleset.ProductFamily === product.Family || rule.Ruleset.ProductFamily == null)
-    //         && (rule.Ruleset.ProductCategory === get(product, 'Categories[0].Name') || rule.Ruleset.ProductCategory == null)
-    //         && (productGroups.indexOf(rule.Ruleset.ProductGroup.Id >= 0 || rule.Ruleset.ProductGroup.Id == null))
-    //         && this.validateCriteria(rule.Ruleset.Criteria, lineItem)
-    //     );
-    //     matchingRules.forEach(rule => this.processEntries(rule, rule.RuleEntries, p, lineItem.Quantity, lineItem.AttributeValue, lineItem));
-    //     return p;
+    private ruleAdjustment(p: Price, priceRules: Array<PriceRule>, lineItem: CartItem): Price {
+        //     const product = lineItem.Product;
+        //     const productGroups = defaultTo(get(product, 'ProductGroups'), []).map(groupMember => groupMember.ProductGroup.Id);
+        //     // Get matching rule sets
+        //     const matchingRules = priceRules.filter(rule =>
+        //         (rule.Ruleset.ProductFamily === product.Family || rule.Ruleset.ProductFamily == null)
+        //         && (rule.Ruleset.ProductCategory === get(product, 'Categories[0].Name') || rule.Ruleset.ProductCategory == null)
+        //         && (productGroups.indexOf(rule.Ruleset.ProductGroup.Id >= 0 || rule.Ruleset.ProductGroup.Id == null))
+        //         && this.validateCriteria(rule.Ruleset.Criteria, lineItem)
+        //     );
+        //     matchingRules.forEach(rule => this.processEntries(rule, rule.RuleEntries, p, lineItem.Quantity, lineItem.AttributeValue, lineItem));
+        //     return p;
         return null;
     }
 
