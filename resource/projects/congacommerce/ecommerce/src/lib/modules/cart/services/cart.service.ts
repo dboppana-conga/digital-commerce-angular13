@@ -343,11 +343,11 @@ export class MyComponent implements OnInit{
         return this.apiService.post(`/cart/v1/carts/${cart.Id}/items`, cartRequestList)
       }),
       switchMap(data => {
-        if(get(data, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED){
+        if (get(data, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED) {
           this.priceCart();
           return of(null);
-        } else  {
-          const items= get(data, 'CartResponse.LineItems');
+        } else {
+          const items = get(data, 'CartResponse.LineItems');
           cartRef = get(data, 'CartResponse');
           return this.cartItemProductService.addProductInfoToLineItems(items);
         }
@@ -358,9 +358,10 @@ export class MyComponent implements OnInit{
         }
         else {
           return plainToClass(CartItem, result, { ignoreDecorators: true }) as unknown as Array<CartItem>;
-      }})
+        }
+      })
     );
-    return this.actionQueue.queueAction(addItemResp$,  bind(()=>{}, this)).pipe(
+    return this.actionQueue.queueAction(addItemResp$, bind(() => { }, this)).pipe(
       tap(cartItemList => {
         this.onAdd(cartRef);
         this.mergeCartItems(cartItemList);
@@ -371,9 +372,9 @@ export class MyComponent implements OnInit{
   private mergeCartItems(cartItemList: Array<CartItem>) {
     if (!isNil(cartItemList) && !isEmpty(cartItemList) && isArray(cartItemList)) {
 
-      const keyFn = (r) => r.LineNumber + '.' + r.PrimaryLineNumber + '.' + r.ItemSequence; 
+      const keyFn = (r) => r.LineNumber + '.' + r.PrimaryLineNumber + '.' + r.ItemSequence;
 
-      remove(get(this.state.value, 'LineItems'), (l) => includes(_map(cartItemList, 'LineNumber'), l.LineNumber) && l.LineType === 'Option' && !includes(cartItemList, (i) => keyFn(i) === keyFn(l)));
+      remove(get(this.state.value, 'LineItems'), (l) => includes(_map(cartItemList, 'LineNumber'), l.LineNumber) && l.LineType === 'Option' && !includes(cartItemList, find(cartItemList, i => keyFn(i) === keyFn(l))));
 
       set(this.state.value, 'LineItems', values(merge(keyBy(get(this.state.value, 'LineItems'), keyFn), keyBy(cartItemList, keyFn))));
       this.publish(this.state.value);
@@ -399,7 +400,7 @@ export class MyComponent implements OnInit{
     );
     return updateItem$.pipe(
       map(result => {
-        const items= result.CartResponse.LineItems;
+        const items = result.CartResponse.LineItems;
         if (isEmpty(items)) {
           throw ErrorMessage.FAILED_TO_UPDATE;
         }
@@ -451,17 +452,17 @@ export class MyComponent implements OnInit{
         const updateItemsResp$ = this.apiService.patch(`/cart/v1/carts/${CartService.getCurrentCartId()}/items`, lineItems)
           .pipe(
             map(response => {
-              if(get(response, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED){
+              if (get(response, 'Title') === ErrorMessage.SERVER_IS_TAKING_LONGER_THAN_EXPECTED) {
                 this.priceCart();
                 return of(null);
-              } else  {
-                const items= response.CartResponse.LineItems;
+              } else {
+                const items = response.CartResponse.LineItems;
                 cartRef = response.CartResponse;
                 return plainToClass(this.metadataService.getTypeByApiName('LineItem'), items) as unknown as Array<CartItem>
               }
             })
           );
-        return this.actionQueue.queueAction(updateItemsResp$,  bind(()=>{}, this)).pipe(
+        return this.actionQueue.queueAction(updateItemsResp$, bind(() => { }, this)).pipe(
           tap(cartItemList => {
             this.onAdd(cartRef);
             this.mergeCartItems(cartItemList);
@@ -568,7 +569,7 @@ export class MyComponent{
      * @returns a cold boolean observable representing the success state of the delete operation
      */
   deleteCart(cart: Cart | Array<Cart>): Observable<boolean> {
-    const cartId = flatten(_map(cart, (cartElement) => [{ 'Id': cartElement.Id }]));
+    const cartId = flatten(_map(cart, (cartElement: Cart) => [{ 'Id': cartElement.Id }]));
     const obsv$ = this.apiService.delete(`/cart/v1/carts`, cartId)
     return obsv$.pipe(
       map(deleteList => every(deleteList, l => l === 'Deleted successfully!')),
@@ -603,7 +604,7 @@ export class MyComponent implements OnInit{
       lineItemRes$
     ]).pipe(
       map(([cartList, lineItemRes]) => {
-        const cart = first(cartList);
+        const cart = first(cartList) as Cart;
         CartService.setCurrentCartId(get(cart, 'Id'));
         if (priceCart) {
           cart.LineItems = lineItemRes;
@@ -660,7 +661,7 @@ export class MyComponent implements OnInit{
       LineType: item.LineType,
       PricingStatus: item.PricingStatus,
       ParentBundleNumber: item.ParentBundleNumber,
-    })
+    }) as unknown as CartRequest
     );
     if (get(cartItem, 'Id'))
       return this.updateItem(get(cartItem, 'Id'), request, false);
@@ -690,7 +691,7 @@ export class MyComponent implements OnInit{
             'PrimaryTxnLineNumber': this.getNextPrimaryLineNumber(this.state.value.LineItems, this.state.value),
             'ExternalId': this.guid(),
             'ProductId': product.Id,
-            'OptionId': option.ComponentProductId,
+            'OptionId': option.ComponentProduct.Id,
             'Quantity': option.DefaultQuantity,
             'TxnParentBundleNumber': lineNumber,
             'LineType': 'Option',
@@ -849,7 +850,7 @@ export class MyComponent implements OnInit{
 
     return this.actionQueue.queueAction(removeCartItems$, bind(() => {
       this.priceCart();
-    }));
+    }, this));
   }
 
   /**

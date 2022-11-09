@@ -97,7 +97,7 @@ export class ProductOptionGroup extends AObject {
         if (!get(this, 'IsHidden')) {
             const reference = { key: this.Id, value: this.Name };
             let childErrors = [];
-            const childOptionGroups = get(this, 'ChildOptionGroups') as object;
+            const childOptionGroups = get(this, 'ChildOptionGroups') as unknown as object;
             forEach(childOptionGroups, g => {
                 childErrors = concat(childErrors, get(g, 'errors'));
             });
