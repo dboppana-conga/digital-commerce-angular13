@@ -38,6 +38,7 @@ import { CartService } from '../../cart/services/cart.service';
 import { ProductAttributeService, ProductAttributeValueService } from './product-attribute.service';
 import { OrderLineItemService } from '../../order/services/order-line-item.service';
 import { OrderLineItem } from '../../order/classes/order-line-item.model';
+import { ProductAttributeMatrixView } from '../../constraint-rules/classes/attribute-value-matrix/product-attribute-matrix-view.model';
 import { ProductAttributeGroupService } from './product-attribute-group.service';
 import { QuoteLineItem } from '../../order/classes/quote-line-item.model';
 import { QuoteLineItemService } from '../../order/services/quote-line-item.service';
@@ -47,8 +48,7 @@ import { LineItemService } from '../../../services/line-item.service';
 import { LineStatus } from '../../cart/enums';
 import { TurboApiService } from '../../../services/turbo-api.service';
 import { plainToClass } from 'class-transformer';
-import { AttributeGroup } from '../classes/attribute-group.model';
-import { ProductAttributeMatrixView } from '../../constraint-rules';
+
 
 /** @ignore */
 const _moment = moment;
@@ -110,14 +110,14 @@ export class ProductOptionService extends ProductService {
     * @param changes Changes accepts list fo cartItems.
     * @returns returns an observable of Product
     */
-     getProductOptionTree(productId: string, relatedTo?: CartItem | QuoteLineItem | AssetLineItem | OrderLineItem, applyFilter: 'none' | 'items' | 'changes' = 'none', changes?: Array<CartItem>): Observable<Product> {
+    getProductOptionTree(productId: string, relatedTo?: CartItem | QuoteLineItem | AssetLineItem | OrderLineItem, applyFilter: 'none' | 'items' | 'changes' = 'none', changes?: Array<CartItem>): Observable<Product> {
         return combineLatest([this.fetch(productId), this.cartService.getMyCart(), this.productAttributeValueService.describe()])// TODO: Add this back when cart is available
             .pipe(
                 switchMap(([product, cart, metadata]) => {
                     if (product) {
                         const cartState = cart;
-                        set(product, 'ProductAttributeMatrixViews', filter(get(product, 'ProductAttributeMatrixViews'), r => r.Active));
-                        remove(get(product, 'ProductAttributeMatrixViews'),(r :ProductAttributeMatrixView) => {
+                        set(product, 'ProductAttributeMatrixViews', filter(get(product, 'ProductAttributeMatrixViews'), (r: ProductAttributeMatrixView) => r.Active));
+                        remove(get(product, 'ProductAttributeMatrixViews'), (r: ProductAttributeMatrixView) => {
                             const expiredate = _moment(r.AttributeValueMatrix.ExpirationDate).format('YYYY-MM-DD');
                             return _moment(expiredate).isBefore(_moment(new Date()).format('YYYY-MM-DD'));
                         });
@@ -128,27 +128,27 @@ export class ProductOptionService extends ProductService {
                             cartItems$ = this.cartItemService.getCartItemsForAsset(relatedTo as CartItem, cart);
                         else if (!isNil(relatedTo))
                             cartItems$ = this.cartItemService.getOptionsForItem(relatedTo, cart)
-                                        .pipe(
-                                            switchMap((res) => of(plainToClass(CartItem, res))),
-                                            map((result) => {
-                                                // To DO: when PAV are available need to remove this code                          
-                                                // TO DO: Need to remove this code when getlineitem API is available.
-                                                let cartItems = result.filter(r => r.PrimaryLineNumber === relatedTo.PrimaryLineNumber);
-                                                cartItems = cartItems.concat(result.filter(r => r.ParentBundleNumber === relatedTo.PrimaryLineNumber));
-                                                forEach(cartItems, (i) => {
-                                                    if (i.HasAttributes)
-                                                    i.AttributeValue = this.productAttributeValueService.getInstanceWithDefaults(i.Product, i)
-                                                });
-                                                if(cartState.LineItems.length !== result.length) {
-                                                    set(cartState, 'LineItems', result);
-                                                    this.cartService.publish(cartState);
-                                                }
-                                                return cartItems as unknown as Array<CartItem>;
-                                            }));
+                                .pipe(
+                                    switchMap((res) => of(plainToClass(CartItem, res))),
+                                    map((result) => {
+                                        // To DO: when PAV are available need to remove this code                          
+                                        // TO DO: Need to remove this code when getlineitem API is available.
+                                        let cartItems = result.filter(r => r.PrimaryLineNumber === relatedTo.PrimaryLineNumber);
+                                        cartItems = cartItems.concat(result.filter(r => r.ParentBundleNumber === relatedTo.PrimaryLineNumber));
+                                        forEach(cartItems, (i) => {
+                                            if (i.HasAttributes)
+                                                i.AttributeValue = this.productAttributeValueService.getInstanceWithDefaults(i.Product, i)
+                                        });
+                                        if (cartState.LineItems.length !== result.length) {
+                                            set(cartState, 'LineItems', result);
+                                            this.cartService.publish(cartState);
+                                        }
+                                        return cartItems as unknown as Array<CartItem>;
+                                    }));
 
                         return cartItems$.pipe(
                             map(cartItems => {
-                                const bundleProduct = cloneDeep(product) as Product;
+                                const bundleProduct: Product = cloneDeep(product as Product);
                                 const cartItem = find(cartItems, (i) => get(i, 'LineType') === 'Product/Service');
                                 const attrValue = isNil(changes) ? defaultTo(defaultTo(get(relatedTo, 'AttributeValue'), get(cartItem, 'AttributeValue')), new ProductAttributeValue()) : get(cartItem, 'AttributeValue');
                                 set(cartItem, 'AttributeValue', attrValue);
@@ -186,7 +186,7 @@ export class ProductOptionService extends ProductService {
      */
     @MemoizeAll()
     getProductOptions(product: Product): Array<ProductOptionComponent> {
-        const items: Array<ProductOptionComponent> = [];
+        const items = [];
 
         const handleComponent = (c: ProductOptionComponent) => {
             items.push(c);
@@ -225,7 +225,7 @@ export class ProductOptionService extends ProductService {
     * @returns an array of ProductoptionComponent.
     */
     getProductOptionsForGroup(product: Product, group: ProductOptionGroup): Array<ProductOptionComponent> {
-        const items : Array<ProductOptionComponent>= [];
+        const items = [];
 
         const handleComponent = (c: ProductOptionComponent) => {
             if (group.Id === get(c, 'ProductOptionGroup.Id')) {
@@ -284,35 +284,33 @@ export class ProductOptionService extends ProductService {
         parentItem = defaultTo(parentItem, find(relatedItems, i => get(i, 'LineType') === 'Product/Service' && i.IsPrimaryLine === true));
         // sort the list of ProductAttributes with in attribute groups.
         forEach(attributeGroups, group => {
-            let attributeGroup: Array<AttributeGroup> = group.AttributeGroup as Array<AttributeGroup>;
-            set(attributeGroup, 'AttributeGroupMembers', sortBy(get(group.AttributeGroup, 'AttributeGroupMembers'), 'Sequence'));
+            set(group.AttributeGroup, 'AttributeGroupMembers', sortBy(get(group.AttributeGroup, 'AttributeGroupMembers'), 'Sequence'));
         });
 
         const assetAttributeValue = get(parentItem, 'Asset.AttributeValue', get(parentItem, 'AttributeValue'));
 
-      if (!isEmpty(attributeGroups) && applyFilter === 'items' || applyFilter === 'changes') {
-        forEach(attributeGroups, group => {
-            let attributeGroup: Array<AttributeGroup> = group.AttributeGroup as Array<AttributeGroup>;
-            set(attributeGroup, 'AttributeGroupMembers',
-                filter(get(group.AttributeGroup, 'AttributeGroupMembers'), (member) => {
-                    const attribute = member.Attribute;
+        if (!isEmpty(attributeGroups) && applyFilter === 'items' || applyFilter === 'changes') {
+            forEach(attributeGroups, group => {
+                set(group.AttributeGroup, 'AttributeGroupMembers',
+                    filter(get(group.AttributeGroup, 'AttributeGroupMembers'), (member) => {
+                        const attribute = member.Attribute;
 
-                    // If the passed filter is "changes" then return the attributes that are changed.
-                    if (applyFilter === 'changes') {
-                        return get(assetAttributeValue, attribute.Name) !== get(attributeValue, attribute.Name);
-                    }
+                        // If the passed filter is "changes" then return the attributes that are changed.
+                        if (applyFilter === 'changes') {
+                            return get(assetAttributeValue, attribute.Name) !== get(attributeValue, attribute.Name);
+                        }
 
-                    return (!isNil(attributeValue)
-                        ? !isNil(get(attributeValue, attribute.Name))
-                        : !isNil(get(attributeValue, attribute.DefaultValue))
-                    );
-                })
-            );
-        });
-        set(p, 'AttributeGroups', filter(attributeGroups, (group) => get(group.AttributeGroup, 'AttributeGroupMembers.length', 0) > 0));
-    }
+                        return (!isNil(attributeValue)
+                            ? !isNil(get(attributeValue, attribute.Name))
+                            : !isNil(get(attributeValue, attribute.DefaultValue))
+                        );
+                    })
+                );
+            });
+            set(p, 'AttributeGroups', filter(attributeGroups, (group) => get(group.AttributeGroup, 'AttributeGroupMembers.length', 0) > 0));
+        }
         if (!isEmpty(optionGroups)) {
-            forEach(optionGroups, group => {
+            forEach(optionGroups, (group: ProductOptionGroup) => {
 
                 forEach(get(group, 'Options', []), (option: ProductOptionComponent) => {
 
@@ -327,9 +325,8 @@ export class ProductOptionService extends ProductService {
                         && get(i, 'ParentBundleNumber') === get(parentItem, 'PrimaryLineNumber')
                         && every(flatten(_map(optionGroups, g => get(g, 'Options'))), (o) => get(o, 'ComponentProduct._metadata.item.PrimaryLineNumber') !== get(i, 'PrimaryLineNumber'))
                     );
-                    
-                    const componentProduct = option.ComponentProduct as Product;
-                    componentProduct.set('item', cloneDeep(item));
+
+                    option.ComponentProduct.set('item', cloneDeep(item));
                     set(option, 'ComponentProduct.ProductAttributeMatrixViews', filter(get(option, 'ComponentProduct.ProductAttributeMatrixViews'), r => r.Active));
                     remove(get(option, 'ProductAttributeMatrixViews'), (r: ProductAttributeMatrixView) => {
                         const expiredate = _moment(r.AttributeValueMatrix.ExpirationDate).format('YYYY-MM-DD');
@@ -337,7 +334,7 @@ export class ProductOptionService extends ProductService {
                     });
                     set(option, 'ComponentProduct.ProductOptionGroup.IsHidden', group.IsHidden);
                     set(option, 'ComponentProduct', this.groupOptionGroups(
-                        get(option, 'ComponentProduct') as Product
+                        get(option, 'ComponentProduct')
                         , get(item, 'AttributeValue')
                         , relatedItems
                         , applyFilter
@@ -345,7 +342,7 @@ export class ProductOptionService extends ProductService {
                         , item
                     ));
                     // Filter Product Option Components with invalid effective/expiration dates.
-                    set(option, 'ComponentProduct', first(this.productService.filterInvalidProducts([option.ComponentProduct as Product])));
+                    set(option, 'ComponentProduct', first(this.productService.filterInvalidProducts([option.ComponentProduct])));
                 });
                 if (applyFilter === 'changes')
                     set(group, 'Options',
@@ -367,21 +364,16 @@ export class ProductOptionService extends ProductService {
                 // Set the option group metadata
                 set(group, '_metadata.summary', {
                     changes: sumBy(get(group, 'Options')
-                        , (o: ProductOptionComponent) => {
-                            const p = o.ComponentProduct as Product;
-                            return Number(includes(changedStatus, p.get('item.LineStatus')))
-                        }),
+                        , (o) => Number(includes(changedStatus, get(o, 'ComponentProduct').get('item.LineStatus')))),
                     disabled: false
                 });
 
                 // Setting expand/collapse flag based on item selection.
-                group.set('expand', (filter(get(group, 'Options'), (option) => {
-                        const op = get(option, 'ComponentProduct') as Product;
-                        return op.get('item')}).length > 0) || (filter(optionGroups, (g) => get(g, 'ParentOptionGroupId') === get(group, 'OptionGroup.Id')).length > 0) ? true : false);
+                group.set('expand', (filter(get(group, 'Options'), (option) => get(option, 'ComponentProduct').get('item')).length > 0) || (filter(optionGroups, (g) => get(g, 'ParentOptionGroupId') === get(group, 'OptionGroup.Id')).length > 0) ? true : false);
             });
 
             // check all Option groups & Attribute groups are opened
-            p.set('expandAll', (optionGroups && optionGroups.length === filter(optionGroups, (og) => og.get('expand')).length) && attributeGroups && attributeGroups.length <= 1)
+            p.set('expandAll', (optionGroups.length === filter(optionGroups, (og) => og.get('expand')).length) && attributeGroups.length <= 1)
 
             // Filter out any groups that don't have options and aren't a parent
             set(p, 'OptionGroups',
@@ -424,17 +416,17 @@ export class ProductOptionService extends ProductService {
      */
     getRequiredUncheckedOptions(allOptions: Array<ProductOptionComponent>): Array<ProductOptionComponent> {
         // IsHidden option groups will not be considered
-        let uncheckedRequiredOptions = filter(allOptions, (o) => o.IsRequired && o.ComponentProduct && !o.ComponentProduct.get('item') && !get(o, 'ProductOptionGroup.IsHidden'));
-        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) =>  a.ProductOptionGroup.OptionGroup.Id);
-        let reqUnCheckedOpts :Array<ProductOptionComponent> = filter(allOptions,
+        let uncheckedRequiredOptions = filter(allOptions, (o) => o.IsRequired && !o.ComponentProduct.get('item') && !get(o, 'ProductOptionGroup.IsHidden'));
+        let requiredOptionGroups = _map(uncheckedRequiredOptions, (a) => a.ProductOptionGroup.OptionGroup.Id);
+        let reqUnCheckedOpts = filter(allOptions,
             (ao) => get(ao.ComponentProduct, 'OptionGroups.length') > 0
-                && filter(ao.ComponentProduct && ao.ComponentProduct.OptionGroups, (og) => og.OptionGroup && includes(requiredOptionGroups, og.OptionGroup.Id))) as Array<ProductOptionComponent>;
+                && filter(ao.ComponentProduct.OptionGroups, (og) => includes(requiredOptionGroups, og.OptionGroup.Id))) as Array<ProductOptionComponent>;
         if (reqUnCheckedOpts.length > 0) {
-            let uncheckOptions = flatten(_map(reqUnCheckedOpts, (re) => flatten(re.ComponentProduct && re.ComponentProduct.get('item') && _map(re.ComponentProduct.OptionGroups, (op) => filter(op.Options, (opts) => opts.IsRequired && !get(opts, 'ProductOptionGroup.IsHidden'))))));
-            uncheckOptions = concat(filter(allOptions, (ao) => ao.IsRequired && ao.ParentProduct && ao.ParentProduct.Id === first(reqUnCheckedOpts).ParentProduct.Id && !get(ao, 'ProductOptionGroup.IsHidden')), uncheckOptions);
-            return uncheckOptions as Array<ProductOptionComponent>;
+            let uncheckOptions = flatten(_map(reqUnCheckedOpts, (re) => flatten(re.ComponentProduct.get('item') && _map(re.ComponentProduct.OptionGroups, (op) => filter(op.Options, (opts) => opts.IsRequired && !get(opts, 'ProductOptionGroup.IsHidden'))))));
+            uncheckOptions = concat(filter(allOptions, (ao) => ao.IsRequired && ao.ParentProduct.Id === first(reqUnCheckedOpts).ParentProduct.Id && !get(ao, 'ProductOptionGroup.IsHidden')), uncheckOptions);
+            return uncheckOptions;
         }
-        return uncheckedRequiredOptions as Array<ProductOptionComponent>;
+        return uncheckedRequiredOptions;
     }
 
     /**
@@ -464,7 +456,7 @@ export class ProductOptionService extends ProductService {
         const uncheckedOptionComponents = filter(productOptionComponents, component => !get(component, 'ProductOptionGroup.IsHidden') && !includes(_map(cartItems, 'ProductOptionId'), get(component, 'Id')));
 
         // Filter out the unrequired options
-        const requiredUncheckedOptions = filter(uncheckedOptionComponents, { Required: true });
+        const requiredUncheckedOptions = filter(uncheckedOptionComponents, { Required: true }) as Array<ProductOptionComponent>;
 
         // Get the list of option group ids
         const requiredUncheckedOptionGroups = _map(requiredUncheckedOptions, option => get(option, 'ProductOptionGroup.OptionGroupId'));
@@ -472,15 +464,15 @@ export class ProductOptionService extends ProductService {
 
         const reqdOptionsNeeded = filter(productOptionComponents,
             (optionComponent) => !isEmpty(get(optionComponent, 'ComponentProduct.OptionGroups'))
-                && filter(get(optionComponent, 'ComponentProduct.OptionGroups'), (optionGrp) => !optionGrp.IsHidden && includes(requiredUncheckedOptionGroups, optionGrp.OptionGroupId))) as Array<ProductOptionComponent> ;
+                && filter(get(optionComponent, 'ComponentProduct.OptionGroups'), (optionGrp) => !optionGrp.IsHidden && includes(requiredUncheckedOptionGroups, optionGrp.OptionGroup.Id))) as Array<ProductOptionComponent>;
 
         if (reqdOptionsNeeded.length > 0) {
             // Get all required suboptions for the bundle options.
-            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent as ProductOptionComponent, cartItems) && _map(get(optionComponent,'ComponentProduct.OptionGroups'), (optionGrp) => filter(optionGrp.Options, (opts) => opts.Required && !get(opts, 'ProductOptionGroup.IsHidden'))))));
+            let reqdOptions = flatten(_map(reqdOptionsNeeded, (optionComponent) => flatten(this.isProductOptionSelected(optionComponent, cartItems) && _map(optionComponent.ComponentProduct.OptionGroups, (optionGrp) => filter(optionGrp.Options, (opts) => opts.IsRequired && !get(opts, 'ProductOptionGroup.IsHidden'))))));
             reqdOptions = concat(filter(productOptionComponents, (optionComponent) => !get(optionComponent, 'ProductOptionGroup.IsHidden') && optionComponent.ComponentProduct.IsActive && optionComponent.IsRequired && optionComponent.ParentProduct.Id === first(reqdOptionsNeeded).ParentProduct.Id), reqdOptions);
             return reqdOptions;
         }
-        return requiredUncheckedOptions as Array<ProductOptionComponent>;
+        return requiredUncheckedOptions;
     }
     /**@ignore */
     isProductOptionSelected(productOptionComponent: ProductOptionComponent, cartItems: Array<CartItem>) {
