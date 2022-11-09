@@ -26,7 +26,7 @@ export class MyService extends AObjectService {
 ```
  **/
 
- @Injectable({
+@Injectable({
   providedIn: 'root'
 })
 
@@ -55,43 +55,46 @@ export class UserViewService extends AObjectService {
    ```
    * @param viewId string identifier, an optional parameter representing the user view.
    * @returns an observable containing list of display columns for cart item fields.
+   * To DO:  Add back when API is available
    */
   getUserView(viewId: string = null): Observable<Array<UserView>> {
-    return this.userService.getCurrentUser().pipe(
-      switchMap((user: User) => {
-        const view = get(JSON.parse(localStorage.getItem(this.storageKey)), `${user.Id}`);
-        if (!isEmpty(view)) return of(view);
+    return of(null);
+    // return this.userService.getCurrentUser().pipe(
+    //   switchMap((user: User) => {
+    //     const view = get(JSON.parse(localStorage.getItem(this.storageKey)), `${user.Id}`);
+    //     if (!isEmpty(view)) return of(view);
 
-        if (viewId) {
-          return this.apiService.get(`/users/${get(user, 'Id')}/views/${viewId}`);
-        }
-        else {
-          return this.apiService.get(`/users/${get(user, 'Id')}/views/active`);
-        }
-      }),
-      map(data => {
-        this.userViews = data as Array<UserView>;
-        const mappedViews: Array<UserView> = [];
-        _map(data, item => {
-          const view = {
-            isSelected: item.IsSelected,
-            displayColumn: plainToClass(this.type, item.DisplayColumn) as unknown as ConfigCustomDisplayColumns
-          }
-          mappedViews.push(view as UserView);
-        });
-        return mappedViews;
-      })
-    );
+    //     if (viewId) {
+    //       return this.apiService.get(`/users/${get(user, 'Id')}/views/${viewId}`);
+    //     }
+    //     else {
+    //       return this.apiService.get(`/users/${get(user, 'Id')}/views/active`);
+    //     }
+    //   }),
+    //   map(data => {
+    //     this.userViews = data as Array<UserView>;
+    //     const mappedViews: Array<UserView> = [];
+    //     _map(data, item => {
+    //       const view = {
+    //         isSelected: item.IsSelected,
+    //         displayColumn: plainToClass(this.type, item.DisplayColumn) as unknown as ConfigCustomDisplayColumns
+    //       }
+    //       mappedViews.push(view as UserView);
+    //     });
+    //     return mappedViews;
+    //   })
+    // );
   }
 
   /**
    * @ignore
    */
   getUserViews(): Observable<Array<ConfigCustomDisplayColumns>> {
-    return this.userService.getCurrentUser().pipe(
-      switchMap((user: User) => this.apiService.get(`/users/${get(user, 'Id')}/views`)),
-      map(res => plainToClass(this.type, res) as unknown as Array<ConfigCustomDisplayColumns>)
-    );
+    return of(null);
+    // return this.userService.getCurrentUser().pipe(
+    //   switchMap((user: User) => this.apiService.get(`/users/${get(user, 'Id')}/views`)),
+    //   map(res => plainToClass(this.type, res) as unknown as Array<ConfigCustomDisplayColumns>)
+    // );
   }
 
   /**
@@ -113,17 +116,19 @@ export class UserViewService extends AObjectService {
      ```
    * @param view list of user view records to be stored.
    * @returns an observable of boolean.
+   * To DO:  Add back when API is available
    */
   updateUserView(view: Array<UserView>, viewId: string = null): Observable<boolean> {
-    return this.userService.getCurrentUser().pipe(
-      switchMap((user: User) => {
-        if (view) {
-          localStorage.setItem(this.storageKey, JSON.stringify({ [user.Id]: view }));
-          return of(true);
-        }
-        return of(false);
-      })
-    );
+    return of(null);
+    // return this.userService.getCurrentUser().pipe(
+    //   switchMap((user: User) => {
+    //     if (view) {
+    //       localStorage.setItem(this.storageKey, JSON.stringify({ [user.Id]: view }));
+    //       return of(true);
+    //     }
+    //     return of(false);
+    //   })
+    // );
   }
 
 }

@@ -15,7 +15,7 @@ import { TranslatorLoaderService } from '../../../services/translator-loader.ser
 import { CategoryService, ProductCategoryService } from './category.service';
 import { TurboApiService } from '../../../services/turbo-api.service';
 import { AssetService } from '../../abo/services/asset.service';
-import { PriceListItem } from '../../pricing/classes';
+import { PriceListItem } from '../../pricing/classes/price-list-item.model';
 
 /** @ignore */
 const _moment = moment;
@@ -63,10 +63,10 @@ export class ProductService extends AObjectService {
         if (get(products, 'length') > 0) {
             const today = _moment(new Date()).valueOf();
             productList = _filter(products, p => {
-                const pli: PriceListItem= defaultTo(find(get(p, 'PriceLists', []), (item) => item.ChargeType === ChargeType.StandardPrice || item.ChargeType === ChargeType.Subscription), get(p, 'PriceLists[0]'));
-                const isProductExpired = (!isNil(p.ExpirationDate) && p.ExpirationDate.valueOf() < today) || (!isNil(p.EffectiveDate) && p.EffectiveDate.valueOf() > today);
+                const pli = defaultTo(find(get(p, 'PriceLists', []), (item) => item.ChargeType === ChargeType.StandardPrice || item.ChargeType === ChargeType.Subscription), get(p, 'PriceLists[0]')) as PriceListItem;
+                const isProductExpired = (!isNil(p.ExpirationDate) && p.ExpirationDate.getMilliseconds() < today) || (!isNil(p.EffectiveDate) && p.EffectiveDate.getMilliseconds() > today);
 
-                const isPliExpired = isNil(pli) || isNil(pli.ListPrice) || (!isNil(pli.ExpirationDate) && pli.ExpirationDate.valueOf() < today) || (!isNil(pli.EffectiveDate) && pli.EffectiveDate.valueOf() > today);
+                const isPliExpired = isNil(pli) || isNil(pli.ListPrice) || (!isNil(pli.ExpirationDate) && pli.ExpirationDate.getMilliseconds() < today) || (!isNil(pli.EffectiveDate) && pli.EffectiveDate.getMilliseconds() > today);
                 if (!isProductExpired && !isPliExpired) return p;
             }) as Array<Product>;
         }
@@ -196,54 +196,54 @@ export class MyComponent implements OnInit{
         searchString && queryparam.append('query', searchString);
         filter && queryparam.append('filters', `${filter.filterOperator}(${filter.field}:'${filter.value.join("','")}')`);
         const params = isEmpty(queryparam.toString()) ? '' : `&${queryparam.toString()}`;
-       if(this.plService.isPricelistId()){ // Handles scenarios when switching is done between accounts without pricelist  
-        if (isEmpty(adtlConditions) && (isEmpty(categories) || isNil(categories))) {
-            return this.plService.getPriceListId().pipe(
-                switchMap(pl => this.apiService.get(`/catalog/v1/products?includes=options&includes=attributes&includes=prices${params}&page=${pageNumber}&limit=${pageSize}`)),
-                switchMap(result => {
-                    const productList = plainToClass(Product, result, { excludeExtraneousValues: true }) as unknown as Array<Product>;
-                    return combineLatest([of(productList), of(get(result, 'TotalCount'))]);
-                }),
-                map(([products, totalCount]) => {
-                    return {
-                        Products: products,
-                        TotalCount: totalCount
-                    } as ProductResult;
-                })
-            )
-        } else if (!isEmpty(adtlConditions) || get(categories, 'length') > 1) {
-            // TODO: Add implementation when RLP API to fetch products for multiple categories is available. For now this always returns Totalcount as 0.
-            return of(null).pipe(  
-            map((products) => {
-                return {
-                    Products: products,
-                    TotalCount: 0
-                } as ProductResult;
-            }))
+        if (this.plService.isPricelistId()) { // Handles scenarios when switching is done between accounts without pricelist  
+            if (isEmpty(adtlConditions) && (isEmpty(categories) || isNil(categories))) {
+                return this.plService.getPriceListId().pipe(
+                    switchMap(pl => this.apiService.get(`/catalog/v1/products?includes=options&includes=attributes&includes=prices${params}&page=${pageNumber}&limit=${pageSize}`)),
+                    switchMap(result => {
+                        const productList = plainToClass(Product, result, { excludeExtraneousValues: true }) as unknown as Array<Product>;
+                        return combineLatest([of(productList), of(get(result, 'TotalCount'))]);
+                    }),
+                    map(([products, totalCount]) => {
+                        return {
+                            Products: products,
+                            TotalCount: totalCount
+                        } as ProductResult;
+                    })
+                )
+            } else if (!isEmpty(adtlConditions) || get(categories, 'length') > 1) {
+                // TODO: Add implementation when RLP API to fetch products for multiple categories is available. For now this always returns Totalcount as 0.
+                return of(null).pipe(
+                    map((products) => {
+                        return {
+                            Products: products,
+                            TotalCount: 0
+                        } as ProductResult;
+                    }))
 
-        } else {
-            return this.plService.getPriceListId().pipe(
-                switchMap(pl => this.apiService.get(`/catalog/v1/categories/${first(categories)}/products?includes=attributes&includes=options&includes=prices${params}&page=${pageNumber}&limit=${pageSize}`)),
-                switchMap(result => {
-                    const productList = plainToClass(Product, result, { excludeExtraneousValues: true }) as unknown as Array<Product>;
-                    return combineLatest([of(productList), of(get(result, 'TotalCount'))]);
-                }),
-                map(([products, totalCount]) => {
-                    return {
-                        Products: products,
-                        TotalCount: totalCount
-                    } as ProductResult;
-                })
-            )
+            } else {
+                return this.plService.getPriceListId().pipe(
+                    switchMap(pl => this.apiService.get(`/catalog/v1/categories/${first(categories)}/products?includes=attributes&includes=options&includes=prices${params}&page=${pageNumber}&limit=${pageSize}`)),
+                    switchMap(result => {
+                        const productList = plainToClass(Product, result, { excludeExtraneousValues: true }) as unknown as Array<Product>;
+                        return combineLatest([of(productList), of(get(result, 'TotalCount'))]);
+                    }),
+                    map(([products, totalCount]) => {
+                        return {
+                            Products: products,
+                            TotalCount: totalCount
+                        } as ProductResult;
+                    })
+                )
+            }
         }
-    }
-    else{ // Handles scenarios when switching is done between accounts without pricelist  
-        return of(
-            {
-                Products: [],
-                TotalCount: 0
-            } as ProductResult);
-    }
+        else { // Handles scenarios when switching is done between accounts without pricelist  
+            return of(
+                {
+                    Products: [],
+                    TotalCount: 0
+                } as ProductResult);
+        }
     }
 
     /**
@@ -306,7 +306,7 @@ export class MyComponent implements OnInit{
      */
     getFieldPickList(fieldName = null): Observable<Array<string>> {
         return this.describe(this.type, fieldName, true)
-            .pipe(map(res => _map(res, item => item.Value as string)));
+            .pipe(map(res => _map(res, item => item.Value)));
     }
 
     /**
@@ -361,7 +361,7 @@ export class MyComponent implements OnInit{
     }
 }
 ```
-    **/ 
+    **/
     static setValue(key: string, pageValue: string) {
         localStorage.setItem(key, pageValue);
     }
@@ -381,7 +381,7 @@ export class MyComponent implements OnInit{
     }
 }
 ```
-    **/ 
+    **/
     static getValue(key): string {
         if (localStorage.getItem(key))
             return localStorage.getItem(key);

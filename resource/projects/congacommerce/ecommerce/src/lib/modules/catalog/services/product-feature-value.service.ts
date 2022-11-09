@@ -50,10 +50,10 @@ export class MyComponent implements OnInit{
 ```
    * @params productlist is an Array of ProductObject or Array of productId.
    * @returns an observable of Array of ProductFeatureValue object.
+   * TODO:  Add back when API is available
    */
   @memoize()
   getProductFeatureValues(productList: Array<Product> | Array<string>): Observable<Array<ProductFeatureValue>> {
-      // To Do:
     // if (get(productList, 'length') > 0) {
     //   let productIds = null;
     //   if (every(productList, item => typeof (item) === 'string')) {
@@ -62,19 +62,19 @@ export class MyComponent implements OnInit{
     //   else {
     //     productIds = _map(productList, p => p.Id).join(',');
     //   }
-    
-      // return this.query({
-      //   conditions: [new ACondition(this.type, 'ProductId', 'In', productIds)],
-      //   lookups: [
-      //     {
-      //       field: 'Apttus_Config2__FeatureId__c',
-      //       lookups: [{ field: 'Apttus_Config2__FeatureSetId__c' }]
-      //     }
-      //   ]
-      // })
-      // return null;
+    // To Do:
+    // return this.query({
+    //   conditions: [new ACondition(this.type, 'ProductId', 'In', productIds)],
+    //   lookups: [
+    //     {
+    //       field: 'Apttus_Config2__FeatureId__c',
+    //       lookups: [{ field: 'Apttus_Config2__FeatureSetId__c' }]
+    //     }
+    //   ]
+    // })
+    return of(null);
     // }
     // else
-      return of(null) as unknown as Observable<Array<ProductFeatureValue>> ;
+    //   return of(null);
   }
 }

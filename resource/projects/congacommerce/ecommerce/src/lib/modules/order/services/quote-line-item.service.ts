@@ -81,25 +81,27 @@ export class QuoteLineItemService extends LineItemService {
            * @returns an observable array of quote line items
            */
     getQuoteLineItems(quoteId: string): Observable<Array<QuoteLineItem>> {
-        return this.apiService.post('/Apttus_Proposal__Proposal_Line_Item__c/query', {
-            'conditions': [
-                {
-                    'field': 'ProposalId',
-                    'filterOperator': 'Equal',
-                    'value': quoteId
-                }
-            ],
-            'lookups': [
-                {
-                    'field': 'Apttus_Proposal__Product__c'
-                },
-                {
-                    'field': 'Apttus_QPConfig__AttributeValueId__c'
-                }
-            ],
-            'children': [{
-                'field': 'Apttus_QPConfig__TaxBreakups__r'
-            }]
-        }, this.type, null);
+        /* TO DO : */
+        return of(null);
+        // return this.apiService.post('/Apttus_Proposal__Proposal_Line_Item__c/query', {
+        //     'conditions': [
+        //         {
+        //             'field': 'ProposalId',
+        //             'filterOperator': 'Equal',
+        //             'value': quoteId
+        //         }
+        //     ],
+        //     'lookups': [
+        //         {
+        //             'field': 'Apttus_Proposal__Product__c'
+        //         },
+        //         {
+        //             'field': 'Apttus_QPConfig__AttributeValueId__c'
+        //         }
+        //     ],
+        //     'children': [{
+        //         'field': 'Apttus_QPConfig__TaxBreakups__r'
+        //     }]
+        // }, this.type, null);
     }
 }

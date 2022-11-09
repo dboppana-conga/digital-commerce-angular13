@@ -551,6 +551,7 @@ export const quoteMockData = [
         "QuoteAuto_Multipicklist_CstField_c": null
     }
 ] as unknown as Array<Quote>;
+
 export const quoteWithLineItem = {
     "ABOType": "New",
     "Account": {
@@ -647,8 +648,4 @@ export const quoteWithLineItem = {
         "Name": "TestUserDC RLP"
     },
     "ModifiedDate": "2022-08-30T11:37:27"
-} as unknown as Quote;
-export const mockQuoteResult = {
-    'QuoteList': quoteMockData,
-    'TotalRecord': 3
-} as unknown as QuoteResult
+} as unknown as QuoteLineItem;

@@ -28,11 +28,15 @@ export class AttributeRuleService extends AObjectService {
 
     /**@ignore */
     getActionFlag(action: string, actionName: string): boolean {
-        return action === actionName;
+        /* TO DO : */
+        return false;
+        // return action === actionName;
     }
     /**@ignore */
     getResetFlag(action: string, resetValues: Array<string>): boolean {
-        return action === 'Reset' && resetValues.length > 0;
+        /* TO DO : */
+        return false;
+        // return action === 'Reset' && resetValues.length > 0;
     }
 
     /**
@@ -43,7 +47,9 @@ export class AttributeRuleService extends AObjectService {
      */
     @MemoizeAll()
     getAttributeRulesForProducts(productList: Array<string> | Array<Product>): Observable<Array<AttributeRuleResult>> {
-        const subject = new BehaviorSubject<Array<AttributeRuleResult>>(null);
+        /* TO DO : */
+        return of(null);
+        // const subject = new BehaviorSubject<Array<AttributeRuleResult>>(null);
         // if (productList) {
         //     // First query retrieves list of potential rules that the product list is a member of
         //     productList = (<any>productList).filter(p => p != null);
@@ -140,6 +146,6 @@ export class AttributeRuleService extends AObjectService {
         //     );
         // }
 
-        return subject.pipe(filter(r => r != null));
+        // return subject.pipe(filter(r => r != null));
     }
 }

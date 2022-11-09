@@ -30,28 +30,29 @@ export class PaymentService extends AObjectService {
  * TO DO:
  */
   saleCaptureMethod(transactionDetails: PaymentTransaction, gatewayTransaction: GatewayTransaction = new GatewayTransaction(), gatewayCommunication: GatewayCommunication = new GatewayCommunication()): Observable<Array<any>> {
-    return this.apiService.post('GetPaymentRequestDetails', transactionDetails,).pipe(take(1), flatMap(response => {
+    // return this.apiService.post('GetPaymentRequestDetails', transactionDetails,).pipe(take(1), flatMap(response => {
 
-      if (response === null) return of(null);
-      gatewayTransaction.AccountId = transactionDetails.CustomerBillingAccountID;
-      gatewayTransaction.OrderId = transactionDetails.OrderGeneratedID;
-      gatewayTransaction.TransactionId = _.get(response, 'transaction_uuid');
-      gatewayTransaction.ProfileId = _.get(response, 'profile_id');
-      gatewayTransaction.TransactionType = _.defaultTo(_.get(gatewayTransaction, 'TransactionType'), 'Capture');
-      gatewayTransaction.RequestDate = _.get(response, 'signed_date_time');
-      gatewayTransaction.Status = _.defaultTo(_.get(gatewayTransaction, 'Status'), 'Pending');
-      return this.gatewayTransactionService.create([gatewayTransaction], true).pipe(take(1), flatMap(gtResponse => {
-        gatewayCommunication.GatewayTransactionId = _.get(gtResponse, '[0].Id');
-        gatewayCommunication.Payload = JSON.stringify(response);
-        gatewayCommunication.PayloadType = _.defaultTo(_.get(gatewayTransaction, 'PayloadType'), 'Request');
-        gatewayCommunication.CommunicationDate = response['signed_date_time'];
-        gatewayCommunication.Type = _.defaultTo(_.get(gatewayTransaction, 'Type'), 'Payment Method Request');
-        return this.gatewayCommunicationService.create([gatewayCommunication], true).pipe(flatMap(() => {
-          return of([response, gatewayCommunication.GatewayTransactionId]);
-        }));
-      }));
+    //   if (response === null) return of(null);
+    //   gatewayTransaction.AccountId = transactionDetails.CustomerBillingAccountID;
+    //   gatewayTransaction.OrderId = transactionDetails.OrderGeneratedID;
+    //   gatewayTransaction.TransactionId = _.get(response, 'transaction_uuid');
+    //   gatewayTransaction.ProfileId = _.get(response, 'profile_id');
+    //   gatewayTransaction.TransactionType = _.defaultTo(_.get(gatewayTransaction, 'TransactionType'), 'Capture');
+    //   gatewayTransaction.RequestDate = _.get(response, 'signed_date_time');
+    //   gatewayTransaction.Status = _.defaultTo(_.get(gatewayTransaction, 'Status'), 'Pending');
+    //   return this.gatewayTransactionService.create([gatewayTransaction], true).pipe(take(1), flatMap(gtResponse => {
+    //     gatewayCommunication.GatewayTransactionId = _.get(gtResponse, '[0].Id');
+    //     gatewayCommunication.Payload = JSON.stringify(response);
+    //     gatewayCommunication.PayloadType = _.defaultTo(_.get(gatewayTransaction, 'PayloadType'), 'Request');
+    //     gatewayCommunication.CommunicationDate = response['signed_date_time'];
+    //     gatewayCommunication.Type = _.defaultTo(_.get(gatewayTransaction, 'Type'), 'Payment Method Request');
+    //     return this.gatewayCommunicationService.create([gatewayCommunication], true).pipe(flatMap(() => {
+    //       return of([response, gatewayCommunication.GatewayTransactionId]);
+    //     }));
+    //   }));
 
-    }));
+    // }));
+    return of(null);
   }
   /**
    * This method is responsible for fetching active cards for payment based on the account id.
@@ -59,7 +60,8 @@ export class PaymentService extends AObjectService {
    * @returns List of details of pyment Method for the associated account Id.
    */
   getActiveCardsForAccount(accountId: string): Observable<Array<PaymentMethod>> {
-    return this.apiService.get(`/Apttus_Billing__PaymentMethod__c?condition[0]=AccountId,Equal,${accountId}&condition[1]=Status,Equal,Active`, this.type);
+    //return this.apiService.get(`/Apttus_Billing__PaymentMethod__c?condition[0]=AccountId,Equal,${accountId}&condition[1]=Status,Equal,Active`, this.type);
+    return of(null);
   }
 
   /**
@@ -71,32 +73,33 @@ export class PaymentService extends AObjectService {
    * To Do:
    */
   silentOrderPayment(transactionDetails: PaymentTransaction, gatewayTransaction: GatewayTransaction = new GatewayTransaction(), gatewayCommunication: GatewayCommunication = new GatewayCommunication()): Observable<Array<any>> {
-    return this.getDefaultPaymentMethod(transactionDetails.CustomerBillingAccountID).pipe(take(1), flatMap(result => {
-      transactionDetails.PaymentToken = result.TokenId;
-      return this.apiService.post('GetSilentPaymentRequestDetails', transactionDetails).pipe(take(1), flatMap(response => {
-        if (response === null) return of(null);
+    // return this.getDefaultPaymentMethod(transactionDetails.CustomerBillingAccountID).pipe(take(1), flatMap(result => {
+    //   transactionDetails.PaymentToken = result.TokenId;
+    //   return this.apiService.post('GetSilentPaymentRequestDetails', transactionDetails).pipe(take(1), flatMap(response => {
+    //     if (response === null) return of(null);
 
-        gatewayTransaction.AccountId = transactionDetails.CustomerBillingAccountID;
-        gatewayTransaction.OrderId = transactionDetails.OrderGeneratedID;
-        gatewayTransaction.TransactionId = _.get(response, 'transaction_uuid');
-        gatewayTransaction.ProfileId = _.get(response, 'profile_id');
-        gatewayTransaction.TransactionType = _.defaultTo(_.get(gatewayTransaction, 'TransactionType'), 'Sale');
-        gatewayTransaction.RequestDate = _.get(response, 'signed_date_time');
-        gatewayTransaction.Status = _.defaultTo(_.get(gatewayTransaction, 'Status'), 'Pending');
-        return this.gatewayTransactionService.create([gatewayTransaction], true).pipe(take(1), flatMap(gtResponse => {
+    //     gatewayTransaction.AccountId = transactionDetails.CustomerBillingAccountID;
+    //     gatewayTransaction.OrderId = transactionDetails.OrderGeneratedID;
+    //     gatewayTransaction.TransactionId = _.get(response, 'transaction_uuid');
+    //     gatewayTransaction.ProfileId = _.get(response, 'profile_id');
+    //     gatewayTransaction.TransactionType = _.defaultTo(_.get(gatewayTransaction, 'TransactionType'), 'Sale');
+    //     gatewayTransaction.RequestDate = _.get(response, 'signed_date_time');
+    //     gatewayTransaction.Status = _.defaultTo(_.get(gatewayTransaction, 'Status'), 'Pending');
+    //     return this.gatewayTransactionService.create([gatewayTransaction], true).pipe(take(1), flatMap(gtResponse => {
 
-          gatewayCommunication.GatewayTransactionId = _.get(gtResponse, '[0].Id');
-          gatewayCommunication.Payload = JSON.stringify(response);
-          gatewayCommunication.PayloadType = _.defaultTo(_.get(gatewayTransaction, 'PayloadType'), 'Request');
-          gatewayCommunication.CommunicationDate = response['signed_date_time'];
-          gatewayCommunication.Type = _.defaultTo(_.get(gatewayTransaction, 'Type'), 'Payment Against Order');
-          return this.gatewayCommunicationService.create([gatewayCommunication], true).pipe(flatMap(() => {
-            return of([response, gatewayCommunication.GatewayTransactionId]);
-          }));
+    //       gatewayCommunication.GatewayTransactionId = _.get(gtResponse, '[0].Id');
+    //       gatewayCommunication.Payload = JSON.stringify(response);
+    //       gatewayCommunication.PayloadType = _.defaultTo(_.get(gatewayTransaction, 'PayloadType'), 'Request');
+    //       gatewayCommunication.CommunicationDate = response['signed_date_time'];
+    //       gatewayCommunication.Type = _.defaultTo(_.get(gatewayTransaction, 'Type'), 'Payment Against Order');
+    //       return this.gatewayCommunicationService.create([gatewayCommunication], true).pipe(flatMap(() => {
+    //         return of([response, gatewayCommunication.GatewayTransactionId]);
+    //       }));
 
-        }));
-      }));
-    }));
+    //     }));
+    //   }));
+    // }));
+    return of(null);
 
 
   }
@@ -114,7 +117,7 @@ export class PaymentService extends AObjectService {
     // return this.where(conditionList, 'AND', null, null, null, null).pipe(take(1), flatMap((result) => {
     //   return result;
     // }));
-    return null;
+    return of(null);
 
   }
 

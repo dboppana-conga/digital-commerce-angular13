@@ -52,7 +52,7 @@ export class MyComponent implements OnInit{
      * 
      */
     public getProductRules(productCode: string): Observable<Array<ProductAttributeRule>> {
-       // To Do:
+        // To Do:
         // return this.where(`ID IN
         //         (SELECT Apttus_Config2__ProductAttributeRuleId__c
         //             FROM Apttus_Config2__ProductAttributeRuleView__c
@@ -65,12 +65,12 @@ export class MyComponent implements OnInit{
         //         ]
         //     )
         // ]);
-        return of(null) as unknown as  Observable<Array<ProductAttributeRule>>;
+        return of(null);
     }
 }
- /**
-  *  @ignore 
- */
+/**
+ *  @ignore 
+*/
 @Injectable({
     providedIn: 'root'
 })

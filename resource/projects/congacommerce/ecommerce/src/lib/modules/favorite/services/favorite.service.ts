@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { take, map as rmap } from 'rxjs/operators';
 import { map, get, filter, every, isNil, first } from 'lodash';
 import { AObjectService } from '@congacommerce/core';
@@ -17,7 +17,7 @@ import { FavoriteItemRequest } from '../interfaces/index';
   providedIn: 'root'
 })
 export class FavoriteService extends AObjectService {
-  override type = Favorite;
+  type = Favorite;
 
   protected cartService: CartService = this.injector.get(CartService);
   protected priceListService: PriceListService = this.injector.get(PriceListService);
@@ -39,9 +39,10 @@ export class FavoriteService extends AObjectService {
    * @param lookups string value representing the lookups to be fetched for a given favorite.
    * @returns observable containing the favorite record.
    */
-  getFavoriteById(favoriteId: string, lookups: string | null = null): Observable<Favorite> {
-    const queryParam = lookups ? `?lookups=${lookups}` : '';
-    return this.apiService.get(`/Apttus_Config2__FavoriteConfiguration__c/${favoriteId}${queryParam}`, this.type);
+  getFavoriteById(favoriteId: string, lookups: string = null): Observable<Favorite> {
+    // const queryParam = lookups ? `?lookups=${lookups}` : '';
+    // return this.apiService.get(`/Apttus_Config2__FavoriteConfiguration__c/${favoriteId}${queryParam}`, this.type);
+    return of(null);
   }
 
   /**
@@ -49,49 +50,50 @@ export class FavoriteService extends AObjectService {
    * @returns observable containing list of favorite configuration line items. 
    */
   getFavoriteItems(configurationId: string): Observable<Array<CartItem>> {
-    return this.apiService.post('/Apttus_Config2__LineItem__c/query', {
-      'alias': false,
-      'conditions': [
-        {
-          'field': 'ConfigurationId',
-          'filterOperator': 'Equal',
-          'value': configurationId
-        }
-      ],
-      'lookups': [
-        {
-          'field': 'Product',
-          'children': [
-            {
-              'field': 'OptionGroups'
-            }
-          ]
-        },
-        {
-          'field': 'Option',
-          'children': [
-            {
-              'field': 'OptionGroups'
-            }
-          ]
-        },
-        {
-          'field': 'ProductOption'
-        },
-        {
-          'field': 'AttributeValue'
-        },
-        {
-          'field': 'AssetLineItem'
-        },
-        {
-          'field': 'PriceListItem'
-        }
-      ],
-      'children': [{
-        'field': 'AdjustmentLineItems'
-      }]
-    }, CartItem, false, false);
+    // return this.apiService.post('/Apttus_Config2__LineItem__c/query', {
+    //   'alias': false,
+    //   'conditions': [
+    //     {
+    //       'field': 'ConfigurationId',
+    //       'filterOperator': 'Equal',
+    //       'value': configurationId
+    //     }
+    //   ],
+    //   'lookups': [
+    //     {
+    //       'field': 'Product',
+    //       'children': [
+    //         {
+    //           'field': 'OptionGroups'
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       'field': 'Option',
+    //       'children': [
+    //         {
+    //           'field': 'OptionGroups'
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       'field': 'ProductOption'
+    //     },
+    //     {
+    //       'field': 'AttributeValue'
+    //     },
+    //     {
+    //       'field': 'AssetLineItem'
+    //     },
+    //     {
+    //       'field': 'PriceListItem'
+    //     }
+    //   ],
+    //   'children': [{
+    //     'field': 'AdjustmentLineItems'
+    //   }]
+    // }, CartItem, false, false);
+    return of(null);
   }
 
   /**
@@ -100,8 +102,9 @@ export class FavoriteService extends AObjectService {
    * @returns an observable containing list of cart items added from a favorite.
    */
   addFavoriteToCart(favorite: string | Favorite): Observable<Array<CartItem>> {
-    const favoriteId = favorite instanceof Favorite ? favorite.Id : favorite;
-    return this.cartService.addItem({ 'FavoriteId': favoriteId as string });
+    // const favoriteId = favorite instanceof Favorite ? favorite.Id : favorite;
+    // return this.cartService.addItem({ 'FavoriteId': favoriteId });
+    return of(null);
   }
 
   /**
@@ -114,10 +117,11 @@ export class FavoriteService extends AObjectService {
   * @returns an observable of list of cartitems got added to the favorite configuration.
   */
   addFavorite(favoriteId: string, payload: Array<FavoriteItemRequest> | Array<number>): Observable<Array<CartItem>> {
-    return this.apiService.post(
-      `/favorites/${favoriteId}/items`,
-      payload
-    );
+    // return this.apiService.post(
+    //   `/favorites/${favoriteId}/items`,
+    //   payload
+    // );
+    return of(null);
   }
 
   /**
@@ -127,10 +131,11 @@ export class FavoriteService extends AObjectService {
    * @returns an observable of Favorite which got newly created.
    */
   createFavorite(payload: Array<Favorite>): Observable<Favorite> {
-    const requestObj = map(payload, (item) => item.strip());
-    return this.apiService
-      .post(`/favorites`, requestObj, this.type)
-      .pipe(rmap(res => first(res) as Favorite));
+    // const requestObj = map(payload, (item) => item.strip());
+    // return this.apiService
+    //   .post(`/favorites`, requestObj, this.type)
+    //   .pipe(rmap(first));
+    return of(null);
   }
 
   /**
@@ -139,8 +144,9 @@ export class FavoriteService extends AObjectService {
    * @returns observable instance of favorite record.
    */
   removeFavorite(favorite: string | Favorite): Observable<Favorite> {
-    const favoriteId = favorite instanceof Favorite ? favorite.Id : favorite;
-    return this.apiService.delete(`/favorites/${favoriteId}`, this.type);
+    // const favoriteId = favorite instanceof Favorite ? favorite.Id : favorite;
+    // return this.apiService.delete(`/favorites/${favoriteId}`, this.type);
+    return of(null);
   }
 
   /**
@@ -149,12 +155,13 @@ export class FavoriteService extends AObjectService {
   * @returns observable containing favorite record with updated fields.
   */
   updateFavorite(favorite: Favorite): Observable<Favorite> {
-    const payload = {
-      'Name': favorite.Name,
-      'Description': favorite.Description,
-      'Scope': favorite.Scope
-    }
-    return this.apiService.put(`/favorites/${favorite.Id}`, payload, this.type);
+    // const payload = {
+    //   'Name': favorite.Name,
+    //   'Description': favorite.Description,
+    //   'Scope': favorite.Scope
+    // }
+    // return this.apiService.put(`/favorites/${favorite.Id}`, payload, this.type);
+    return of(null);
   }
 
   /**
@@ -163,10 +170,11 @@ export class FavoriteService extends AObjectService {
    * @returns observable containing list of favorites.
    */
   removeFavorites(favoriteList: Array<Favorite> | Array<string>): Observable<Array<Favorite>> {
-    const favorites = filter(favoriteList, f => !isNil(f));
-    const payload = every(favorites, fav => typeof (fav) === 'string') ?
-      map(favorites, fav => ({ Id: fav }))
-      : map(favorites, fav => ({ Id: get(fav, 'Id') }));
-    return this.apiService.post(`/favorites/delete`, payload, this.type);
+    // const favorites = filter(favoriteList, f => !isNil(f));
+    // const payload = every(favorites, fav => typeof (fav) === 'string') ?
+    //   map(favorites, fav => ({ Id: fav }))
+    //   : map(favorites, fav => ({ Id: fav.Id }));
+    // return this.apiService.post(`/favorites/delete`, payload, this.type);
+    return of(null);
   }
 }

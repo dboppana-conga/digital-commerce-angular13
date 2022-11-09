@@ -349,6 +349,7 @@ export class MyComponent implements OnInit{
                             set(cartItem, 'ShipToAccount.Id', defaultTo(get(cart, 'ShipToAccount.Id'), get(account, 'Id')));
                             set(cartItem, 'BillToAccount.Id', defaultTo(get(cart, 'BillToAccount.Id'), get(account, 'Id')));
                             cartItem.IsTaxable = priceListItem.Taxable;
+                            // set(cartItem, 'TaxCode.Id', priceListItem.TaxCodeId);
                             cartItem.HasOptions = bundleProduct.HasOptions;
                             cartItem.HasAttributes = isNil(optionComponent) ? bundleProduct.HasAttributes : optionComponent.ComponentProduct.HasAttributes;
                             cartItem.ItemSequence = itemSequence;

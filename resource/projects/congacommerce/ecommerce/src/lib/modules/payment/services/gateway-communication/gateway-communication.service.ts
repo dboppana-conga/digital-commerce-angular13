@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { first } from 'lodash';
 import { AObjectService } from '@congacommerce/core';
@@ -38,13 +38,14 @@ export class MyComponent implements OnInit{
    * @returns an observable containing the gateway communication response.
    */
   public getResponseUpdate(gatewayTransactionId: string): Observable<GatewayCommunication> {
-    let conditionList = [];
+    // TODO: Replace with RLP API
+    //let conditionList = [];
     // TODO: Replace with RLP API
     // conditionList.push(new ACondition(this.type, 'GatewayTransactiontId', 'Equal', gatewayTransactionId));
     // conditionList.push(new ACondition(this.type, 'PayloadType', 'Equal', 'Response'));
 
     // return this.query({ skipCache: true, conditions: conditionList })
     //   .pipe(map(res => first(res)));
-    return null;
+    return of(null);
   }
 }

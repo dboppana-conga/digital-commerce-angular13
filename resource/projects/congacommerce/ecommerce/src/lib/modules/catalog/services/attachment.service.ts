@@ -1,8 +1,8 @@
-
-import {throwError as observableThrowError,  Observable, Subscriber } from 'rxjs';
+import { throwError as observableThrowError, Observable, Subscriber, of } from 'rxjs';
 import { Attachment } from '../classes/attachment.model';
 import { AObjectService } from '@congacommerce/core';
 import { Injectable } from '@angular/core';
+import { Quote } from '../../order/classes';
 
 /**
  * The attachment represents a file that can be associated with an order, quote, etc as an attachment.
@@ -35,42 +35,44 @@ export class AttachmentService extends AObjectService {
      * @param parentId id of associted parent of an attachment
      * @returns an observable of the uploaded attached with id, errors and status
      */
-    uploadAttachment(file: File, parentId: string): Observable<any> {
-        if (!file) {
-            return observableThrowError('Invalid file');
-        }
+    uploadAttachment(file: File, parentId: string): Observable<any> { //TODO: Add back when API is available
+        return of(null);
+        //     if (!file) {
+        //         return observableThrowError('Invalid file');
+        //     }
 
-        if (!parentId) {
-            return observableThrowError('Invalid parent id');
-        }
+        //     if (!parentId) {
+        //         return observableThrowError('Invalid parent id');
+        //     }
 
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
+        //     let reader = new FileReader();
+        //     reader.readAsDataURL(file);
 
-        return Observable.create((observer: Subscriber<any[]>): void => {
-            reader.onload = () => {
-                //TO DO:
-                //let base64data = reader.result.toString().split(',')[1];
-                // this.apiService.getConnection().sobject('Attachment').create({
-                //     ParentId: parentId,
-                //     Name: file.name,
-                //     Body: (base64data) ? base64data : '',
-                //     ContentType: file.type
-                // }).then((res) => {
-                //     observer.next(res);
-                //     observer.complete();
-                //     this.cacheService.refresh(Quote);
-                // });
-            };
+        //     return Observable.create((observer: Subscriber<any[]>): void => {
+        //         reader.onload = () => {
+        //             let base64data = reader.result.toString().split(',')[1];
+        //             //TO DO:
+        //             // this.apiService.getConnection().sobject('Attachment').create({
+        //             //     ParentId: parentId,
+        //             //     Name: file.name,
+        //             //     Body: (base64data) ? base64data : '',
+        //             //     ContentType: file.type
+        //             // }).then((res) => {
+        //             //     observer.next(res);
+        //             //     observer.complete();
+        //             //     this.cacheService.refresh(Quote);
+        //             // });
+        //         };
 
-            reader.onerror = (error: ProgressEvent): void => {
-                observer.error(error);
-            };
-        });
+        //         reader.onerror = (error: ProgressEvent): void => {
+        //             observer.error(error);
+        //         };
+        //     });
     }
 
     /** Method to get attachments */
-    getAttachments(parentId: string): Observable<Array<Attachment>> {
-        return this.apiService.get(`/attachment?condition[0]=ParentId,Equal,${parentId}&lookups=CreatedById&sort[field]=CreatedDate&sort[direction]=DESC`, Attachment);
-      }
+    getAttachments(parentId: string): Observable<Array<Attachment>> {//TODO: Add back when API is available
+        //return this.apiService.get(`/attachment?condition[0]=ParentId,Equal,${parentId}&lookups=CreatedById&sort[field]=CreatedDate&sort[direction]=DESC`, Attachment);
+        return of(null);
+    }
 }

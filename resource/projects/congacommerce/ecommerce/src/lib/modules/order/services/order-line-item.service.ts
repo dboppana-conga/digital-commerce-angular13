@@ -1,5 +1,5 @@
 import { AObjectService } from '@congacommerce/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { OrderLineItem } from '../classes/order-line-item.model';
 
@@ -41,7 +41,7 @@ export class MyComponent implements OnInit{
      * @param orderBy the field by which to order the records
      * @param orderDirection the direction in which to sort the records
      * @returns an observable array of order line items
-     * To DO:
+     * To DO:  Add back when API is available
      */
     public getOrderLineItemsForOrder(orderId: string = null, days?: number, limit: number = 10, pageNumber: number = 0, orderBy: string = 'CreatedDate', orderDirection: 'ASC' | 'DESC' = 'DESC'): Observable<Array<OrderLineItem>> {
         // const conditions = [];
@@ -52,7 +52,7 @@ export class MyComponent implements OnInit{
         // return this.where(conditions, 'AND', null, [
         //     new ASort(this.type, orderBy, orderDirection)
         // ], new APageInfo(limit, pageNumber), null);
-        return null;
+        return of(null);
     }
 
 
@@ -79,27 +79,29 @@ export class MyComponent implements OnInit{
          * @override
          * @param orderId the order id to fetch the related order line items results
          * @returns an observable array of order line items
+         * TODO:  Add back when API is available
          */
     getOrderLineItems(orderId: string = null): Observable<Array<OrderLineItem>> {
-        return this.apiService.post('/Apttus_Config2__OrderLineItem__c/query', {
-            'conditions': [
-                {
-                    'field': 'OrderId',
-                    'filterOperator': 'Equal',
-                    'value': orderId
-                }
-            ],
-            'lookups': [
-                {
-                    'field': 'Apttus_Config2__ProductId__c'
-                },
-                {
-                    'field': 'Apttus_Config2__AttributeValueId__c'
-                }
-            ],
-            'children': [{
-                'field': 'Apttus_Config2__OrderTaxBreakups__r'
-            }]
-        }, this.type, null);
+        // return this.apiService.post('/Apttus_Config2__OrderLineItem__c/query', {
+        //     'conditions': [
+        //         {
+        //             'field': 'OrderId',
+        //             'filterOperator': 'Equal',
+        //             'value': orderId
+        //         }
+        //     ],
+        //     'lookups': [
+        //         {
+        //             'field': 'Apttus_Config2__ProductId__c'
+        //         },
+        //         {
+        //             'field': 'Apttus_Config2__AttributeValueId__c'
+        //         }
+        //     ],
+        //     'children': [{
+        //         'field': 'Apttus_Config2__OrderTaxBreakups__r'
+        //     }]
+        // }, this.type, null);
+        return of(null);
     }
 }

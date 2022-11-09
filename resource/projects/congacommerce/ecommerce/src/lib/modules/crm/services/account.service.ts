@@ -162,7 +162,7 @@ export class MyComponent implements OnInit{
      * @returns an observable containing the account record that was set to active
      */
     setAccount(account: Account | string, useLocalStorage: boolean = false): Observable<Account> {
-        const accountId: string = get(account, 'Id', account);
+        const accountId = (account instanceof Account) ? get(account, 'Id') : account;
         localStorage.setItem(this.ACCOUNT_KEY, accountId);
         return this.getAccount(accountId)
             .pipe(
