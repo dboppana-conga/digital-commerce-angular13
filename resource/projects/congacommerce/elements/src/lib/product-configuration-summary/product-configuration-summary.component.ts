@@ -165,7 +165,7 @@ export class ProductConfigurationSummaryComponent implements OnChanges, OnDestro
   setProduct() {
     this.product$.next(null);
     this.ngOnDestroy();
-    this.subscription = this.productOptionService.getProductOptionTree(get(this, 'product.Id', this.product), this.relatedTo, this.filter, this.changes)
+    this.subscription = this.productOptionService.getProductOptionTree(get(this.product, 'Id'), this.relatedTo, this.filter, this.changes)
       .subscribe(
         product => {
           this.product$.next(product);
