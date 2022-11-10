@@ -168,8 +168,8 @@ export class MyComponent implements OnInit{
     getEffectivePriceList(): Observable<PriceList> {
         return this.priceList.pipe(
             filter(r => r != null),
-            map(r => get(r, 'BasedOnPriceList', r))
-        ) as Observable<PriceList>
+            map(r => get(r, 'BasedOnPriceList', r) as PriceList)
+        )
     }
 
     /**
@@ -179,7 +179,7 @@ export class MyComponent implements OnInit{
         if (pl) {
             const today = _moment(new Date()).valueOf();
             const isPlExpired = (!isNil(get(pl, 'ExpirationDate')) && get(pl, 'ExpirationDate') < today) || (!isNil(get(pl, 'EffectiveDate')) && get(pl, 'EffectiveDate') > today);
-            return get(pl, 'Active') && !isPlExpired;
+            return get(pl, 'IsActive') && !isPlExpired;
         }
         else return false;
     }
@@ -187,7 +187,7 @@ export class MyComponent implements OnInit{
     /**
      * @ignore
      */
-    isPricelistId(): boolean{ //checks if the pricelist is available or not
+    isPricelistId(): boolean { //checks if the pricelist is available or not
         return localStorage.getItem('pricelistId') === 'undefined' ? false : true;
     }
 }

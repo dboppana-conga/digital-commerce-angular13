@@ -53,7 +53,7 @@ export class MyComponent implements OnInit{
      */
     public getProductInformation(productId: string): Observable<ProductInformation[]> {
         if (productId) {
-            return this.apiService.get(`common/v1/documents/object/Product/${productId}`).pipe(map(data => {
+            return this.apiService.get(`document-management/v1/documents/object/Product/${productId}`).pipe(map(data => {
                 each(data, (res, i) => {
                     set(data[i].DocumentMetadata, '_metadata.blobData', res.BlobData)
                 })
@@ -87,19 +87,20 @@ export class MyComponent implements OnInit{
      * @returns a string url for the given product attachment
      */
     public getAttachmentUrl(attachmentId: string, productId: string): string {
-        const endpoint = `${this.configurationService.get('endpoint')}/servlet/servlet.FileDownload?file=`;
-        return endpoint + attachmentId;
+        // const endpoint = `${this.configurationService.get('endpoint')}/servlet/servlet.FileDownload?file=`;
+        // return endpoint + attachmentId;
+        return null;
     }
 
-    private base64ToArrayBuffer(base64: string) {
-        let binaryString = window.atob(base64);
-        let binaryLen = binaryString.length;
-        let bytes = new Uint8Array(binaryLen);
-        for (var i = 0; i < binaryLen; i++) {
-            var ascii = binaryString.charCodeAt(i);
-            bytes[i] = ascii;
-        }
-        return bytes;
+    private base64ToArrayBuffer(base64) {
+        // let binaryString = window.atob(base64);
+        // let binaryLen = binaryString.length;
+        // let bytes = new Uint8Array(binaryLen);
+        // for (var i = 0; i < binaryLen; i++) {
+        //     var ascii = binaryString.charCodeAt(i);
+        //     bytes[i] = ascii;
+        // }
+        // return bytes;
     }
 
     /**
@@ -121,13 +122,13 @@ export class MyComponent implements OnInit{
      * 
      */
     public donwloadProductAttachment(attachment: ProductInformation) {
-        const blobData = attachment.get('blobData');
-        let bytes = this.base64ToArrayBuffer(blobData);
-        let blob = new Blob([bytes], { type: `${get(attachment, 'Type')}` });
-        let link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = get(attachment, 'Name') as string;
-        link.click();
-        link.remove();
+        // const blobData = attachment.get('blobData');
+        // let bytes = this.base64ToArrayBuffer(blobData);
+        // let blob = new Blob([bytes], { type: `${get(attachment, 'Type')}` });
+        // let link = document.createElement('a');
+        // link.href = URL.createObjectURL(blob);
+        // link.download = get(attachment, 'Name');
+        // link.click();
+        // link.remove();
     }
 }

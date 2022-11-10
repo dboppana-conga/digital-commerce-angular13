@@ -51,6 +51,13 @@ describe('StorefrontService', () => {
         })
     });
 
+    it('getTurboEnvironment() returns string value from getsetting method', () => {
+        spyOn(service,'getSetting').and.returnValue(of('string'));
+        service.getTurboEnvironment().pipe(take(1)).subscribe(c=>{
+            expect(c).toEqual('string')
+        })
+    });
+
     it('isFavoriteDisabled() returns true when storefront has favorite disabled', () => {
         spyOn(service,'getSetting').and.returnValue(of(true));
         service.isFavoriteDisabled().subscribe(c=>{

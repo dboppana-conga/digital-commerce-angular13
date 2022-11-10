@@ -1,23 +1,25 @@
 import {  async, inject, TestBed } from "@angular/core/testing";
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ApttusModule } from "@congacommerce/core";
+import { ApttusModule, AObjectService } from "@congacommerce/core";
 import { of } from "rxjs";
 import { CommerceModule } from "../../../ecommerce.module";
 import { AccountLocation} from "../classes/index"; 
 import { AccountLocationService, AccountService } from "../index";
-import { account, accountLocation, AccountLocationTest, MockAccountLocationService } from './mock/index';
+import { accountValue, accountLocation, AccountLocationTest, MockAccountLocationService } from './mock/index';
 import { take } from "rxjs/operators";
 import { TranslateModule } from "@ngx-translate/core";
 
 
 describe('AccountLocationService',() =>{
     let accountLocationService:AccountLocationService;
+    let aObjectSpy= jasmine.createSpyObj<AObjectService>(['delete'])
     
     beforeEach(() =>{
         TestBed.configureTestingModule({ 
             imports:[ApttusModule, CommerceModule.forRoot({}), 
                 TranslateModule.forRoot(), HttpClientTestingModule],
-            providers:[AccountLocationService]
+            providers:[AccountLocationService,
+                { provide: AObjectService, useValue: aObjectSpy}]
         });
         accountLocationService = TestBed.inject(AccountLocationService);        
     });
@@ -28,11 +30,32 @@ describe('AccountLocationService',() =>{
         expect(accountLocationService.type.name).toEqual('AccountLocationTest');
     });
 
+    it('getAccountLocations returns account location array', () =>{
+        accountLocationService['locations$'].next(accountLocation)
+        spyOn<any>(accountLocationService,'refreshLocations').and.returnValue(null)
+        accountLocationService.getAccountLocations().pipe(take(1)).subscribe(res=> {
+            expect(res).toEqual(accountLocation)
+        })
+        accountLocationService['locations$'].next(null)
+        accountLocationService.getAccountLocations().pipe(take(1)).subscribe(res=> {
+            expect(accountLocationService['refreshLocations']).toHaveBeenCalled()
+            expect(res).toBeNull()
+        })
+    });
+
+    it('delete an array of records that were deleted in the process', () =>{
+        aObjectSpy.delete.and.returnValue(of(accountValue))
+        spyOn<any>(accountLocationService,'refreshLocations').and.returnValue(null)
+        accountLocationService.delete(accountLocation).pipe(take(1)).subscribe(res=> {
+            expect(accountLocationService['refreshLocations']).toHaveBeenCalled()
+        })
+    });
+
 
     it('saveLocationToAccount verifies the AccountId of the savedAccountLocation is set to currentAccount and returns the same.', async(inject([AccountLocationService], 
         (injectService: MockAccountLocationService) => {
             injectService.accountService = injectService.injector.get(AccountService);
-            spyOn(injectService.accountService, 'getCurrentAccount').and.returnValue(of(account));
+            spyOn(injectService.accountService, 'getCurrentAccount').and.returnValue(of(accountValue));
             spyOn(injectService, 'upsert').and.returnValue(of([accountLocation[1]]));
             accountLocation[1].Account.Id = '546';
             injectService.saveLocationToAccount(accountLocation[1])

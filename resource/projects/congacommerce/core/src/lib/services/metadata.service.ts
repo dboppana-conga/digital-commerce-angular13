@@ -1,7 +1,7 @@
 import { Configuration } from '../classes/configuration.model';
 import { Inject, Injectable, Injector } from '@angular/core';
 import { AObject } from '../classes/index';
-import { find, get, set, pickBy, split, map, forEach, isNil, defaultTo, includes, filter, some, isUndefined, isEmpty, isFunction, last, uniq, concat } from 'lodash';
+import { find, get, set, pickBy, split, map, forEach, isNil, defaultTo, includes, filter, some, isUndefined, isEmpty, isFunction, last, uniq, concat, first } from 'lodash';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { defaultMetadataStorage } from 'class-transformer/storage';
 import { Observable, of, forkJoin } from 'rxjs';
@@ -87,7 +87,7 @@ export class MetadataService {
 
         if (get(metadata, 'reflectedType') && Array.isArray(metadata.reflectedType()))
             return 'Array';
-        else if (Array.isArray(get(instance, fieldName)) && get(instance, `${fieldName}[0]`) instanceof AObject)
+        else if (Array.isArray(get(instance, fieldName)) && get(instance, first(fieldName)) instanceof AObject)
             return 'Array';
         else if (get(metadata, 'typeFunction')) {
             return 'Object';

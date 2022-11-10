@@ -155,8 +155,8 @@ export class OrderService extends AObjectService {
         return zip(account$, cart$)
             .pipe(
                 mergeMap(([_account, _cart]) => {
-                    order.ShipToAccount = defaultTo(get(_account, 'ShipToAccount.Id') ? get(_account, 'ShipToAccount.Id') : get(_cart, 'ShipToAccount.Id'), get(_account, 'Id'));
-                    order.BillToAccount = get(_account, 'BillToAccount.Id') ? get(_account, 'BillToAccount.Id') : defaultTo(get(_cart, 'BillToAccount.Id'), get(_account, 'Id'));
+                    order.ShipToAccount = defaultTo(get(_account, 'ShipToAccount.Id') ? get(_account, 'ShipToAccount.Id') : get(_cart, 'ShipToAccount.Id'), get(_account, 'Id')) as unknown as Account;
+                    order.BillToAccount = get(_account, 'BillToAccount.Id') ? get(_account, 'BillToAccount.Id') : defaultTo(get(_cart, 'BillToAccount.Id'), get(_account, 'Id')) as unknown as Account;
                     order.SoldToAccount = get(_account, 'SoldToAccount.Id') ? get(_account, 'SoldToAccount.Id') : get(_account, 'Id');
 
                     // TODO: Pass orderReq object in the payload when checkokut API has the support.
@@ -260,7 +260,7 @@ export class OrderService extends AObjectService {
      */
     getAllOrders(filters?: Array<FieldFilter> | string): Observable<Array<Order>> {
         let queryparam = new URLSearchParams();
-        forEach(filters  as Array<FieldFilter>, (filter) => {
+        forEach(filters as Array<FieldFilter>, (filter) => {
             filter.field && queryparam.append('filter', `${filter.filterOperator}(${filter.field}:'${filter.value}')`);
         });
         let params = isEmpty(queryparam.toString()) ? '' : `${queryparam.toString()}`;

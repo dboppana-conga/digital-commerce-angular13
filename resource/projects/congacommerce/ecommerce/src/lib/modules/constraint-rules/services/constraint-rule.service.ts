@@ -82,7 +82,7 @@ export abstract class ConstraintRuleService extends AObjectService {
         //         mergeMap(() => this.applyConstraintRules(finalize, _cart))
         //     )
         // ));
-        return null;
+        return of(null);
     }
 
     /**
@@ -113,23 +113,25 @@ export abstract class ConstraintRuleService extends AObjectService {
    */
     @MemoizeAll()
     getConstraintRulesForProducts(productList: Array<string> | Array<Product>, matchInPrimaryLines: boolean = true, matchInOptions: boolean = false): Observable<Array<ConstraintRule>> {
-        if (!matchInPrimaryLines && !matchInOptions)
-            return observableThrowError('matchInPrimaryLines or matchInOptions must be set to true');
-        if (get(productList, 'length') > 0) {
-            let productIdList;
-            if (every(productList, (item) => typeof (<any>item) === 'string'))
-                productIdList = _map(productList, (productId) => ({ Id: productId }));
-            else
-                productIdList = _map(productList, (product) => ({ Id: get(product, 'Id') }));
+        /* TO DO : */
+        return of(null);
+        // if (!matchInPrimaryLines && !matchInOptions)
+        //     return observableThrowError('matchInPrimaryLines or matchInOptions must be set to true');
+        // if (get(productList, 'length') > 0) {
+        //     let productIdList;
+        //     if (every(productList, (item) => typeof (<any>item) === 'string'))
+        //         productIdList = _map(productList, (productId) => ({ Id: productId }));
+        //     else
+        //         productIdList = _map(productList, (product) => ({ Id: get(product, 'Id') }));
 
-            return this.apiService.post(`/products/rules?matchInPrimaryLines=${matchInPrimaryLines}&matchInOptions=${matchInOptions}`, productIdList, this.type)
-                .pipe(map(productRuleMap => {
-                    return flatten(values(productRuleMap));
-                }),
-                    map(rules => plainToClass(this.type, rules, { ignoreDecorators: true }) as unknown as Array<ConstraintRule>));
-        } else {
-            return of(null);
-        }
+        //     return this.apiService.post(`/products/rules?matchInPrimaryLines=${matchInPrimaryLines}&matchInOptions=${matchInOptions}`, productIdList, this.type)
+        //         .pipe(map(productRuleMap => {
+        //             return flatten(values(productRuleMap));
+        //         }),
+        //             map(rules => plainToClass(this.type, rules, { ignoreDecorators: true }) as unknown as Array<ConstraintRule>));
+        // } else {
+        //     return of(null);
+        // }
     }
 
     /**
@@ -156,7 +158,7 @@ export abstract class ConstraintRuleService extends AObjectService {
         * @return Observable<Array<Product>> returns an observable of Array<Product> records.
    */
     getRecommendationsForCart(cart?: Cart): Observable<Array<Product>> {
-        return null;
+        return of(null);
         //To Do:
         //this.araiService.getAppliedActionsForCart()
         //     .pipe(
@@ -296,13 +298,15 @@ export abstract class ConstraintRuleService extends AObjectService {
        * @return Observable<Array<AppliedRuleActionInfo>> returns an observable of Array<AppliedRuleActionInfo> records.
   */
     getPendingActionsForCart(): Observable<Array<AppliedRuleActionInfo>> {
-        return this.araiService.getAppliedActionsForCart()
-            .pipe(
-                map(actions => {
-                    let filteredAppliedRuleAction = filter(actions, action => action.Pending === true && !isEmpty(concat(get(action, 'ActionProductIds'))));
-                    filteredAppliedRuleAction = this.getDistinctAppliedRules(filteredAppliedRuleAction);
-                    return filteredAppliedRuleAction;
-                }));
+        /* TO DO : */
+        return of(null);
+        // return this.araiService.getAppliedActionsForCart()
+        //     .pipe(
+        //         map(actions => {
+        //             let filteredAppliedRuleAction = filter(actions, action => action.Pending === true && !isEmpty(concat(get(action, 'ActionProductIds'))));
+        //             filteredAppliedRuleAction = this.getDistinctAppliedRules(filteredAppliedRuleAction);
+        //             return filteredAppliedRuleAction;
+        //         }));
     }
 
     /**
@@ -368,8 +372,9 @@ export abstract class ConstraintRuleService extends AObjectService {
        * @return Observable<boolean> returns an observable of boolean value.
   */
     hasPendingErrors(cart?: Cart): Observable<boolean> {
-        return this.getPendingActionsForCart().pipe(
-            map(rules => rules.filter(rule => rule.MessageType === 'Error').length > 0));
+        return of(false);
+        // return this.getPendingActionsForCart().pipe(
+        //     map(rules => rules.filter(rule => rule.MessageType === 'Error').length > 0));
     }
 
     /**
@@ -377,11 +382,13 @@ export abstract class ConstraintRuleService extends AObjectService {
      * @ignore
     */
     getDistinctAppliedRules(appliedRules: Array<AppliedRuleActionInfo>): Array<AppliedRuleActionInfo> {
-        let resp: Array<AppliedRuleActionInfo> = [];
-        let cartRule = filter(appliedRules, (elem) => elem.IsTargetPrimaryLine);
-        cartRule = uniqBy(cartRule, 'ConstraintRuleActionId');
-        const optionRule = filter(appliedRules, (elem) => elem.IsTargetOption);
-        resp = [...cartRule, ...optionRule]
-        return resp;
+        /* TO DO : */
+        return null;
+        // let resp: Array<AppliedRuleActionInfo> = [];
+        // let cartRule = filter(appliedRules, (elem) => elem.IsTargetPrimaryLine);
+        // cartRule = uniqBy(cartRule, 'ConstraintRuleActionId');
+        // const optionRule = filter(appliedRules, (elem) => elem.IsTargetOption);
+        // resp = [...cartRule, ...optionRule]
+        // return resp;
     }
 }

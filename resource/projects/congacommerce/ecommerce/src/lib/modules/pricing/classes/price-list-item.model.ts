@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { AObject, ATable } from '@congacommerce/core';
+import { AObject, ATable, AField } from '@congacommerce/core';
 import { PriceList } from '../../pricing/classes/price-list.model';
 import { Product } from '../../catalog/classes/product.model';
 

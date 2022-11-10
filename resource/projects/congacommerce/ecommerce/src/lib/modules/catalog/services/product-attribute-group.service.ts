@@ -61,32 +61,33 @@ export class MyComponent implements OnInit{
      * @returns An observable containing array of product attribute groups.
      * 
      */
-    getProductAttributeGroups(productList: Array<string | Product> = []): Observable<Array<ProductAttributeGroup>> {
-        let obsv$ = of([]);
-        if (productList.every(item => typeof item === 'string')) {
-            // To DO:
-            // obsv$ = this.where(null, 'AND', null, null, null, [
-            //     new AJoin(this.productAttributeGrpMemberService.type, 'Id', 'AttributeGroupId', [
-            //         new ACondition(this.productAttributeGrpMemberService.type, 'ProductId', 'In', productList)
-            //     ])
-            // ]);
-            return of(null) as unknown as Observable<Array<ProductAttributeGroup>>;
-        } else {
-           // obsv$ = this.get(uniq(flatten(productList.map((p: Product) => get(p, 'AttributeGroups', []).map(g => g.AttributeGroup.Id)))));
-            return of(null) as unknown as Observable<Array<ProductAttributeGroup>>;
-        }
-        return obsv$.pipe(
-            switchMap(productAttributeGroupList => this.translatorService.translateData(productAttributeGroupList)),
-            switchMap(translatedProductAttributeGroupList => {
-                const productAttributes = compact(flatten(translatedProductAttributeGroupList.map(group => group.ProductAttributes)));
-                return this.productAttributeService.setDescribeInformationOnProductAttributes(productAttributes).pipe(map(attrs => translatedProductAttributeGroupList));
-            })
-        )
+    getProductAttributeGroups(productList: Array<string | Product> = []): Observable<Array<ProductAttributeGroup>> { //TODO: Add back when API is available
+        //     let obsv$ = of([]);
+        //     if (productList.every(item => typeof item === 'string')) {
+        //         // To DO:
+        //         // obsv$ = this.where(null, 'AND', null, null, null, [
+        //         //     new AJoin(this.productAttributeGrpMemberService.type, 'Id', 'AttributeGroupId', [
+        //         //         new ACondition(this.productAttributeGrpMemberService.type, 'ProductId', 'In', productList)
+        //         //     ])
+        //         // ]);
+        //         return null;
+        //     } else {
+        //        // obsv$ = this.get(uniq(flatten(productList.map((p: Product) => get(p, 'AttributeGroups', []).map(g => g.AttributeGroup.Id)))));
+        //         return null;
+        //     }
+        //     return obsv$.pipe(
+        //         switchMap(productAttributeGroupList => this.translatorService.translateData(productAttributeGroupList)),
+        //         switchMap(translatedProductAttributeGroupList => {
+        //             const productAttributes = compact(flatten(translatedProductAttributeGroupList.map(group => group.ProductAttributes)));
+        //             return this.productAttributeService.setDescribeInformationOnProductAttributes(productAttributes).pipe(map(attrs => translatedProductAttributeGroupList));
+        //         })
+        //     )
+        return of(null);
     }
 }
- /**
-  *  @ignore 
- */
+/**
+ *  @ignore 
+*/
 @Injectable({
     providedIn: 'root'
 })

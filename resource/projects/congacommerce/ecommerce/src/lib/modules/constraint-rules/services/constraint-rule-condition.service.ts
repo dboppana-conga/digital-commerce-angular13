@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AObjectService } from '@congacommerce/core';
 import { ConstraintRuleCondition } from '../classes/index';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import * as _ from 'lodash';
 import { Product } from '../../catalog/classes';
 
@@ -41,14 +41,15 @@ export class MyComponent implements OnInit{
      * TO DO:
      */
     getConstraintRuleConditionsForProduct(product: Product): Observable<Array<ConstraintRuleCondition>> {
-        let productGroupIds = [];
-        if (_.get(product, 'ProductGroups[0].Id')) {
-            productGroupIds = Object.keys(product.ProductGroups).map(key => product.ProductGroups[key].ProductGroupId);
-        }
+        /* TO DO : */
+        // let productGroupIds = [];
+        // if (_.get(product, 'ProductGroups[0].Id')) {
+        //     productGroupIds = Object.keys(product.ProductGroups).map(key => product.ProductGroups[key].ProductGroupId);
+        // }
         // if (productGroupIds) {
         //     return this.where([new ACondition(this.type, 'ProductId', 'Equal', product.Id), new ACondition(this.type, 'ProductGroupId', 'In', productGroupIds)], 'OR');
         // }
         // return this.where([new ACondition(this.type, 'Product.Id', 'Equal', product.Id)]);
-        return null;
+        return of(null);
     }
 }

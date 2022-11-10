@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ApiService, AObject } from "@congacommerce/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 // import * as download from 'downloadjs';
 
 /**
@@ -24,8 +24,8 @@ export class MyService extends AObjectService {
 @Injectable({
     providedIn: 'root'
 })
-export class FileService{
-    constructor(private apiService: ApiService){}
+export class FileService {
+    constructor(private apiService: ApiService) { }
 
     /**
      * This method fetches all the files based on entity id
@@ -51,17 +51,19 @@ export class MyComponent implements OnInit{
     /**
      * @param entityId Ids is an instance of string.
      * @returns Observable<Array<File>> returns an observable list of files based on given id.
+     * To DO:  Add back when API is available
     */
-    getFiles(entityId: string): Observable<Array<File>>{        
-        return this.apiService.get(`/files/${entityId}`, File);
+    getFiles(entityId: string): Observable<Array<File>> {
+        return of(null);
+        //return this.apiService.get(`/files/${entityId}`, File);
     }
-    
+
     /** 
      * This method used to download attachments.
      * @param file is an instance of <File>.
      * 
     **/
-    downloadFile(file: File): void{
+    downloadFile(file: File): void {
         // TO DO:
         // this.apiService.get(`/files/${file.Id}/download`)
         //     .subscribe(data => download('data:text/plain,base64,' + data, file.Title, 'text/plain'));
@@ -69,13 +71,13 @@ export class MyComponent implements OnInit{
 }
 
 /* An interface for the attachments associated with order/quote */
-export class File extends AObject{
+export class File extends AObject {
     /* Size of attachment */
-    ContentSize: number= 0;
+    ContentSize: number;
     /* Title of attachment */
-    Title: string ='';
+    Title: string;
     /* Type of attachment */
-    FileType: string ='';
+    FileType: string;
     /* Attachment extension e.g. jpeg,pdf etc */
-    FileExtension: string ='';
+    FileExtension: string;
 }

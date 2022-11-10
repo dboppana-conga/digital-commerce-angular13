@@ -11,13 +11,21 @@ import { CategoryService } from '../../catalog/services/category.service';
 import { AccountService } from '../../crm/services/account.service';
 import { CartItemService } from './cart-item.service';
 import { ProductAttributeValueService } from '../../catalog/services/product-attribute.service';
-import { CART_ITEMS, PRODUCT } from '../../../test/data-manager';
+import { CART_ITEMS, PRODUCT, PRODUCT2 } from '../../../test/data-manager';
 import { CartService } from './cart.service';
+import { PriceListItemService, PriceListService } from '../../pricing/services';
+import { CARTS, PRODUCT_ATTRIBUTE_DATA, User1 } from './datamanager/data';
 
 const moment = _moment;
 
 describe('CartItemService', () => {
   let cartItemService: CartItemService;
+  let productAttributeSericeSpy = jasmine.createSpyObj<ProductAttributeValueService>('ProductAttributeValueService', ['describe']);
+  let priceListItemServiceSpy = jasmine.createSpyObj<PriceListItemService>('PriceListItemService', ['describe']);
+  let priceListServiceSpy = jasmine.createSpyObj<PriceListService>('PriceListService', ['getEffectivePriceListId']);
+  let categoryServiceSpy = jasmine.createSpyObj<CategoryService>('CategoryService', ['getCategoryBranchForProductSync']);
+  let accountServiceSpy = jasmine.createSpyObj<AccountService>('AccountService', ['getCurrentAccount']);
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -25,7 +33,7 @@ describe('CartItemService', () => {
         {
           provide: ApiService,
           useValue: jasmine.createSpyObj('ApiService', {
-            refreshToken: of(null),
+            refreshToken: of(User1),
             get: of(null),
           }),
         },
@@ -56,6 +64,10 @@ describe('CartItemService', () => {
           useValue: jasmine.createSpyObj('ProductAttributeValueService', [
             'describe',
           ]),
+        },
+        {
+          provide: PriceListItemService,
+          useValue: priceListItemServiceSpy
         },
       ],
     });
@@ -109,15 +121,49 @@ describe('CartItemService', () => {
     expect(term4).toBe('One Time');
   });
 
-  it('should return array of CartItem associated with Product', () => {
-    const product = PRODUCT;
-    spyOn(cartItemService, 'getCartItemsForProduct').withArgs(product).and.returnValue(of(CART_ITEMS));
-    cartItemService.getCartItemsForProduct(product).pipe(take(1)).subscribe((res) => {
-        expect(res).toEqual(CART_ITEMS);
+  it('should return array of CartItem associated with Product', () => { /* TO DO: Need to re-visit */
+    const product = PRODUCT2;
+    productAttributeSericeSpy.describe.and.returnValue(null);
+    // productAttributeSericeSpy.getInstanceWithDefaults.and.returnValue(PRODUCT_ATTRIBUTE_DATA);
+    spyOn(cartItemService, 'getNextPrimaryLineNumber');
+    spyOn(PriceListItemService, 'getPriceListItemForProduct');
+    priceListServiceSpy.getEffectivePriceListId.and.returnValue(of('62ad6108-6abc-465c-b137-3bd3327a2fe6'));
+    accountServiceSpy.getCurrentAccount.and.returnValue(of(null));
+    spyOn(cartItemService, 'getEndDate');
+    categoryServiceSpy.getCategoryBranchForProductSync.and.returnValue(null);
+    const results = cartItemService.getCartItemsForProduct(product);
+    results.pipe(take(1)).subscribe((res) => {
+      expect(productAttributeSericeSpy.describe).toHaveBeenCalledTimes(1);
+      expect(cartItemService.getNextPrimaryLineNumber).toHaveBeenCalledTimes(1);
+      expect(productAttributeSericeSpy.describe).toHaveBeenCalledTimes(1);
     });
   });
 
+  describe('Call getNextPrimaryLineNumber method', () => {
+    let cartItemService: CartItemService;
+    beforeEach(() => {
+      cartItemService = TestBed.inject(CartItemService);
+    });
+
+    it('should return number of primaryLine as 1', () => {
+      const results = cartItemService.getNextPrimaryLineNumber(null, CARTS);
+      expect(results).toBeTruthy();
+      expect(results).toEqual(1);
+    });
+  });
+
+  it('should return number of primaryLine', () => {
+    const results = cartItemService.getNextPrimaryLineNumber(CART_ITEMS, CARTS);
+    expect(results).toBeTruthy();
+    expect(results).toEqual(2);
+  });
+
   describe('Call addCartItems method', () => {
+    let cartItemService: CartItemService;
+    beforeEach(() => {
+      cartItemService = TestBed.inject(CartItemService);
+    });
+    
     it('should call getCurrentCartId() twice ', () => {
       const currentCartSpy = spyOn(
         CartService,

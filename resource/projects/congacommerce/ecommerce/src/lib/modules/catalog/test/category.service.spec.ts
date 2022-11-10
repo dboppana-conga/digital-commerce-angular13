@@ -1,85 +1,259 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CategoryService } from '../services/category.service';
-import { ApttusModule } from "@congacommerce/core";
+import { ApiService, ApttusModule } from "@congacommerce/core";
 import { CommerceModule } from "../../../ecommerce.module";
-import { mockCategory } from './data/dataManger';
+import { mockCategory, MOCK_CATEGORY } from './data/dataManger';
 import { Category } from '../classes/index';
 import { of } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
+import { PriceListService } from '../../pricing/services';
 
 describe('CategoryService', () => {
     let service: CategoryService;
+    const apiServiceSpy = jasmine.createSpyObj<ApiService>('ApiService', ['refreshToken', 'get', 'post', 'patch', 'delete']);
+    apiServiceSpy.refreshToken.and.returnValue(of(null));
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, ApttusModule, CommerceModule.forRoot({}), TranslateModule.forRoot()],
-            providers: [CategoryService],
+            providers: [
+                CategoryService,
+                [{ provide: ApiService, useClass: ApiService }],
+                { provide: PriceListService, useClass: PriceListService }
+            ],
         });
 
         service = TestBed.inject(CategoryService);
     });
 
-    it('getCategories() should return list of categories based on priceList', () => {
-        let productData: any;
-        spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
-        service.getCategories().pipe(take(1)).subscribe(res => {
-            productData = res;
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
         });
-        expect(productData).toEqual(mockCategory);
+        it('refresh() should return empty array and state undefined as pricelist is not having product', () => {
+            spyOn(apiService, 'get').and.returnValue(of([]));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.refresh();
+            expect(service['state'].value[0]).toEqual(undefined);
+        });
     });
 
-    it('getCategoryByName() should return based on given paramter', () => {
-        let productData;
-        spyOn(service, 'getCategoryByName').and.returnValue(of(mockCategory[0]));
-        service.getCategoryByName('Software_Category').pipe(take(1)).subscribe(res => {
-            productData = res;
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
         });
-        expect(productData).toBeTruthy();
-        expect(productData.Name).toEqual(mockCategory[0].Name);
+        it('should return list of categories based on priceList', () => {
+            const apiServiceSpy = spyOn(apiService, 'get').and.returnValue(of(mockCategory));
+            const priceServiceSpy = spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.refresh();
+            expect(service['state'].value[0].Name).toEqual(mockCategory[0].Name);
+            expect(apiServiceSpy).toHaveBeenCalledTimes(1);
+            expect(priceServiceSpy).toHaveBeenCalledTimes(1);
+        });
     });
 
-    it('getCategoriesByProductId() should return based on given product id', () => {
-        let productData;
-        spyOn(service, 'getCategoriesByProductId').and.returnValue(of(mockCategory[0]));
-        service.getCategoriesByProductId('0ebb3fa0-59e5-472a-9678-62d45d5d0344').pipe(take(1)).subscribe(res => {
-            productData = res;
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
         });
-        expect(productData).toBeTruthy();
-        expect(productData.Name).toEqual(mockCategory[0].Name);
+        it('getCategories() should return list of categories', () => {
+            service['state'].next(mockCategory);
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategories();
+            result.pipe(take(1)).subscribe((categories) => {
+                expect(categories.length).toEqual(mockCategory.length);
+                expect(categories[0].Name).toEqual(mockCategory[0].Name);
+            });
+        });
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getCategories() should not return list of categories', () => {
+            service['state'].next(null);
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategories();
+            result.pipe(take(1)).subscribe((categories) => {
+                expect(categories).toEqual(null);
+            });
+        });
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getCategoryByName() should return based on given paramter', () => {
+            spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategoryByName(mockCategory[0].Name);
+            result.pipe(take(1)).subscribe((val) => {
+                expect(val.AncestorId).toEqual(mockCategory[0].AncestorId);
+                expect(val).toEqual(mockCategory[0]);
+            });
+        });
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getCategoryByName() should not return based on given paramter', () => {
+            spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategoryByName("UNAVILABLE_PRODUCT");
+            result.pipe(take(1)).subscribe((val) => {
+                expect(val).toEqual(undefined);
+            });
+        });
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getCategoriesByProductId() should return based on given product id', () => {
+            apiServiceSpy.get.and.returnValue(of(mockCategory[0]));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategoriesByProductId(mockCategory[0].Id);
+            result.pipe(take(1)).subscribe((val) => {
+                expect(val).toEqual(mockCategory[0]);
+                expect(val.Id).toEqual(mockCategory[0].Id);
+                expect(val.Name).toEqual(mockCategory[0].Name);
+            });
+        });
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getCategoriesByProductId() should not return details for invalid product id', () => {
+            apiServiceSpy.get.and.returnValue(of(null));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getCategoriesByProductId("invalid_id");
+            result.pipe(take(1)).subscribe((val) => {
+                expect(val).toBeFalsy();
+                expect(val).toEqual(null);
+            });
+        });
     });
 
     it('getCategoryTree() should return category tree', () => {
-        spyOn(service, 'getCategoryTree').and.returnValue(of(mockCategory));
+        spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
         service.getCategoryTree().pipe(take(1)).subscribe(res => {
             expect(res).toBeTruthy();
+            expect(res.length).not.toEqual(mockCategory.length);
         });
-        expect(service.getCategoryTree).toHaveBeenCalled();
     });
 
-    it('getSubcategories() should return Sub category of given category', () => {
-        spyOn(service, 'getSubcategories').and.returnValue(of(mockCategory));
-        service.getSubcategories('0ebb3fa0-59e5-472a-9678-62d45d5d-0a36w8').pipe(take(1)).subscribe(res => {
-            expect(res).toBeTruthy();
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
         });
-        expect(service.getSubcategories).toHaveBeenCalled();
+        it('getSubcategories() should return Sub category of given category', () => {
+            spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getSubcategories(mockCategory[1].Id);
+            result.pipe(take(1)).subscribe((val) => {
+                expect(val).toBeTruthy();
+                expect(val.length).toEqual(mockCategory.length);
+                expect(val[0].Id).toEqual(mockCategory[0].Id);
+            });
+        });
     });
 
-    it('getRelatedCategories() should return related category of given category', () => {
-        spyOn(service, 'getRelatedCategories').and.returnValue(of(mockCategory));
-        service.getRelatedCategories('9678-59e5-472a-9678-3dsawer-0a36w8').pipe(take(1)).subscribe(res => {
+    it('getRelatedCategories() should return related category of given category', () => { /* TO DO : Check actual response */
+        spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
+        service.getRelatedCategories(mockCategory[4].Id).pipe(take(1)).subscribe(res => {
             expect(res).toBeTruthy();
+            expect(res[0].Name).toEqual(mockCategory[4].Name);
         });
-        expect(service.getRelatedCategories).toHaveBeenCalled();
     });
 
     it('getRootCategories() should return root category', () => {
-        let productData = mockCategory[2] as unknown as Array<Category>;;
-        spyOn(service, 'getRootCategories').and.returnValue(of(productData));
-        service.getRootCategories().pipe(take(1)).subscribe(res => {            
-            expect(res['AncestorId']).toBeNull();
+        spyOn(service, 'getCategories').and.returnValue(of(mockCategory));
+        const result = service.getRootCategories();
+        result.pipe(take(1)).subscribe((categories) => {
+            expect(categories[0].AncestorId).toEqual(null);
+            expect(categories[0].Name).toEqual(mockCategory[2].Name);
         });
-        expect(service.getRootCategories).toHaveBeenCalled();
+    });
+
+    describe('Call refresh() method', () => {
+        let service: CategoryService;
+        let plService: PriceListService;
+        let apiService: ApiService;
+        beforeEach(() => {
+            service = TestBed.inject(CategoryService);
+            plService = TestBed.inject(PriceListService);
+            apiService = TestBed.inject(ApiService);
+            apiServiceSpy.get.calls.reset();
+        });
+        it('getRootCategories() should return root category', () => {
+            spyOn(service, 'getCategories').and.returnValue(of(MOCK_CATEGORY));
+            spyOn(plService, 'getPriceListId').and.returnValue(of('78ad6108-6abc-465c-b137-1221212'));
+            const result = service.getRootCategories();
+            result.pipe(take(1)).subscribe((categories) => {
+                expect(categories.length).toEqual(0);
+            });
+        });
     });
 });
