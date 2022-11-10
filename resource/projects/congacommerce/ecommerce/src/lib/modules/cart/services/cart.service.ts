@@ -837,11 +837,11 @@ export class MyComponent implements OnInit{
         const lineNumbers = _map(filter(lines, (l) => includes(cartItemIds, l.Id)), 'LineNumber');
         const PrimaryLineItem = filter(lines, (i) => includes(cartItemIds, i.Id) && i.LineType === 'Product/Service');
         if (PrimaryLineItem.length > 0) {
-          remove(get(this.state, 'value.LineItems', []), o =>
+          remove(get(this.state, 'value.LineItems', []), (o: CartItem) =>
             includes(lineNumbers, o.LineNumber)
           );
         } else {
-          remove(get(this.state, 'value.LineItems', []), o =>
+          remove(get(this.state, 'value.LineItems', []), (o: CartItem) =>
             includes(cartItemIds, o.Id)
           );
         }
