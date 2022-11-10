@@ -327,7 +327,7 @@ export class ConstraintRuleMessageService {
                 ),
                 isOption: get(error, 'IsTargetOption'),
                 targetBundleNumber: get(error, 'TargetBundleNumber')
-              } as unknown as ConstraintRuleDetail;
+              } as ConstraintRuleDetail;
             }),
             warnings: _map(warnings, warning => {
               return {

@@ -201,7 +201,7 @@ export class TableComponent implements OnChanges, OnDestroy {
         // Set the actions on each of the records
         if (!isEmpty(get(this, 'options.actions'))) {
           forEach(recordData, record => {
-            record.set('actions', filter(get(this.options, 'actions'), a => a.validate(record, {})));
+            record.set('actions', filter(get(this.options, 'actions'), a => a.validate(record, null)));
           });
 
           this.options.selectItemsInGroupFunc && this.options.selectItemsInGroupFunc(recordData);

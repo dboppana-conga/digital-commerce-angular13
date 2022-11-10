@@ -119,7 +119,7 @@ export class PromotionModalComponent implements AfterViewInit {
     this.adjustmentList$ = this.promotionService.getAppliedPromotionForLineItem(
       record.LineNumber
     );
-    this.record$ = iface.service.get([record.Id], false).pipe(map((list) => _.first(list)));
+    this.record$ =  of(null); //TO Do: iface.service.get([record.Id], false).pipe(map((list) => _.first(list)));
     this.totalAmt$ = this.adjustmentList$.pipe(map((items) => _.sumBy(items, 'IncentiveAdjustmentAmount')));
     this.modalRef = this.modalService.show(iface.template, iface.config);
   }
