@@ -8,7 +8,7 @@ import { debounce } from 'lodash-decorators';
 import { AObject } from '@congacommerce/core';
 import { ProductOptionService, PerformAction, ProductOptionComponent, CartItem, CartItemService, Product, CartService, Cart, ProductOptionGroup, ProductAttributeValue, LineStatus, ActionToPerform, ConstraintRule, ProductAttributeGroupMember, ClientConstraintRuleService } from '@congacommerce/ecommerce';
 
-import { CRPopoverComponent } from '../constraint-popover/constraint-popover.component';
+import { PopoverComponent } from '../popover/popover.component';
 import { ConfigurationState } from '../../shared/interfaces/configuration-state.interface';
 import { ProductConfigurationService } from './services/product-configuration.service';
 
@@ -59,7 +59,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
     /** @ignore */
     @ViewChildren('childConfiguration') childConfigurationComponents: QueryList<ProductConfigurationComponent>;
     /** @ignore */
-    @ViewChildren('popover') popover: CRPopoverComponent;
+    @ViewChildren('popover') popover: PopoverComponent;
     /**
      * The view object used to hold information for rendering the view,
      * of type ConfigurationView.
@@ -291,7 +291,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
         };
 
         const handleGroup = (g: ProductOptionGroup, p?: ProductOptionComponent) => {
-            forEach(get(g, 'ChildOptionGroups', []),g => handleGroup(g));
+            forEach(get(g, 'ChildOptionGroups', []),(g) => handleGroup(g));
             forEach(get(g, 'Options'), c => handleComponent(c, p));
         };
 

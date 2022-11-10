@@ -96,7 +96,7 @@ export class MyComponent implements OnInit{
 
     constructor(private productConfigurationService: ProductConfigurationService){}
 
-    getProductAttributeGroups(product: Product){
+    getPrimaryItem(product: Product){
         this.primaryLineItem = this.productConfigurationService.getPrimaryItem(product);
     }
 }

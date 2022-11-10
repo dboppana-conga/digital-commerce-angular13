@@ -7,7 +7,7 @@ import { ApttusModule } from '@congacommerce/core';
 import { PriceModule } from '../price/price.module';
 import { ButtonModule } from '../button/button.module';
 import { InputFieldModule } from '../input-field/input-field.module';
-import { ConstraintPopoverModule } from '../constraint-popover/constraint-popover.module';
+import { PopoverModule } from '../popover/popover.module';
 import { IconModule } from '../icon/icon.module';
 import { ProductAttributeModule } from '../product-attribute/product-attribute.module';
 import { AlertModule } from '../alert/alert.module';
@@ -28,7 +28,7 @@ export * from './services/product-configuration.service';
     InputFieldModule,
     FormsModule,
     ApttusModule,
-    ConstraintPopoverModule,
+    PopoverModule,
     IconModule,
     ProductAttributeModule,
     AlertModule

@@ -153,8 +153,8 @@ export class ProductConfigurationSummaryComponent implements OnChanges, OnDestro
     if (!isNil(this.product$.value) || this.preload === true)
       this.setProduct();
 
-    this.isOrderLineItem = this.relatedTo && this.relatedTo instanceof OrderLineItem;
-    this.isQuoteLineItem = this.relatedTo && this.relatedTo instanceof QuoteLineItem;
+    //this.isOrderLineItem = this.relatedTo && this.relatedTo instanceof OrderLineItem; need to check
+    //this.isQuoteLineItem = this.relatedTo && this.relatedTo instanceof QuoteLineItem;
   }
 
   ngOnDestroy() {
@@ -187,9 +187,9 @@ export class ProductConfigurationSummaryComponent implements OnChanges, OnDestro
   /**
    * @ignore
    */
-  hasChangeConfiguration() {
-    return !(this.relatedTo instanceof OrderLineItem || this.relatedTo instanceof QuoteLineItem);
-  }
+  // hasChangeConfiguration() {
+  //   return !(this.relatedTo instanceof OrderLineItem || this.relatedTo instanceof QuoteLineItem);
+  // }
 
   /**
    * Method to add the bundled product or standalone product with attributes to the cart.
