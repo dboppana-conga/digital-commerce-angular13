@@ -1,13 +1,12 @@
-
-import {take} from 'rxjs/operators';
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { get, split } from 'lodash';
 import { AssetSelectionService } from '../../../shared/services/asset-selection.service';
 import { AssetBatchActionService } from '../../../shared/services/asset-batch-action-service';
-import { AssetLineItem } from '@congacommerce/ecommerce';
-import { Observable, Subscription } from 'rxjs';
-import { StorefrontService } from '@congacommerce/ecommerce';
+import { AssetLineItem, StorefrontService } from '@congacommerce/ecommerce';
 import { AssetModalService } from '../../../shared/services/asset-modal.service';
-import * as _ from 'lodash';
+
 /**
  * Asset list header is used to create the header for the asset list component that holds the batch action buttons.
  * @ignore
@@ -56,12 +55,12 @@ export class AssetListHeaderComponent implements OnInit, OnDestroy {
     public assetBatchActionService: AssetBatchActionService,
     private assetSelectionService: AssetSelectionService,
     private storefrontService: StorefrontService,
-    private assetModalService: AssetModalService) {}
+    private assetModalService: AssetModalService) { }
 
   ngOnInit() {
     this.selectedAssets$ = this.assetSelectionService.getSelectedAssets();
     this.storefrontSubscription = this.storefrontService.getStorefront().subscribe(storefront => {
-      this.enabledActions = (_.get(storefront, 'AssetActions')) ? _.get(storefront, 'AssetActions').split(';') : [];
+      this.enabledActions = (get(storefront, 'AssetActions')) ? split(get(storefront, 'AssetActions'), ';') : [];
     });
   }
 
@@ -89,13 +88,13 @@ export class AssetListHeaderComponent implements OnInit, OnDestroy {
   handleBatchButtonClick(action: string) {
     let selectedAssets;
     this.selectedAssets$.pipe(take(1)).subscribe(assets => selectedAssets = assets);
-    switch(action) {
+    switch (action) {
       case 'Renew':
         this.assetModalService.openRenewModal(selectedAssets[0], selectedAssets);
-      break;
+        break;
       case 'Terminate':
         this.assetModalService.openTerminateModal(selectedAssets[0], selectedAssets);
-      break;
+        break;
     }
   }
 

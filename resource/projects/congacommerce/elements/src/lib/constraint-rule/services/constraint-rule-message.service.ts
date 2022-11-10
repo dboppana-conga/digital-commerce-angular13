@@ -62,7 +62,7 @@ export class ConstraintRuleMessageService {
     ])
       .pipe(
         switchMap(([configState, rules]) => {
-         if (rules) {
+          if (rules) {
             return this.getConstraintRuleGroups(rules);
           }
           return of(null);
@@ -91,22 +91,22 @@ export class ConstraintRuleMessageService {
    * Returns an observable of the cart level rule groups.
    */
   getCartRuleGroups(): Observable<ConstraintRuleGroups> {
-    if(!this.cartRuleGroups$){
+    if (!this.cartRuleGroups$) {
       this.cartRuleGroups$ = new BehaviorSubject<ConstraintRuleGroups>(null);
       this.refreshCartRules();
     }
-      
+
     return this.cartRuleGroups$;
   }
   /**
    * Returns an observable of the product configuration level rule groups.
    */
   getConfigurationRuleGroups(): Observable<ConstraintRuleGroups> {
-    if(!this.configRuleGroups$){
+    if (!this.configRuleGroups$) {
       this.configRuleGroups$ = new BehaviorSubject<ConstraintRuleGroups>(null);
       this.refreshConfigRules();
     }
-    
+
     return this.configRuleGroups$;
   }
 
@@ -152,10 +152,10 @@ export class ConstraintRuleMessageService {
               ), 'Id'
             );
             if (cartItemId) {
-                return this.cartService.addOptionToBundle(cartItemId, {
-                  ProductId: get(product, 'Id'),
-                  Quantity: quantity
-                });
+              return this.cartService.addOptionToBundle(cartItemId, {
+                ProductId: get(product, 'Id'),
+                Quantity: quantity
+              });
             }
             else
               return of(null);
@@ -169,16 +169,16 @@ export class ConstraintRuleMessageService {
         );
       }
       else {
-      
-          return this.cartService.addProductToCart(product, quantity)
-            .pipe(
-              switchMap(res => {
-                return of(this.exceptionService.showSuccess('SUCCESS.CART.ITEM_ADDED_TOASTR_MESSAGE', 'SUCCESS.CART.ITEM_ADDED_TOASTR_TITLE', { productName: get(product, 'Name') }));
-              }),
-              catchError(error => {
-                return of(this.exceptionService.showError(error));
-              })
-            );
+
+        return this.cartService.addProductToCart(product, quantity)
+          .pipe(
+            switchMap(res => {
+              return of(this.exceptionService.showSuccess('SUCCESS.CART.ITEM_ADDED_TOASTR_MESSAGE', 'SUCCESS.CART.ITEM_ADDED_TOASTR_TITLE', { productName: get(product, 'Name') }));
+            }),
+            catchError(error => {
+              return of(this.exceptionService.showError(error));
+            })
+          );
       }
     }
     return of();
@@ -202,7 +202,7 @@ export class ConstraintRuleMessageService {
           );
         }),
         switchMap(cartItems => {
-            return this.cartService.removeCartItems(cartItems);
+          return this.cartService.removeCartItems(cartItems);
         }),
         catchError(error => {
           return of(this.exceptionService.showError(error));
@@ -218,13 +218,13 @@ export class ConstraintRuleMessageService {
    * @param bundleProduct Parent product that will be to add the given option product to.
    */
   addProductToConfiguration(product: Product, quantity: number, targetBundleNumber: number): Observable<void> {
-   
-      this.clientConstraintRuleService.assignAction({
-        prod: product,
-        quantity: quantity,
-        type: 'Inclusion'
-      } as PerformAction);
-      return of(null);
+
+    this.clientConstraintRuleService.assignAction({
+      prod: product,
+      quantity: quantity,
+      type: 'Inclusion'
+    } as PerformAction);
+    return of(null);
   }
   /**
    * Removes the given product from the current configuration that hasn't been added to the cart.
@@ -232,11 +232,11 @@ export class ConstraintRuleMessageService {
    */
   removeOptionFromConfiguration(product: Product, bundleProduct: Product): Observable<void> {
 
-      this.clientConstraintRuleService.assignAction({
-        prod: product,
-        type: 'Exclusion'
-      } as PerformAction);
-      return of(null);
+    this.clientConstraintRuleService.assignAction({
+      prod: product,
+      type: 'Exclusion'
+    } as PerformAction);
+    return of(null);
   }
   /**
   * Formats the standard message received from the api response to add links and bold highlighting.
@@ -304,7 +304,7 @@ export class ConstraintRuleMessageService {
       //   children: [{ field: 'PriceLists' }]
       // TO DO:
       // })
-      of(null)
+      of(null) as unknown as Array<Product>
     ])
       .pipe(
         map(([rules, relatedProducts]) => {
@@ -327,7 +327,7 @@ export class ConstraintRuleMessageService {
                 ),
                 isOption: get(error, 'IsTargetOption'),
                 targetBundleNumber: get(error, 'TargetBundleNumber')
-              } as ConstraintRuleDetail;
+              } as unknown as ConstraintRuleDetail;
             }),
             warnings: _map(warnings, warning => {
               return {
@@ -364,5 +364,4 @@ export class ConstraintRuleMessageService {
         })
       );
   }
-
 }

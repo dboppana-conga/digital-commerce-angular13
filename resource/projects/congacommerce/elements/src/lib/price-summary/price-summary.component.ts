@@ -6,7 +6,6 @@ import { mergeMap, take, map, switchMap, tap, catchError } from 'rxjs/operators'
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { sumBy, filter, get, find, isNil, defaultTo, set, isEmpty, some, map as _map, flatten } from 'lodash';
-
 import {
     Cart, Storefront, StorefrontService, UserService, QuoteService, CartService,
     Quote, Order, ConstraintRuleService, AccountService,
@@ -144,27 +143,27 @@ export class PriceSummaryComponent implements OnInit, OnDestroy, OnChanges {
         if (this.page === 'create-proposal' || this.page === 'checkout' || this.calculateTaxForOrder) {
             this.setLoading(true);
             return this.storefrontService.getStorefront().pipe(
-                 mergeMap(()=> {
-                 return of(null);//TODO
-                //     if (get(storefront, 'EnableTaxCalculations') && this.record instanceof Cart)
-                //         return this.taxService.computeTaxForCart().pipe(
-                //             tap(r => {
-                //                 this.exceptionService.showSuccess('TAX.COMPUTE_TAX_SUCCESS', 'TAX.COMPUTE_TAX_SUCCESS_TITLE');
-                //                 return r;
-                //             }),
-                //             tap(() => this.setLoading(false)),
-                //             catchError(e => {
-                //                 this.setLoading(false);
-                //                 this.exceptionService.showWarning(e, 'TAX.COMPUTE_TAX_ERROR_TITLE');
-                //                 return throwError(e);
-                //             })
-                //         );
-                //     else
-                //         return of(null);
-                // }),
-                // take(1)
-                 }
-             ) );
+                mergeMap(() => {
+                    return of(null);//TODO
+                    //     if (get(storefront, 'EnableTaxCalculations') && this.record instanceof Cart)
+                    //         return this.taxService.computeTaxForCart().pipe(
+                    //             tap(r => {
+                    //                 this.exceptionService.showSuccess('TAX.COMPUTE_TAX_SUCCESS', 'TAX.COMPUTE_TAX_SUCCESS_TITLE');
+                    //                 return r;
+                    //             }),
+                    //             tap(() => this.setLoading(false)),
+                    //             catchError(e => {
+                    //                 this.setLoading(false);
+                    //                 this.exceptionService.showWarning(e, 'TAX.COMPUTE_TAX_ERROR_TITLE');
+                    //                 return throwError(e);
+                    //             })
+                    //         );
+                    //     else
+                    //         return of(null);
+                    // }),
+                    // take(1)
+                }
+                ));
         }
         return of(null);
     }
@@ -173,7 +172,7 @@ export class PriceSummaryComponent implements OnInit, OnDestroy, OnChanges {
     calculateTotalPromotions(): number {
         return sumBy(
             filter(
-                get(this, `record.${get(find(this.fieldMap, f => f.type === this.record.getType()), 'field')}`),
+                get(this.record, `${get(find(this.fieldMap, f => f.type === this.record.getType()), 'field')}`),
                 line => line.PriceType !== 'Usage'
             ),
             'IncentiveAdjustmentAmount'
@@ -184,7 +183,7 @@ export class PriceSummaryComponent implements OnInit, OnDestroy, OnChanges {
     // TODO: This is added temporarily for August 2022 demo.
     calculateTotalAdjusmentAmount(): number {
         let adjustmentPrice = 0;
-        if(this.record instanceof Cart){
+        if (this.record instanceof Cart) {
             adjustmentPrice = sumBy(flatten(_map(filter(this.record.LineItems, item => item.PriceType !== 'Usage'), line => line.AdjustmentLineItems)), 'AdjustmentAmount');
         }
         return adjustmentPrice;
@@ -192,7 +191,7 @@ export class PriceSummaryComponent implements OnInit, OnDestroy, OnChanges {
 
     /** @ignore */
     computeTaxForOrder(): Observable<CartItem> {
-        if (this.record instanceof Cart && some(get(this, 'record.LineItems'), i => get(i, 'Taxable') === true)) {
+        if (this.record instanceof Cart && some(get(this.record, 'LineItems'), i => get(i, 'Taxable') === true)) {
             this.calculateTaxForOrder = true;
             return this.calculateTotalTax();
         }
@@ -321,7 +320,7 @@ export class PriceSummaryComponent implements OnInit, OnDestroy, OnChanges {
     }
     /** @ignore */
     isQuoteOnCart(): boolean {
-        return this.record instanceof Cart && get(this.record, 'Proposald.Id');
+        return this.record instanceof Cart && !isNil(get(this.record, 'Proposald.Id'));
     }
 
     /**
