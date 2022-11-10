@@ -90,7 +90,7 @@ export class ProductConfigurationComponent implements OnChanges, OnDestroy {
 
         this.view$.next(null);
         const cartItems = !isNil(get(this, 'view$')) ? this.getItems(get(this, 'view$.value.product'), get(this, 'view$.value')) : undefined;
-        this.subscriptions.push(this.productOptionService.getProductOptionTree(get(this, 'product.Id', this.product), this.relatedTo, 'none', defaultTo(cartItems, []))
+        this.subscriptions.push(this.productOptionService.getProductOptionTree(get(this.product, 'Id'), this.relatedTo, 'none', defaultTo(cartItems, []))
             .pipe(
                 switchMap(Product => combineLatest([
                     //this.clientConstraintRuleService.getConstraintRulesForProducts(Product, this.relatedTo),// TODO: Add this back when server side rules are integrated

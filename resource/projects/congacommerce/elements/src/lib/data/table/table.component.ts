@@ -308,7 +308,7 @@ export class TableComponent implements OnChanges, OnDestroy {
     this.updateSelectedRecordList(state, record);
 
     if (!isNil(group)) {
-      const groupedData = get(view, `groupedData.${group.label}`);
+      const groupedData = get(view, `groupedData.${group.label}`) as AObject;
 
       if (every(groupedData, child => child.get('state') === CheckState.CHECKED))
         group.state = CheckState.CHECKED;
@@ -327,8 +327,8 @@ export class TableComponent implements OnChanges, OnDestroy {
     const view = this.view$.value;
     const state = group.state === CheckState.CHECKED ? CheckState.UNCHECKED : CheckState.CHECKED;
     group.state = state;
-
-    forEach(get(view, `groupedData.${group.label}`), r => {
+    const groupedData = get(view, `groupedData.${group.label}`) as AObject;
+    forEach(groupedData, r => {
       r.set('state', state);
       this.updateSelectedRecordList(state, r);
     });
