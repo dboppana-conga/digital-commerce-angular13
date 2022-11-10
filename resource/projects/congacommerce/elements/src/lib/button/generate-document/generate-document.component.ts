@@ -98,7 +98,7 @@ export class GenerateDocumentComponent implements OnInit {
    */
   onChange() {
     this.disableGenModalBtn = true;
-    if (defaultTo(this.generateDocObj.templateId, null) && defaultTo(this.generateDocObj.format, null)) {
+    if (defaultTo(this.generateDocObj.templateId) && defaultTo(this.generateDocObj.format)) {
       this.disableGenModalBtn = false;
     }
   }

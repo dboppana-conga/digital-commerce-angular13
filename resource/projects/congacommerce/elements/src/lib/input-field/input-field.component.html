@@ -76,7 +76,7 @@
     <ng-container *ngSwitchCase="'double'">
       <input type="number" [min]="minVal" class="form-control custom" [class.form-control-sm]="small" [id]="value"
         [(ngModel)]="value" [disabled]="readonly" (ngModelChange)="propagateChange(value)" [required]="required"
-        [placeholder]="placeholder" #num="ngModel"
+        [placeholder]="placeholder" #num="ngModel" step="any"
         [ngClass]="{ 'is-invalid': num.invalid && (num.touched || num.dirty) || value < minVal}" />
       <div class="invalid-feedback">{{errorMsg | translate}}</div>
     </ng-container>

@@ -297,73 +297,72 @@ export class ConstraintRuleMessageService {
    */
   private getConstraintRuleGroups(actionInfo: Array<AppliedRuleActionInfo>): Observable<ConstraintRuleGroups> {
     const relatedProductIds = uniq(flatten(concat(_map(actionInfo, rule => split(get(rule, 'TriggeringProductIds'), ', ')), _map(actionInfo, rule => split(get(rule, 'ActionProductIds'), ', ')))));
-    // return combineLatest([
-    //   of(actionInfo),
-    //   // this.productService.query({
-    //   //   conditions: [new ACondition(Product, 'Id', 'In', relatedProductIds)],
-    //   //   children: [{ field: 'PriceLists' }]
-    //   // TO DO:
-    //   // })
-    //   of(null)
-    // ])
-    //   .pipe(
-    //     map(([rules, relatedProducts]) => {
-    //       const success = filter(rules, rule => (rule.ConstraintRuleAction.ActionIntent === 'Auto Include' || rule.ConstraintRuleAction.ActionIntent === 'Disable Selection') && rule.Pending);
-    //       const errors = filter(rules, rule => rule.MessageType === 'Error' && rule.Pending);
-    //       const warnings = filter(rules, rule => rule.MessageType === 'Warning' && rule.Pending);
-    //       const info = filter(rules, rule => rule.MessageType === 'Info' && rule.Pending);
-    //       const totalRules = sum([size(errors), size(warnings), size(info)]);
-    //       return {
-    //         errors: _map(errors, error => {
-    //           return {
-    //             triggeringProducts: filter(relatedProducts, product => includes(get(error, 'TriggeringProductIds'), get(product, 'Id'))),
-    //             actionItems: this.getActionItems(filter(relatedProducts, product => includes(get(error, 'ActionProductIds'), get(product, 'Id')))),
-    //             actionType: get(error, 'ConstraintRuleAction.ActionType'),
-    //             message: get(error, 'Message'),
-    //             messageHtml: this.beautifyMessage(
-    //               get(error, 'Message'),
-    //               filter(relatedProducts, product => includes(get(error, 'TriggeringProductIds'), get(product, 'Id'))),
-    //               filter(relatedProducts, product => includes(get(error, 'ActionProductIds'), get(product, 'Id')))
-    //             ),
-    //             isOption: get(error, 'IsTargetOption'),
-    //             targetBundleNumber: get(error, 'TargetBundleNumber')
-    //           } as ConstraintRuleDetail;
-    //         }),
-    //         warnings: _map(warnings, warning => {
-    //           return {
-    //             triggeringProducts: filter(relatedProducts, product => includes(get(warning, 'TriggeringProductIds'), get(product, 'Id'))),
-    //             actionItems: this.getActionItems(filter(relatedProducts, product => includes(get(warning, 'ActionProductIds'), get(product, 'Id')))),
-    //             actionType: get(warning, 'ConstraintRuleAction.ActionType'),
-    //             message: get(warning, 'Message'),
-    //             messageHtml: this.beautifyMessage(
-    //               get(warning, 'Message'),
-    //               filter(relatedProducts, product => includes(get(warning, 'TriggeringProductIds'), get(product, 'Id'))),
-    //               filter(relatedProducts, product => includes(get(warning, 'ActionProductIds'), get(product, 'Id')))
-    //             ),
-    //             isOption: get(warning, 'IsTargetOption'),
-    //             targetBundleNumber: get(warning, 'TargetBundleNumber')
-    //           } as ConstraintRuleDetail;
-    //         }),
-    //         info: _map(info, datum => {
-    //           return {
-    //             actionType: get(datum, 'ConstraintRuleAction.ActionType'),
-    //             message: get(datum, 'Message')
-    //           } as ConstraintRuleInfoDetail;
-    //         }),
-    //         success: _map(success, datum => {
-    //           return {
-    //             message: this.generateRuleActionMessage(
-    //               get(datum, 'Message'),
-    //               filter(relatedProducts, product => includes(get(datum, 'ActionProductIds'), get(product, 'Id'))),
-    //               filter(relatedProducts, product => includes(get(datum, 'TriggeringProductIds'), get(product, 'Id')))
-    //             )
-    //           } as ConstraintRuleInfoDetail;
-    //         }),
-    //         totalRules: totalRules
-    //       } as ConstraintRuleGroups;
-    //     })
-    //   );
-    return of(null);
+    return combineLatest([
+      of(actionInfo),
+      // this.productService.query({
+      //   conditions: [new ACondition(Product, 'Id', 'In', relatedProductIds)],
+      //   children: [{ field: 'PriceLists' }]
+      // TO DO:
+      // })
+      of(null)
+    ])
+      .pipe(
+        map(([rules, relatedProducts]) => {
+          const success = filter(rules, rule => (rule.ConstraintRuleAction.ActionIntent === 'Auto Include' || rule.ConstraintRuleAction.ActionIntent === 'Disable Selection') && rule.Pending);
+          const errors = filter(rules, rule => rule.MessageType === 'Error' && rule.Pending);
+          const warnings = filter(rules, rule => rule.MessageType === 'Warning' && rule.Pending);
+          const info = filter(rules, rule => rule.MessageType === 'Info' && rule.Pending);
+          const totalRules = sum([size(errors), size(warnings), size(info)]);
+          return {
+            errors: _map(errors, error => {
+              return {
+                triggeringProducts: filter(relatedProducts, product => includes(get(error, 'TriggeringProductIds'), get(product, 'Id'))),
+                actionItems: this.getActionItems(filter(relatedProducts, product => includes(get(error, 'ActionProductIds'), get(product, 'Id')))),
+                actionType: get(error, 'ConstraintRuleAction.ActionType'),
+                message: get(error, 'Message'),
+                messageHtml: this.beautifyMessage(
+                  get(error, 'Message'),
+                  filter(relatedProducts, product => includes(get(error, 'TriggeringProductIds'), get(product, 'Id'))),
+                  filter(relatedProducts, product => includes(get(error, 'ActionProductIds'), get(product, 'Id')))
+                ),
+                isOption: get(error, 'IsTargetOption'),
+                targetBundleNumber: get(error, 'TargetBundleNumber')
+              } as ConstraintRuleDetail;
+            }),
+            warnings: _map(warnings, warning => {
+              return {
+                triggeringProducts: filter(relatedProducts, product => includes(get(warning, 'TriggeringProductIds'), get(product, 'Id'))),
+                actionItems: this.getActionItems(filter(relatedProducts, product => includes(get(warning, 'ActionProductIds'), get(product, 'Id')))),
+                actionType: get(warning, 'ConstraintRuleAction.ActionType'),
+                message: get(warning, 'Message'),
+                messageHtml: this.beautifyMessage(
+                  get(warning, 'Message'),
+                  filter(relatedProducts, product => includes(get(warning, 'TriggeringProductIds'), get(product, 'Id'))),
+                  filter(relatedProducts, product => includes(get(warning, 'ActionProductIds'), get(product, 'Id')))
+                ),
+                isOption: get(warning, 'IsTargetOption'),
+                targetBundleNumber: get(warning, 'TargetBundleNumber')
+              } as ConstraintRuleDetail;
+            }),
+            info: _map(info, datum => {
+              return {
+                actionType: get(datum, 'ConstraintRuleAction.ActionType'),
+                message: get(datum, 'Message')
+              } as ConstraintRuleInfoDetail;
+            }),
+            success: _map(success, datum => {
+              return {
+                message: this.generateRuleActionMessage(
+                  get(datum, 'Message'),
+                  filter(relatedProducts, product => includes(get(datum, 'ActionProductIds'), get(product, 'Id'))),
+                  filter(relatedProducts, product => includes(get(datum, 'TriggeringProductIds'), get(product, 'Id')))
+                )
+              } as ConstraintRuleInfoDetail;
+            }),
+            totalRules: totalRules
+          } as ConstraintRuleGroups;
+        })
+      );
   }
 
 }

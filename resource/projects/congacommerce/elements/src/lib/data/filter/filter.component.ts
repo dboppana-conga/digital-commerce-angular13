@@ -317,7 +317,6 @@ export interface FilterOptions {
    */
   visibleFieldsWithOperators?: Array<FieldWithOperators>;
 }
-
 /**
  * Field name with an associated list of operators.
  */

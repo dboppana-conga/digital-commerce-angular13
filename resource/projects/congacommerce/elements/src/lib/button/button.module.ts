@@ -10,7 +10,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { InstalledProductsComponent } from './installed-products/installed-products.component';
 import { PricingModule } from '@congacommerce/ecommerce';
-import { ConstraintPopoverModule } from '../constraint-popover/constraint-popover.module';
+import { PopoverModule } from '../popover/popover.module';
 import { AssetDropdownButtonComponent } from './asset-dropdown-button/asset-dropdown-button.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,7 +37,7 @@ export * from './present-document/present-document.component';
     LaddaModule,
     PricingModule,
     ConfigurationSummaryModule,
-    ConstraintPopoverModule,
+    PopoverModule,
     TooltipModule.forRoot(),
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot(),

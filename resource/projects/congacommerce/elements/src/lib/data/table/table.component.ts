@@ -12,7 +12,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { BehaviorSubject, Subscription, combineLatest, of, Observable } from 'rxjs';
 import { isNil, get, filter, slice, assign, defaultTo, forEach, isEmpty, every, some, keys, groupBy, remove, includes, isArray, map as rmap, set, find } from 'lodash';
 import { debounce } from 'lodash-decorators';
-import { map, take } from 'rxjs/operators';
+import { map, take, catchError } from 'rxjs/operators';
 import { AObject, MetadataService, AObjectService, ApiService } from '@congacommerce/core';
 import { Product, AssetLineItem, CartItem, Cart, Order } from '@congacommerce/ecommerce';
 import { ProductConfigurationSummaryComponent } from '../../product-configuration-summary/configuration-summary.module';
@@ -186,19 +186,22 @@ export class TableComponent implements OnChanges, OnDestroy {
       this.searchString && queryparam.append('filter', `LIKE(Name:'${this.searchString.trim()}')`);
     const params = isEmpty(queryparam.toString()) ? '' : `${queryparam.toString()}`;
     const relativePath = this.metadataService.getRestResource(this.type);
-    const dataQuery$ = this.apiService.get(`/${relativePath}?${params}&Page=${this.page}&limit=${view.limit}`)
+    const dataQuery$ = this.apiService.get(`/${relativePath}?${params}&Page=${this.page}&limit=${view.limit}`,null,true,false)//to stop toaster messages from api service
       .pipe(
         map(result => {
           aggregateData = get(result, 'TotalCount');
           return plainToClass(this.type, result, { excludeExtraneousValues: true }) as unknown as Array<AObject>;;
+        }),
+        catchError(error => {
+          return of(null)
         }));
-    const describeQuery$ = this.service.describe();
+    const describeQuery$ = this.service.describe(this.type);
     this.subscription = combineLatest([dataQuery$, describeQuery$])
       .subscribe(([recordData, describe]) => {
         // Set the actions on each of the records
         if (!isEmpty(get(this, 'options.actions'))) {
           forEach(recordData, record => {
-            record.set('actions', filter(get(this.options, 'actions'), a => a.validate(record, [])));
+            record.set('actions', filter(get(this.options, 'actions'), a => a.validate(record, {})));
           });
 
           this.options.selectItemsInGroupFunc && this.options.selectItemsInGroupFunc(recordData);
@@ -365,12 +368,12 @@ export class TableComponent implements OnChanges, OnDestroy {
 
     view.selectedItemCount = this.selectedRecords.length;
 
-    view.totalPages = Math.ceil(view.totalRecords / view.limit);
+    view.totalPages = view.totalRecords? Math.ceil(view.totalRecords / view.limit): 1;
 
     view.pageStats = {
       minVal: view.totalRecords > 0 ? ((view.page - 1) * view.limit + 1) : 0,
       maxVal: ((view.limit * view.page) >= view.totalRecords) ? view.totalRecords : (view.limit * view.page),
-      totalVal: view.totalRecords
+      totalVal: view.totalRecords? view.totalRecords : 0
     };
 
     view.actions = filter(get(this.options, 'actions'), 'massAction');

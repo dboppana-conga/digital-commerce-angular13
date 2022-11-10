@@ -130,8 +130,9 @@ export class FavoriteModalComponent implements OnInit, OnDestroy {
           //     ? this.favService.query(assign(options))
           //     : of(this.lookupResults);
           // return combineLatest([obsv$, recordObsv$])
+        //   return of(null);
         // }),
-      //   take(1))
+        // take(1))
       // .subscribe(
       //   ([results, record]) => {
       //     this.lookUpLoading = false;

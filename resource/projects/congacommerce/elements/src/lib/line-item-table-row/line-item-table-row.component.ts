@@ -7,6 +7,7 @@ import {
     StorefrontService, OrderLineItem, QuoteLineItem,
     AssetLineItem
 } from '@congacommerce/ecommerce';
+import { ConfigurationService } from '@congacommerce/core';
 import { ProductConfigurationSummaryComponent } from '../product-configuration-summary/product-configuration-summary.component';
 import { BatchSelectionService } from '../../shared/services/index';
 import { CartItemView } from './interfaces/line-item-view.interface';
@@ -39,7 +40,7 @@ import { CartItemView } from './interfaces/line-item-view.interface';
     selector: 'apt-line-item-table-row',
     templateUrl: './line-item-table-row.component.html',
     styleUrls: ['./line-item-table-row.component.scss'],
-    encapsulation:ViewEncapsulation.None,
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LineItemTableRowComponent implements OnInit, OnChanges {
@@ -51,7 +52,7 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
     /**
      * Primary line item to show in table.
      */
-    @Input() parent: any;
+    @Input() parent: CartItem | QuoteLineItem | OrderLineItem;
 
     /**
      * Taking product options for tax breakup items.
@@ -98,7 +99,7 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
      * The product identifier set in the configuration file.
      * @ignore
      */
-    identifier: string = this.cartService.configurationService.get('productIdentifier');
+    identifier: string = this.configurationService.get('productIdentifier');
 
     /** @ignore */
     showTaxPopUp: boolean = false;
@@ -122,6 +123,7 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
     constructor(
         private cartService: CartService,
         private storefrontService: StorefrontService,
+        private configurationService: ConfigurationService,
         protected batchSelectionService: BatchSelectionService,
         private cdr: ChangeDetectorRef) {
         this.selected$ = of(false);
@@ -144,15 +146,16 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.storefront$ = this.storefrontService.getStorefront();
+        _.set(this.parent, 'AdjustmentAmount' , 0);
         if (!(this.parent instanceof CartItem)) {
-            this.parent.PricingFrequency = this.parent.Frequency;
+            _.set(this.parent, 'PricingFrequency',_.get(this.parent, 'Frequency'));
             this.readonly = true;
             if (_.get(this.parent, 'Taxable')) {
                 this.calculateTotalTax();
             }
         }
         this.subs.push(this.batchSelectionService.getSelectedLineItems().subscribe(cartItems => {
-            this.selected$ = this.batchSelectionService.isLineItemSelected(this.parent).pipe(take(1));
+            this.selected$ = this.batchSelectionService.isLineItemSelected(this.parent as CartItem).pipe(take(1));
             this.cdr.detectChanges();
         }));
     }
@@ -202,9 +205,9 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
             () => {
                 _.set(item, '_metadata._loading', false);
             },
-            () => {
+            err => {
                 _.set(item, '_metadata._loading', false);
-            }
+            }// change this
         );
     }
 
@@ -257,14 +260,14 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
 
     /** @ignore */
     getTaxItemsBasedOnType() {
-        let taxItems;
-        if (this.parent instanceof OrderLineItem) {
-            taxItems = _.get(this.parent, 'OrderTaxBreakups');
-        }
-        else {
-            taxItems = _.get(this.parent, 'TaxBreakups');
-        }
-        return taxItems;
+        // let taxItems;
+        // if (this.parent instanceof OrderLineItem) {
+        //     taxItems = _.get(this.parent, 'OrderTaxBreakups');
+        // }
+        // else {
+        //     taxItems = _.get(this.parent, 'TaxBreakups');
+        // }
+        // return taxItems;
     }
 
     /** @ignore */
@@ -274,13 +277,13 @@ export class LineItemTableRowComponent implements OnInit, OnChanges {
 
     /** @ignore */
     isOrderOrProposal(parentRecord) {
-        return _.get(parentRecord, 'OrderId') || _.get(parentRecord, 'Proposal');
+        return _.get(parentRecord, 'Order') || _.get(parentRecord, 'Proposal');
     }
 
     /** @ignore */
     handleCheckbox(e) {
-        if (e.target.checked) this.batchSelectionService.addLineItemToSelection(this.parent);
-        else this.batchSelectionService.removeLineItemFromSelection(this.parent);
+        if (e.target.checked) this.batchSelectionService.addLineItemToSelection(this.parent as CartItem);
+        else this.batchSelectionService.removeLineItemFromSelection(this.parent as CartItem);
     }
 
     /** @ignore */

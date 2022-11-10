@@ -7,7 +7,7 @@ export * from './lib/price/price.module';
 export * from './lib/address/address.module';
 export * from './lib/mini-cart/mini-cart.module';
 export * from './lib/icon/icon.module';
-export * from './lib/constraint-popover/constraint-popover.module';
+export * from './lib/popover/popover.module';
 export * from './lib/constraint-rule/constraint-rule.module';
 export * from './lib/product-drawer/product-drawer.module';
 export * from './lib/product-carousel/product-carousel.module';

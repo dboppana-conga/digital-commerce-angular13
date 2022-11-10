@@ -26,12 +26,17 @@
                 [routerLink]="isFavoriteConfigurationItem? ['/products', parent.Product[identifier]] : ['/products', parent.Product[identifier], parent.Id]">
                 {{parent?.Product?.Name}}
               </a>
+              <span *ngIf="parent?.AddedBy === 'Constraint Rule'" class="badge badge-pill badge-primary">Included</span><!--ToDO: remove post Demo-->
             </ng-template>
             <span *ngIf="parent?.HasAttributes || parent?.HasOptions">
               <button class="text-muted btn btn-link btn-sm p-0" (click)="showSummary()">
                 <i class="fas fa-wrench"></i>
               </button>
             </span>
+            <h6>
+              <span *ngIf="parent?.AddedBy==='Constraint Rule'" class="badge badge-pill badge-primary">Included
+              </span>
+            </h6>
           </h5>
           <ng-template [ngTemplateOutlet]="statusBadge" [ngTemplateOutletContext]="{cartItem: parent}"></ng-template>
         </div>
@@ -46,19 +51,19 @@
         </p>
         <div class="row">
           <!-- Frequency -->
-          <div class="col-sm-6 col-xl-3" *ngIf="parent?.PriceType !== 'One Time'">
+          <div class="col-md-4" *ngIf="parent?.PriceType !== 'One Time'">
             <apt-output-field [record]="parent" layout="stacked" label="Frequency" field="Frequency"
               [editable]="editableFields"></apt-output-field>
           </div>
 
           <!-- Price Type -->
-          <div class="col-sm-6 col-xl-3">
+          <div class="col-md-4">
             <apt-output-field [record]="parent" layout="stacked" label="Price Type" field="PriceType"
               [editable]="editableFields"></apt-output-field>
           </div>
 
           <!-- Selling Term -->
-          <div class="col-sm-6 col-xl-3">
+          <div class="col-md-4">
             <apt-output-field [record]="parent" layout="stacked" label="SellingTerm" field="SellingTerm"
               [editable]="editableFields">
             </apt-output-field>
@@ -88,20 +93,23 @@
 
         <!-- Adjustment Type / Adjustment Amount -->
         <div class="row">
-          <div class="col-8">
-            <div class="d-flex adjustment-container">
-              <div class="adjustment-type-dropdown pr-1">
+              <div class="adjustment-type-dropdown col-md-6">
                 <apt-input-field [(ngModel)]="parent.AdjustmentType" [entity]="parent" field="AdjustmentType"
-                  [label]="'MANAGE_CART.ADJUESTMENT_TYPE' | translate"
+                  *ngIf="!readonly" [label]="'COMMON.ADJUSTMENT_TYPE' | translate"
                   [readonly]="parent?.LineStatus?.toLowerCase() ==='cancelled'"></apt-input-field>
+                <apt-output-field [record]="parent" field="AdjustmentType"
+                  [label]="'COMMON.ADJUSTMENT_TYPE' | translate" *ngIf="readonly" [editable]="editableFields">
+                </apt-output-field>
               </div>
-              <div class="adjustment-amount pr-1">
+              <div class="adjustment-amount col-md-6">
                 <apt-input-field [(ngModel)]="parent.AdjustmentAmount" [entity]="parent" field="AdjustmentAmount"
-                  [label]="'MANAGE_CART.ADJUESTMENT_AMOUNT' | translate" (change)="updateAdjustments(parent)"
-                  [readonly]="parent?.LineStatus?.toLowerCase() ==='cancelled'" minVal="0"></apt-input-field>
-              </div>
+                  *ngIf="!readonly" [label]="'COMMON.ADJUSTMENT_AMOUNT' | translate"
+                  (change)="updateAdjustments(parent)" [readonly]="parent?.LineStatus?.toLowerCase() ==='cancelled'"
+                  minVal="0"></apt-input-field>
+                <apt-output-field [record]="parent" field="AdjustmentAmount"
+                  [label]="'COMMON.ADJUSTMENT_AMOUNT' | translate" *ngIf="readonly" [editable]="editableFields">
+                </apt-output-field>
             </div>
-          </div>
         </div>
         <ng-template #displayFields>
           <div class="row">
