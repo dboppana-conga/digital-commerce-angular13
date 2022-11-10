@@ -339,11 +339,11 @@ export class AssetLineItemExtended extends AssetLineItem {
             && selectedAsset.length === 0;
     }
 
-    canRenew(childRecords: Array<AssetLineItemExtended>): boolean {
+    canRenew(childRecords?: Array<AssetLineItemExtended>): boolean {
         return this.IsPrimaryLine && !this.onlyHasOneTimePriceType(childRecords) && !this.IsInactive;
     }
 
-    canTerminate(childRecords: Array<AssetLineItemExtended>): boolean {
+    canTerminate(childRecords?: Array<AssetLineItemExtended>): boolean {
         return this.IsPrimaryLine && !this.onlyHasOneTimePriceType(childRecords) && !this.IsInactive;
     }
 

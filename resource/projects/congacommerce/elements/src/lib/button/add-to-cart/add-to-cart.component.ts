@@ -216,7 +216,7 @@ export class AddToCartComponent implements OnInit, OnChanges, OnDestroy {
       // Get required Option Components based on the current selection in the configuration.
       let requiredOptionComponents = this.productOptionService.getRequiredOptions(productOptionComponents, this.cartItems);
       let requiredProducts = _map(requiredOptionComponents, action => get(action, 'ComponentProductId'));
-      let selectedProducts = compact(_map(this.cartItems, item => item.ProductOption && item.ProductOption.ComponentProductId));
+      let selectedProducts = compact(_map(this.cartItems, item => item.ProductOption && item.ProductOption.ComponentProduct.Id));
 
       let hasDifference = (difference(requiredProducts, selectedProducts).length > 0);
       viewState.disabled = this.product.hasErrors || hasDifference;
