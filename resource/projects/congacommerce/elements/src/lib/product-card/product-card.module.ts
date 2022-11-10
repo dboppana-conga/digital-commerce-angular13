@@ -9,6 +9,7 @@ import { ApttusModule } from '@congacommerce/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigurationSummaryModule } from '../product-configuration-summary/configuration-summary.module';
+import { PopoverModule } from '../popover/popover.module';
 
 export * from './product-card.component';
 export * from './compare-product-card/compare-product-card.component';
@@ -25,6 +26,7 @@ export * from './compare-product-card/compare-product-card.component';
     RouterModule,
     ApttusModule,
     TranslateModule.forChild(),
+    PopoverModule,
     ConfigurationSummaryModule
   ],
   declarations: [ProductCardComponent, CompareProductCardComponent],

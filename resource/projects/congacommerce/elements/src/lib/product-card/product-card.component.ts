@@ -1,16 +1,13 @@
-
+import { Component, OnChanges, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, empty, Observable } from 'rxjs';
 import { get, split } from 'lodash';
 import { map, take } from 'rxjs/operators';
-import { Component, OnChanges, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ProductService, UserService, Product } from '@congacommerce/ecommerce';
 import { ConfigurationService } from '@congacommerce/core';
-import { StorefrontService } from '@congacommerce/ecommerce';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ProductService, UserService, Product, ConstraintRule, StorefrontService } from '@congacommerce/ecommerce';
+import { ProductConfigurationSummaryComponent } from '../product-configuration-summary/configuration-summary.module';
 import { BatchSelectionService } from '../../shared/services/index';
 import { ProductConfigurationService } from '../product-configuration/services/product-configuration.service';
-import { ProductConfigurationSummaryComponent } from '../product-configuration-summary/configuration-summary.module';
-
 
 /**
  * The Product Card component generates a card template which displays the product information.
@@ -123,13 +120,13 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
    * @ignore 
    * Added due to stopgap approach
    */
-  @ViewChild('productConfiguration', {static: false}) productConfiguration: ProductConfigurationSummaryComponent;
+  @ViewChild('productConfiguration', { static: false }) productConfiguration: ProductConfigurationSummaryComponent;
 
   /** 
    * @ignore 
    * Added due to stopgap approach
    */
-  quantity=1;
+  quantity = 1;
 
   constructor(
     protected config: ConfigurationService,
@@ -204,8 +201,8 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
    * @ignore
    * Added due to stopgap approach
   */
-  fetchQuantity(value){
-    this.quantity=value;
+  fetchQuantity(value) {
+    this.quantity = value;
   }
 
   /** 

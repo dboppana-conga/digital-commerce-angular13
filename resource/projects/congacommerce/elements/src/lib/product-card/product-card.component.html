@@ -4,19 +4,17 @@
       <div class="custom-control custom-checkbox custom-checkbox-lg card-title">
         <input [id]="_product.Id" type="checkbox" class="custom-control-input" (change)="handleCheckbox($event)"
           [checked]="selected$ | async" />
-      <label class="custom-control-label d-flex justify-content-between" [for]="_product.Id"></label>
+        <label class="custom-control-label d-flex justify-content-between" [for]="_product.Id"></label>
         <div class="d-flex justify-content-between">
-          <p class="m-0 font-weight-bold d-flex text-break" tooltip="{{_product?.Name}}" container="body" placement="top">{{ _product?.Name | truncate:30 }}</p>
+          <p class="m-0 font-weight-bold d-flex text-break" tooltip="{{_product?.Name}}" container="body"
+            placement="top">{{ _product?.Name | truncate:30 }}</p>
           <span class="pt-1 text-muted icons d-flex">
-            <i
-              class="fa fa-shopping-bag"
-              tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}"
-              container="body"
+            <i class="fa fa-shopping-bag" tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}" container="body"
               [adaptivePosition]="false"
-               *ngIf="aboEnabled && _product?.AssetLineItems?.length > 0 && isLoggedIn$ | async"
-            >
+              *ngIf="aboEnabled && _product?.AssetLineItems?.length > 0 && isLoggedIn$ | async">
             </i>
-            <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body" [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
+            <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body"
+              [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
           </span>
         </div>
       </div>
@@ -26,20 +24,28 @@
           <img class="card-img-top w-auto m-auto d-flex align-self-center" [src]="_product.IconId | image"
             [alt]="_product.Name" *ngIf="thumbnail">
         </div>
-    
+
         <div class="d-flex my-1 align-items-center split-items">
           <span class="text-muted product-code pr-1 text-truncate" *ngIf="showCode">{{_product.ProductCode}}</span>
           <span class="text-muted product-category pl-1 pr-1 border-left text-truncate"
             *ngIf="showCategory && _product.Categories?.length > 0">{{_product.Categories[0]?.Classification?.Name}}</span>
         </div>
-        <span class="card-text font-weight-bold d-flex flex-column justify-content-between" *ngIf="showPrice">
-          <span class="text-truncate">{{'PRODUCT_CARD.STANDARD_PRICE' | translate}}</span>
-          <apt-price [record]="_product"></apt-price>
-        </span>
       </a>
+      <div class="d-flex flex-row">
+        <apt-popover [placement]="'right'" [popoverContent]="popoverTemplate">
+          <span class="card-text font-weight-bold d-flex flex-column justify-content-between" *ngIf="showPrice">
+            <span class="text-truncate">{{'PRODUCT_CARD.STANDARD_PRICE' | translate}}
+              <!-- TODO: Add info icon when DC-8455 implementation is taken up.
+              <i class="fas fa-info-circle"></i> -->
+            </span>
+            <apt-price [record]="_product"></apt-price>
+          </span>
+        </apt-popover>
+      </div>
+
     </div>
     <div class="card-footer px-2" *ngIf="canAddToCart">
-      <apt-add-to-cart [skipRules]="skipRules" size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)"></apt-add-to-cart>
+      <apt-add-to-cart size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)"></apt-add-to-cart>
     </div>
   </div>
 
@@ -50,8 +56,8 @@
       <label class="custom-control-label mt-2 ml-2" [for]="_product.Id">&nbsp;</label>
     </div>
     <!-- <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]"  // Commented due to stopgap changes-->
-    <a href="javascript:void(0)"
-      class="d-flex justify-content-center w-25" [state]="_product" (click)="showProductConfiguration()">
+    <a href="javascript:void(0)" class="d-flex justify-content-center w-25" [state]="_product"
+      (click)="showProductConfiguration()">
       <img class="mr-3" [src]="_product.IconId | image" [alt]="_product.Name">
     </a>
     <div class="media-body px-3">
@@ -61,15 +67,11 @@
           {{_product.Name}}
         </a>
         <span class="ml-auto mr-3 purchased list-purchasedbucket">
-          <i
-            *ngIf="aboEnabled && _product?.AssetLineItems?.length>0 && isLoggedIn$ | async"
-            class="fa fa-shopping-bag"
-            tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}"
-            container="body"
-            [adaptivePosition]="false"
-            aria-hidden="true"
-          ></i>
-          <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body" [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
+          <i *ngIf="aboEnabled && _product?.AssetLineItems?.length>0 && isLoggedIn$ | async" class="fa fa-shopping-bag"
+            tooltip="{{'PRODUCT_CARD.INSTALLED_PRODUCT' | translate}}" container="body" [adaptivePosition]="false"
+            aria-hidden="true"></i>
+          <i class="fa fa-wrench" tooltip="{{'PRODUCT_CARD.COMPLEX_PRODUCT' | translate}}" container="body"
+            [adaptivePosition]="false" *ngIf="_product.HasAttributes || _product.HasOptions"></i>
         </span>
       </h5>
       <div class="d-flex mb-3 align-items-center split-items">
@@ -86,7 +88,8 @@
         <apt-price [record]="_product"></apt-price>
       </strong>
       <div *ngIf="canAddToCart">
-        <apt-add-to-cart [skipRules]="skipRules" size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)"></apt-add-to-cart>
+        <apt-add-to-cart size="sm" [product]="_product" (updateProductQuantity)="fetchQuantity($event)">
+        </apt-add-to-cart>
       </div>
     </div>
   </div>
@@ -94,17 +97,19 @@
   <div class="card" *ngIf="type === 'readonly'">
     <div class="card-body readonly p-3">
       <div class="card-title d-flex justify-content-between align-items-start">
-          <p class="m-0 card-title font-weight-bold text-break" tooltip="{{_product?.Name}}" container="body" placement="top">{{_product?.Name | truncate:30}}</p>
-          <button type="button" class="btn btn-link p-0 close" aria-label="Close" (click)="removeProduct()" *ngIf="selected$ | async">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <p class="m-0 card-title font-weight-bold text-break" tooltip="{{_product?.Name}}" container="body"
+          placement="top">{{_product?.Name | truncate:30}}</p>
+        <button type="button" class="btn btn-link p-0 close" aria-label="Close" (click)="removeProduct()"
+          *ngIf="selected$ | async">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <a href="javascript:void(0)" [routerLink]="['/products', _product[identifier]]" [state]="_product">
         <div class="img-container">
           <img class="card-img-top w-auto m-auto d-flex align-self-center" [src]="_product.IconId | image"
             [alt]="_product.Name" *ngIf="thumbnail">
         </div>
-    
+
         <div class="d-flex mt-3 align-items-center split-items" *ngIf="showCategory || showCode">
           <span class="text-muted product-code" *ngIf="showCode">{{_product.ProductCode}}</span>
           <span class="text-muted product-category"
@@ -119,6 +124,9 @@
   </div>
 </ng-container>
 
+<!-- TODO: Add template when DC-8455 implementation is taken up
+<ng-template #popoverTemplate>
+</ng-template> -->
+
 <!-- Stopgap approach -->
-<apt-product-configuration-summary
-  [product]="_product" #productConfiguration></apt-product-configuration-summary>
+<apt-product-configuration-summary [product]="_product" #productConfiguration></apt-product-configuration-summary>

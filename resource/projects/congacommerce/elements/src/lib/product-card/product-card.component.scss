@@ -102,16 +102,6 @@ apt-product-card {
                 div:first-child {
                     justify-content: flex-end !important;
                 }
-                div:last-child {
-                    justify-content: flex-end;
-                    & > apt-cr-popover {
-                        flex-grow: unset !important;
-                        margin-right: 0px !important;
-                        & > div {
-                            margin-right: 0px !important;
-                        }
-                    }
-                }
             }
         }
     }

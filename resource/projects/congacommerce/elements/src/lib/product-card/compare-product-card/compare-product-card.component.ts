@@ -39,7 +39,7 @@ export class CompareProductCardComponent extends ProductCardComponent {
    */
   removeProduct() {
     this.activatedRoute.queryParams.pipe(take(1)).subscribe(params => {
-      let array = params['products'].split(',');
+      let array =params['products'].split(',');
       let filtered = array.filter(value => {
         return value !== this._product[this.identifier];
       });
