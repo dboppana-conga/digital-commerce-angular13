@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UserService, StorefrontService } from '@congacommerce/ecommerce';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import { get, split } from 'lodash';
+import { UserService, StorefrontService } from '@congacommerce/ecommerce';
 
 /**
  * <strong>This component is a work in progress.</strong>
@@ -50,7 +50,7 @@ export class AssetDropdownButtonComponent implements OnInit {
   /**
    * value of asset configuration type
    */
-  @Input() configurationType:  string;
+  @Input() configurationType: string;
   /**
    * Override for what the primary action of this button is. This will set what is on the face of the button.
    */
@@ -90,33 +90,33 @@ export class AssetDropdownButtonComponent implements OnInit {
       this.storefrontService.getStorefront(),
       this.translateService.stream('BUTTON.LOGIN_MUST_TOOLTIP')
     )
-    .pipe(
-      map(([isLoggedIn, storefront, buttonTooltip]) => {
-        let enabledActions;
-        // Check if pricetype is available before populating value for dropdown.
-        if (this.priceType) enabledActions = (_.get(storefront, 'AssetActions')) ? _.get(storefront, 'AssetActions').split(';') : [];
-        // Check if configurationType is Bundle and dropdown has 'Buy More' then remove buymore action from dropdown
-        if (this.configurationType === 'Bundle' && !this.operation && enabledActions.filter(action => action === 'Buy More').length > 0) enabledActions = enabledActions.filter(action => action !== 'Buy More');
-        // check if operation is 'Buy More' or dropdown has 'Buy More' and price type as one time, then enable only 'Buy More' action.
-        if ((this.operation === 'Buy More') || (enabledActions.filter(action => action === 'Buy More').length > 0 && this.priceType === 'One Time')) enabledActions = enabledActions.filter(action => action === 'Buy More');
-        // check if operation is 'Change Configuration' or dropdown has 'Change Configuration' and price type as one time, then enable only 'Change Configuration' action.
-        if ((this.operation === 'Change Configuration') || (enabledActions.filter(action => action === 'Change Configuration').length > 0 && this.priceType === 'One Time')) enabledActions = enabledActions.filter(action => action === 'Change Configuration');
+      .pipe(
+        map(([isLoggedIn, storefront, buttonTooltip]) => {
+          let enabledActions;
+          // Check if pricetype is available before populating value for dropdown.
+          if (this.priceType) enabledActions = (get(storefront, 'AssetActions')) ? split(get(storefront, 'AssetActions'), ';') : [];
+          // Check if configurationType is Bundle and dropdown has 'Buy More' then remove buymore action from dropdown
+          if (this.configurationType === 'Bundle' && !this.operation && enabledActions.filter(action => action === 'Buy More').length > 0) enabledActions = enabledActions.filter(action => action !== 'Buy More');
+          // check if operation is 'Buy More' or dropdown has 'Buy More' and price type as one time, then enable only 'Buy More' action.
+          if ((this.operation === 'Buy More') || (enabledActions.filter(action => action === 'Buy More').length > 0 && this.priceType === 'One Time')) enabledActions = enabledActions.filter(action => action === 'Buy More');
+          // check if operation is 'Change Configuration' or dropdown has 'Change Configuration' and price type as one time, then enable only 'Change Configuration' action.
+          if ((this.operation === 'Change Configuration') || (enabledActions.filter(action => action === 'Change Configuration').length > 0 && this.priceType === 'One Time')) enabledActions = enabledActions.filter(action => action === 'Change Configuration');
 
-        // Do not show Change Configuration action for standalone product which does not have any attributes
-        if (this.configurationType === 'Standalone' && !this.hasAttributes && !this.operation && enabledActions.filter(action => action === 'Change Configuration').length > 0) enabledActions = enabledActions.filter(action => action !== 'Change Configuration');
+          // Do not show Change Configuration action for standalone product which does not have any attributes
+          if (this.configurationType === 'Standalone' && !this.hasAttributes && !this.operation && enabledActions.filter(action => action === 'Change Configuration').length > 0) enabledActions = enabledActions.filter(action => action !== 'Change Configuration');
 
-        if (this.primaryAction && enabledActions.includes(this.primaryAction)) {
-          let action = enabledActions.splice(enabledActions.indexOf(this.primaryAction), 1);
-          enabledActions.unshift(action[0]);
-        }
+          if (this.primaryAction && enabledActions.includes(this.primaryAction)) {
+            let action = enabledActions.splice(enabledActions.indexOf(this.primaryAction), 1);
+            enabledActions.unshift(action[0]);
+          }
 
-        return {
-          isLoggedIn: isLoggedIn,
-          enabledActions: enabledActions,
-          buttonTooltip: buttonTooltip
-        } as AssetDropdownView;
-      })
-    );
+          return {
+            isLoggedIn: isLoggedIn,
+            enabledActions: enabledActions,
+            buttonTooltip: buttonTooltip
+          } as AssetDropdownView;
+        })
+      );
   }
 
 }

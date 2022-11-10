@@ -1,7 +1,7 @@
 import { Injectable,  OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { BatchSelectionService } from './batch-selection.service';
-import { StorefrontService, BatchAction, CartService, Product, AssetLineItemExtended, CartItem, UserService } from '@congacommerce/ecommerce';
+import { StorefrontService, BatchAction, CartService, Product, AssetLineItemExtended, CartItem, UserService, ProductFeatureValue } from '@congacommerce/ecommerce';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { get, every, isEmpty, invoke, some } from 'lodash';
@@ -160,7 +160,8 @@ export class BatchActionService implements OnDestroy {
           let productMissingFeatures = false;
           items.forEach(product => {
             if (get(product, 'ProductFeatureValues')) {
-              if (get(product, 'ProductFeatureValues').length < 1) productMissingFeatures = true;
+              const productFeatureValues = get(product, 'ProductFeatureValues') as Array<ProductFeatureValue>;
+              if (get(productFeatureValues, 'length') < 1) productMissingFeatures = true;
             }
             else productMissingFeatures = true;
           });
