@@ -1,6 +1,6 @@
 <div class="card border-right-0 border-left-0 border-bottom-0">
   <div class="card-header accordionHeader bg-transparent collapsed pr-0 border-bottom-0" role="button"
-    data-toggle="collapse" [attr.data-target]="'#collapse' + subItem.ItemSequence + subItem.LineNumber">
+    data-toggle="collapse" [attr.data-target]="'#collapse' + subItem?.ItemSequence + subItem?.LineNumber">
     <span class="downArrow">&#9660;</span>
     <div class="d-flex">
       <span class="ml-3 inputSection">
@@ -14,7 +14,7 @@
       </span>
     </div>
   </div>
-  <div [id]="'collapse' + subItem.ItemSequence + subItem.LineNumber" class="collapse">
+  <div [id]="'collapse' + subItem?.ItemSequence + subItem?.LineNumber" class="collapse">
     <div class="d-flex py-3 pl-3">
       <div class="inputSection h-100 d-flex flex-column pr-4">
         <div class="row">
@@ -46,6 +46,30 @@
             </apt-input-field>
             <apt-output-field [record]="subItem" field="Quantity" label="{{'COMMON.QUANTITY' | translate}}" class="w-50"
               *ngIf="readonly" [editable]="editableFields"></apt-output-field>
+          </div>
+        </div>
+        <!-- Adjustment Type / Adjustment Amount -->
+        <div class="row">
+          <div class="col-8">
+            <div class="d-flex adjustment-container">
+              <div class="adjustment-type-dropdown pr-1">
+                <apt-input-field [(ngModel)]="subItem.AdjustmentType" [entity]="subItem" field="AdjustmentType"
+                  *ngIf="!readonly" [label]="'COMMON.ADJUSTMENT_TYPE' | translate"
+                  [readonly]="subItem?.LineStatus?.toLowerCase() ==='cancelled'"></apt-input-field>
+                <apt-output-field [record]="subItem" field="AdjustmentType"
+                  [label]="'COMMON.ADJUSTMENT_TYPE' | translate" *ngIf="readonly" [editable]="editableFields">
+                </apt-output-field>
+              </div>
+              <div class="adjustment-amount pr-1">
+                <apt-input-field [(ngModel)]="subItem.AdjustmentAmount" [entity]="subItem" field="AdjustmentAmount"
+                  *ngIf="!readonly" [label]="'COMMON.ADJUSTMENT_AMOUNT' | translate"
+                  (change)="updateAdjustments(subItem)" [readonly]="subItem?.LineStatus?.toLowerCase() ==='cancelled'"
+                  minVal="0"></apt-input-field>
+                <apt-output-field [record]="subItem" field="AdjustmentAmount"
+                  [label]="'COMMON.ADJUSTMENT_AMOUNT' | translate" *ngIf="readonly" [editable]="editableFields">
+                </apt-output-field>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -121,4 +121,17 @@ export class TableRowSubItemComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+     * Changes the adjustment amount and type.
+     * @param cartItem Cart item reference to change adjustment amount and adjusment type.
+     * @fires CartService.updateCartItems()
+     * @ignore
+     */
+  updateAdjustments(cartItem: CartItem) {
+    this.cartService.updateCartItems([cartItem]).pipe(take(1)).subscribe(
+      res => { },
+      err => set(this.cart, 'IsPricePending', false)
+    );
+  }
+
 }

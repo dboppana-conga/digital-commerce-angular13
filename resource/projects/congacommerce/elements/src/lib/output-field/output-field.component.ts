@@ -1,11 +1,10 @@
 import { Component, Input, OnChanges, ElementRef, ViewChild, ViewEncapsulation, ChangeDetectionStrategy, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { AObject, AObjectService } from '@congacommerce/core';
 import { isNil, get, find, first, split, last, map, defaultTo, set, lowerCase, includes, clone } from 'lodash';
 import { BehaviorSubject, Subscription, combineLatest, of } from 'rxjs';
 import { map as rmap, switchMap } from 'rxjs/operators';
-import { ClassType } from 'class-transformer/ClassTransformer';
-import { MetadataService } from '@congacommerce/core';
 import { PopoverDirective } from 'ngx-bootstrap/popover';
+import { ClassType } from 'class-transformer/ClassTransformer';
+import { AObject, AObjectService, MetadataService } from '@congacommerce/core';
 import { LookupOptions } from '../../shared/interfaces/lookup-option.interface';
 /**
  * Output field component is used to create a label value paired output that can be displayed as an editable field with an optional popover that shows related information about the field.
@@ -287,7 +286,7 @@ export class OutputFieldComponent implements OnChanges, OnDestroy {
    * Returns the value of the field on this record.
    * @ignore
    */
-  getValue(instance: AObject, field: string, metadata: any) {
+   getValue(instance: AObject, field: string, metadata: any) {
     return get(instance,
 
         // If display value input is populated, use the records display value field

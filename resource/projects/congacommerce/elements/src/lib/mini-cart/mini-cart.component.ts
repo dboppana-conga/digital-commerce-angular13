@@ -8,6 +8,7 @@ import { Cart, CartItem, CartService, LineItemService } from '@congacommerce/eco
 import { ExceptionService } from '../../shared/services/exception.service';
 import { ProductConfigurationService } from '../product-configuration/services/product-configuration.service';
 import { RevalidateCartService } from '../revalidate-cart-modal/services/revalidate-cart.service';
+import { ConfigurationService } from '@congacommerce/core';
 
 /**@ignore */
 declare var $: any;
@@ -49,7 +50,7 @@ export class AppModule {}
 })
 export class MiniCartComponent implements OnInit {
     @Input() productLink: string = '/products';
-    @Input() productIdentifier: string = this.cartService.configurationService.get('productIdentifier');
+    @Input() productIdentifier: string = this.configurationService.get('productIdentifier');
     @Input() cartLink: string = '/checkout';
     @Input() manageCartLink: string = '/carts';
 
@@ -85,20 +86,21 @@ export class MiniCartComponent implements OnInit {
         public sanitizer: DomSanitizer,
         private exceptionService: ExceptionService,
         private router: Router,
+        private configurationService: ConfigurationService,
         private productConfigurationService: ProductConfigurationService,
         private revalidateCartService: RevalidateCartService) { }
 
     ngOnInit() {
 
         this.disabled$ = this.productConfigurationService.configurationChange.pipe(map(res => get(res, 'hasErrors')));
-        this.identifier = this.cartService.configurationService.get('productIdentifier');
+        this.identifier = this.configurationService.get('productIdentifier');
         this.cart$ = this.cartService.getMyCart();
         this.cartItems$ = this.cartService.getMyCart().pipe(
             map(cart => {
                 this.lineItemPriceComplete = filter(cart.LineItems, r => r.PricingStatus === 'Complete').length > 0;
                 this.lineItemPricePending = filter(cart.LineItems, r => r.PricingStatus === 'Pending').length > 0 || ((cart.IsPricePending || get(cart, 'IsPriced')) && get(cart.LineItems, 'length') > 0);
                 const primaryLines = compact(flatten(_map(LineItemService.groupItems(isArray(cart) ? defaultTo(get(cart, '[0].LineItems'), []) : defaultTo(get(cart, 'LineItems'), [])), 'PrimaryLines')));
-                return primaryLines as Array<CartItem>;
+                return primaryLines  as Array<CartItem>;;
             })
         );
     }

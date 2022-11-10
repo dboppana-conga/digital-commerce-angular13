@@ -148,7 +148,7 @@ export class UserViewMappingService implements OnDestroy {
   /** 
    * @ignore
    */
-  getFieldLabel(field: string) {
+  getFieldLabel(field: string): string {
     const cartItemFields = new CartItem().getMetadataFromExpose();
     const label = ''; // first(keys(pickBy(cartItemFields, { name: field })));
     return label ? label : field;
