@@ -153,7 +153,7 @@ export class ChartComponent implements OnChanges, OnInit, OnDestroy {
     if (this.myChart) this.myChart.destroy();
     const data: ChartInterface = {} as ChartInterface;
     this.chartOptions = this.getDefaultChartOptions();
-    
+
     // Define custom options for doughnut chart.
     if (this.type === 'doughnut') {
       this.chartOptions.animation = {
@@ -178,7 +178,8 @@ export class ChartComponent implements OnChanges, OnInit, OnDestroy {
       };
       this.chartOptions['onClick'] = (evt, item) => {
         this.myChart.update();
-        if (get(item, 'length') > 0) get(first(item), '_model').outerRadius += 8;
+        const model = get(first(item), '_model') as unknown as any;
+        if (get(item, 'length') > 0 && model) model.outerRadius += 8;
       }
     }
 

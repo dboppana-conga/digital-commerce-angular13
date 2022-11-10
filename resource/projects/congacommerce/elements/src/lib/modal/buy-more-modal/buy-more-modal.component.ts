@@ -81,9 +81,9 @@ export class BuyMoreModalComponent implements OnInit {
   * @returns a date value representing the asset line item end date.
   */
   getMinimumEndDate(startDate: Date = new Date()): Date {
-
-    const endDate = this.cartItemService.getEndDate(startDate, _.get(this, 'assetList[0].SellingTerm'), _.get(this, 'assetList[0].SellingFrequency'));
-    if(!_.isNil(endDate) && endDate > new Date())
+    const assetList = _.first(this.assetList);
+    const endDate = this.cartItemService.getEndDate(startDate, _.get(assetList, 'SellingTerm'), _.get(assetList, 'SellingFrequency') as unknown as any);
+    if (!_.isNil(endDate) && endDate > new Date())
       return endDate;
     else
       return this.moment(startDate).add(1, 'y').toDate();
