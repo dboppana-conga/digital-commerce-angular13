@@ -66,7 +66,7 @@ export class PromotionComponent implements OnChanges {
 
   ngOnChanges() {
     this.storefront$ = this.storefrontService.getStorefront();
-    const adjustmentLI = flatten(filter(get(this, 'cart.LineItems'), r => get(r, 'AdjustmentLineItems')).map(k => k.AdjustmentLineItems));
+    const adjustmentLI : Array<AdjustmentItem>= flatten(_map(filter(get(this, 'cart.LineItems'), r => r.AdjustmentLineItems && r.AdjustmentLineItems.length > 0),k => k.AdjustmentLineItems));
     this.adjustmentItemList$ = of(adjustmentLI);
     const incentiveCodes = adjustmentLI.map(k => k.IncentiveCode);
     const incentiveList$ = isEmpty(incentiveCodes) ? of(null) : this.promotionService.getIncentiveByCode(toString(incentiveCodes));
