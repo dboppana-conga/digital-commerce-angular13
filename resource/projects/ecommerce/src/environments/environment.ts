@@ -11,6 +11,5 @@ export const environment: Configuration = {
   endpoint: 'https://rlp-dev.congacloud.io',
   storefrontId: 'a8407757-18d8-45de-951a-b629d82742db',
   clientId: 'rlp-dev-dc-spa',
-  enableTelemetry: false,
   authority: 'https://login.congacloud.io/int/api/v1/auth'
 };
