@@ -93,7 +93,7 @@ export class ProductAttributeComponent implements OnChanges, OnDestroy {
 
     ngOnChanges() {
         this.product$ = _.isString(this.product) ? this.productOptionService.getProductOptionTree(this.product as string) : of(this.product as Product);
-       // TO DO : Uncomment when RLP  PAR and AVM are available
+        // TO DO : Uncomment when RLP  PAR and AVM are available
         // if (!this.metadata$)
         //     this.metadata$ = this.attributeValueMatrixService.describe(ProductAttributeValue);
 
@@ -175,12 +175,13 @@ export class ProductAttributeComponent implements OnChanges, OnDestroy {
      * @ignore
      */
     applyMatrixViews(matrixResult: Array<AllowedValues>, attributeGroupList: Array<ProductAttributeGroup>, attrValue: ProductAttributeValue) {
-        const attributes = _.flatten(attributeGroupList.map(r => _.get(r, 'AttributeGroup')).map(r =>  _.get(r, 'ProductAttributes'))) as Array<ProductAttribute>;
+        const attributes = _.flatten(attributeGroupList.map(r => _.get(r, 'AttributeGroup')).map(r => _.get(r, 'ProductAttributes'))) as Array<ProductAttribute>;
         _.forEach(matrixResult, (view) => {
             if (view.allowedValues && !_.isEmpty(view.resetValues)) {
                 const resttemp = Object.keys(view.resetValues);
                 for (let i = 0; i < resttemp.length; i++) {
-                    if (_.get(view.resetValues, `${resttemp[i]}.length`) > 0) {
+                    const resetValues = _.get(view.resetValues, `${resttemp[i]}`);
+                    if (_.get(resetValues, 'length') > 0) {
                         _.forEach(attributes.filter(r => r.Field === resttemp[i]), attribute => {
                             _.set(attribute, '_metadata.picklist', view.resetValues[resttemp[i]]);
                             _.set(attribute, '_metadata.enableValues', view.resetValues[resttemp[i]]);
