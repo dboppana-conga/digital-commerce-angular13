@@ -1,16 +1,19 @@
-@import "variables";
+@import "../../../../variables.scss";
+
 @keyframes slide {
-  from {
-      top: $navbar-brand-height;
-  }
-  to {
-      top: 0;
-  }
+    from {
+        top: $navbar-brand-height;
+    }
+
+    to {
+        top: 0;
+    }
 }
 
-.navbar{
+.navbar {
     transition: all 0.2s ease 0s;
-    &.fixed-top{
+
+    &.fixed-top {
         top: 0;
         box-shadow: $box-shadow;
         z-index: 1031;
@@ -18,10 +21,12 @@
         animation-name: slide;
         animation-duration: 0.2s;
     }
-    &.expand{
+
+    &.expand {
         top: calc(#{$navbar-brand-height} + 72px);
     }
-    h3{
+
+    h3 {
         max-width: 95%;
         white-space: nowrap;
         overflow: hidden;
@@ -29,15 +34,18 @@
     }
 }
 
-.headerContainer{
+.headerContainer {
     height: 230px;
-    .form-group{
+
+    .form-group {
         margin-bottom: 0;
-        input:not(.form-control-plaintext){
+
+        input:not(.form-control-plaintext) {
             width: 70px;
         }
     }
-    label{
+
+    label {
         white-space: nowrap;
     }
 }

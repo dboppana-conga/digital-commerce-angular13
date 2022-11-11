@@ -1,19 +1,23 @@
-@import "variables";
+@import "../../../../variables.scss";
 
 @keyframes slide {
-  from {
-      top: $navbar-brand-height;
-  }
-  to {
-      top: 0;
-  }
+    from {
+        top: $navbar-brand-height;
+    }
+
+    to {
+        top: 0;
+    }
 }
-:host{
+
+:host {
     display: block;
 }
-.navbar{
+
+.navbar {
     transition: all 0.2s ease 0s;
-    &.fixed-top{
+
+    &.fixed-top {
         top: 0;
         box-shadow: $box-shadow;
         z-index: 1031;
@@ -22,10 +26,12 @@
         animation-duration: 0.2s;
         background-color: $light;
     }
-    &.expand{
+
+    &.expand {
         top: calc(#{$navbar-brand-height} + 35px);
     }
-    h3{
+
+    h3 {
         max-width: 95%;
         white-space: nowrap;
         overflow: hidden;
@@ -33,35 +39,46 @@
     }
 }
 
-.headerContainer{
+.headerContainer {
     height: 14rem;
-    .form-group{
+
+    .form-group {
         margin-bottom: 0;
-        input:not(.form-control-plaintext){
+
+        input:not(.form-control-plaintext) {
             width: 70px;
         }
     }
-    label{
+
+    label {
         white-space: nowrap;
     }
-    .nav-link{
-        &.active, &:hover{
+
+    .nav-link {
+
+        &.active,
+        &:hover {
             border-bottom-width: 3px;
         }
     }
-    .actions{
+
+    .actions {
         white-space: nowrap;
+
         // overflow: hidden;
-        &.primary-actions{
+        &.primary-actions {
             height: 80px;
-            >div{
+
+            >div {
                 display: flex;
                 align-items: center;
             }
         }
-        &.secondary-actions{
+
+        &.secondary-actions {
             height: 70px;
-            >div{
+
+            >div {
                 display: flex;
                 align-items: center;
             }

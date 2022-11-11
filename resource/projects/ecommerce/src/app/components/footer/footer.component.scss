@@ -1,17 +1,19 @@
+@import "../../../variables.scss";
 
-@import "variables";
-
-:host, li{
+:host,
+li {
     font-size: small;
     color: $gray-600;
 }
-li>button{
+
+li>button {
     font-size: small;
     padding-right: 0;
     padding-left: 0;
     color: $gray-600;
 }
-footer{
+
+footer {
     width: 85rem;
     max-width: 100%;
 }
