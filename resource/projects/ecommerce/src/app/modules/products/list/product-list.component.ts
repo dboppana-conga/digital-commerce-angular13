@@ -159,7 +159,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
    * @param categoryList Array of Category.
    */
   onCategory(categoryList: Array<Category>) {
-    const category = get(categoryList, '[0]');
+    const category = get(categoryList, '[0]') as Category;
     if (category) {
       this.subCategories = [];
       this.page = 1;
